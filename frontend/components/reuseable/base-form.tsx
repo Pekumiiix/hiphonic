@@ -170,7 +170,11 @@ export function FormField<T extends FieldValues>({
                   } as React.HTMLAttributes<HTMLElement>)
                 : null}
             </FormControl>
-            {description && <FormDescription>{description}</FormDescription>}
+            {description && (
+              <FormDescription className="text-xs text-grey-500 leading-[150%]">
+                {description}
+              </FormDescription>
+            )}
             {showMessage && <FormMessage />}
           </FormItem>
         );

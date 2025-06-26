@@ -37,64 +37,75 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --color-sky: "#38BDF8";
-  --color-emrald: "#F8FAFC";
-  --color-purple-999: "#8B5CF6";
-  --color-indigo-999: "#6366F1";
-  --color-grey-900: "#0F172A";
-  --color-grey-800: "#1E293B";
-  --color-grey-700: "#334155";
-  --color-grey-600: "#475569";
-  --color-grey-500: "#64748B";
-  --color-grey-400: "#94A3B8";
-  --color-grey-300: "#CBD5E1";
-  --color-grey-200: "#E2E8F0";
-  --color-grey-100: "#F1F5F9";
-  --color-grey-50: "#F8FAFC";
-  --color-primary-900: "#1E3A8A";
-  --color-primary-800: "#1E40AF";
-  --color-primary-700: "#1D4ED8";
-  --color-primary-600: "#2563EB";
-  --color-primary-500: "#3B82F6";
-  --color-primary-400: "#60A5FA";
-  --color-primary-300: "#93C5FD";
-  --color-primary-200: "#BFDBFE";
-  --color-primary-100: "#DBEAFE";
-  --color-primary-50: "#EFF6FF";
-  --color-glamour-pink-500: "#EC4899";
-  --color-glamour-pink-400: "#F472B6";
-  --color-glamour-pink-300: "#F9A8D4";
-  --color-glamour-pink-200: "#FBCFE8";
-  --color-glamour-pink-100: "#FCE7F3";
-  --color-glamour-pink-50: "#FDF2F8";
-  --color-amber-49: "#F6A723";
-  --color-amber-40: "#FBBF24";
-  --color-amber-30: "#FCD34D";
-  --color-amber-20: "#FDE68A";
-  --color-amber-10: "#FEF3C7";
-  --color-amber-5: "#FFFBEB";
-  --color-algal-500: "#24D164";
-  --color-algal-400: "#4ADE80";
-  --color-algal-300: "#86EFAC";
-  --color-algal-200: "#BBF7D0";
-  --color-algal-100: "#DCFCE7";
-  --color-algal-50: "#F0FDF4";
+  --color-sky: #38bdf8;
+  --color-emrald: #f8fafc;
+  --color-purple-999: #8b5cf6;
+  --color-indigo-999: #6366f1;
+  --color-grey-900: #0f172a;
+  --color-grey-800: #1e293b;
+  --color-grey-700: #334155;
+  --color-grey-600: #475569;
+  --color-grey-500: #64748b;
+  --color-grey-400: #94a3b8;
+  --color-grey-300: #cbd5e1;
+  --color-grey-200: #e2e8f0;
+  --color-grey-100: #f1f5f9;
+  --color-grey-50: #f8fafc;
+  --color-primary-900: #1e3a8a;
+  --color-primary-800: #1e40af;
+  --color-primary-700: #1d4ed8;
+  --color-primary-600: #2563eb;
+  --color-primary-500: #3b82f6;
+  --color-primary-400: #60a5fa;
+  --color-primary-300: #93c5fd;
+  --color-primary-200: #bfdbfe;
+  --color-primary-100: #dbeafe;
+  --color-primary-50: #eff6ff;
+  --color-glamour-pink-500: #ec4899;
+  --color-glamour-pink-400: #f472b6;
+  --color-glamour-pink-300: #f9a8d4;
+  --color-glamour-pink-200: #fbcfe8;
+  --color-glamour-pink-100: #fce7f3;
+  --color-glamour-pink-50: #fdf2f8;
+  --color-amber-49: #f6a723;
+  --color-amber-40: #fbbf24;
+  --color-amber-30: #fcd34d;
+  --color-amber-20: #fde68a;
+  --color-amber-10: #fef3c7;
+  --color-amber-5: #fffbeb;
+  --color-algal-500: #24d164;
+  --color-algal-400: #4ade80;
+  --color-algal-300: #86efac;
+  --color-algal-200: #bbf7d0;
+  --color-algal-100: #dcfce7;
+  --color-algal-50: #f0fdf4;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --animate-ripple: ripple var(--duration, 2s) ease calc(var(--i, 0) * 0.2s)
+    infinite;
+  @keyframes ripple {
+    0%,
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+  }
 }
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: #ffffff;
+  --foreground: #000000;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
