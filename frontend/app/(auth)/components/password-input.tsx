@@ -7,20 +7,14 @@ import { Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { get } from "react-hook-form";
 
 export function PasswordInput<T extends FieldValues>({
   name,
   form,
   description,
+  placeholder = "Password",
 }: InputProps<T>) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
-  const error = get(form.formState.errors, name);
-  const touched = get(form.formState.touchedFields, name);
-  const value = form.watch(name);
-
-  const isValid = touched && !error && value;
 
   return (
     <FormField
@@ -30,30 +24,37 @@ export function PasswordInput<T extends FieldValues>({
       showError
       showMessage
     >
-      <div className="relative w-full h-fit">
-        <Lock size={24} className="absolute text-grey-400 left-4 top-4" />
-        <Input
-          type={showPassword ? "text" : "password"}
-          className={cn(
-            "h-14 rounded-[12px] py-2 pl-[52px] pr-4 text-base font-normal border-grey-200 leading-[160%] placeholder:text-grey-400 shadow-none focus-visible:ring-0 focus-visible:border-primary-600 transition-colors duration-200",
-            { "border-grey-200 hover:border-primary-600": !error },
-            { "border-glamour-pink-500": error },
-            { "border-algal-500": isValid }
-          )}
-          placeholder="Password"
-        />
-        <Button
-          onClick={() => setShowPassword(!showPassword)}
-          variant="ghost"
-          className="absolute p-1 w-fit h-fit hover:bg-transparent top-4 right-4"
-        >
-          {showPassword ? (
-            <Eye size={24} className="text-grey-400" />
-          ) : (
-            <EyeOff size={24} className="text-grey-400" />
-          )}
-        </Button>
-      </div>
+      {(field, meta) => (
+        <div className="relative w-full h-fit">
+          <Lock
+            size={24}
+            className="size-[18px] xl:size-6 absolute text-grey-400 left-4 top-4 xl:top-4"
+          />
+          <Input
+            type={showPassword ? "text" : "password"}
+            className={cn(
+              "h-12 xl:h-14 rounded-[12px] py-2 pl-[46px] xl:pl-[52px] pr-4 text-base font-normal border-grey-200 leading-[160%] placeholder:text-grey-400 shadow-none focus-visible:ring-0 focus-visible:border-primary-600 transition-colors duration-200",
+              { "border-grey-200 hover:border-primary-600": !meta.error },
+              { "border-glamour-pink-500": meta.error },
+              { "border-algal-500": meta.isValid }
+            )}
+            placeholder={placeholder}
+            {...field}
+          />
+          <Button
+            onClick={() => setShowPassword(!showPassword)}
+            variant="ghost"
+            type="button"
+            className="absolute !p-0 max-w-fit h-fit hover:bg-transparent top-4 right-4"
+          >
+            {showPassword ? (
+              <EyeOff size={24} className="text-grey-400" />
+            ) : (
+              <Eye size={24} className="text-grey-400" />
+            )}
+          </Button>
+        </div>
+      )}
     </FormField>
   );
 }
@@ -62,4 +63,5 @@ interface InputProps<T extends FieldValues> {
   name: Path<T>;
   form: UseFormReturn<T>;
   description?: string;
+  placeholder?: string;
 }

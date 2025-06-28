@@ -17,9 +17,9 @@ export function BaseCheckbox({
     <div className="flex gap-3">
       <Checkbox
         id={id}
-        checked={value === id}
-        onCheckedChange={() => {
-          onChange?.(id);
+        checked={value}
+        onCheckedChange={(checked) => {
+          onChange?.(checked === true);
         }}
         className="size-6"
       />

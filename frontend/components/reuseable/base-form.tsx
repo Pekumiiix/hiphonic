@@ -25,7 +25,7 @@
  * )
  * ```
  */
-import React, { type ReactElement, type ReactNode } from "react";
+import React, { type ReactNode } from "react";
 import {
   FormControl,
   FormDescription,
@@ -36,13 +36,14 @@ import {
   Form,
 } from "@/components/ui/form";
 import type {
-  ControllerRenderProps,
   FieldValues,
   Path,
   UseFormReturn,
   FieldErrors,
+  ControllerRenderProps,
 } from "react-hook-form";
 import { cn } from "@/lib/utils";
+import { get } from "react-hook-form";
 
 export interface FormBaseProps<T extends FieldValues> {
   /** React Hook Form instance */
@@ -82,122 +83,61 @@ export function FormBase<T extends FieldValues>({
   );
 }
 
-export interface FormFieldProps<T extends FieldValues> {
-  /** Field name (must match form values type) */
-  name: Path<T>;
-  /** Field label text */
+interface FormFieldProps<TFormValues extends FieldValues> {
+  /** React Hook Form instance for form management and validation */
+  form: UseFormReturn<TFormValues>;
+  /** Field name/path within the form data structure */
+  name: Path<TFormValues>;
+  /** Render function that receives field props and metadata */
+  children: (
+    field: Partial<ControllerRenderProps>,
+    meta: {
+      /** Field validation error object */
+      error: FieldErrors<TFormValues>[Path<TFormValues>];
+      /** Whether the field is valid (touched, no errors, and has value) */
+      isValid: boolean;
+    }
+  ) => React.ReactNode;
+  /** Optional label text to display above the field */
   label?: string;
-  /** Field description text */
+  /** Optional description text to display below the field */
   description?: string;
-  /** Whether to show validation messages */
-  showMessage?: boolean;
-  /** Whether to show error styling */
+  /** Whether to show validation errors (default: true) */
   showError?: boolean;
-  /** Field input component or render function */
-  children:
-    | ReactElement
-    | ((field: ControllerRenderProps<T, Path<T>>) => ReactElement);
-  /** React Hook Form instance */
-  form: UseFormReturn<T>;
-  /** Additional CSS classes for the field container */
-  className?: string;
+  /** Whether to show the form message component (default: true) */
+  showMessage?: boolean;
 }
 
-/**
- * Form field component that handles field validation, error states, and layout.
- * Supports both direct children and render prop patterns.
- */
-export function FormField<T extends FieldValues>({
-  name,
-  label = "",
-  description = "",
-  showMessage = false,
-  showError = false,
-  children,
+export function FormField<TFormValues extends FieldValues>({
   form,
-  className,
-}: FormFieldProps<T>) {
+  name,
+  children,
+  label,
+  description,
+  showError = true,
+  showMessage = true,
+}: FormFieldProps<TFormValues>) {
+  const error = get(form.formState.errors, name);
+  const touched = get(form.formState.touchedFields, name);
+  const value = form.watch(name);
+  const isValid = touched && !error && value;
+
   return (
     <ShadcnFormField
       control={form.control}
       name={name}
-      render={({ field, fieldState }) => {
-        const errorClass =
-          showError && fieldState.invalid
-            ? "border-red-500 focus-visible:ring-red-500"
-            : "";
-
-        const isSelectComponent = (element: React.ReactElement) => {
-          if (
-            element.type &&
-            typeof element.type === "function" &&
-            "displayName" in element.type
-          ) {
-            return element.type.displayName === "BaseSelect";
-          }
-
-          if (element.type && typeof element.type === "function") {
-            return element.type.name === "BaseSelect";
-          }
-
-          return false;
-        };
-
-        return (
-          <FormItem className={cn("flex flex-col items-start", className)}>
-            {label && <FormLabel className="text-inherit">{label}</FormLabel>}
-            <FormControl>
-              {typeof children === "function"
-                ? children(field)
-                : React.isValidElement(children)
-                ? React.cloneElement(children, {
-                    ...field,
-                    ...(isSelectComponent(children)
-                      ? {
-                          triggerClassName: cn(
-                            errorClass,
-                            (children.props as { triggerClassName?: string })
-                              ?.triggerClassName ?? ""
-                          ),
-                        }
-                      : {
-                          className: cn(
-                            errorClass,
-                            (children.props as { className?: string })
-                              ?.className ?? ""
-                          ),
-                        }),
-                  } as React.HTMLAttributes<HTMLElement>)
-                : null}
-            </FormControl>
-            {description && (
-              <FormDescription className="text-xs text-grey-500 leading-[150%]">
-                {description}
-              </FormDescription>
-            )}
-            {showMessage && <FormMessage />}
-          </FormItem>
-        );
-      }}
+      render={({ field }) => (
+        <FormItem>
+          {label && <FormLabel>{label}</FormLabel>}
+          <FormControl>{children(field, { error, isValid })}</FormControl>
+          {description && (
+            <FormDescription className="text-xs text-grey-500 leading-[150%]">
+              {description}
+            </FormDescription>
+          )}
+          {showError && showMessage && <FormMessage />}
+        </FormItem>
+      )}
     />
-  );
-}
-
-interface FormFooterProps {
-  /** Footer content (usually buttons) */
-  children: ReactNode;
-  /** Additional CSS classes for the footer */
-  className?: string;
-}
-
-/**
- * Form footer component for consistent button layout and spacing.
- * Typically used to group submit/cancel buttons.
- */
-export function FormFooter({ children, className }: FormFooterProps) {
-  return (
-    <div className={cn("flex justify-end space-x-2", className)}>
-      {children}
-    </div>
   );
 }

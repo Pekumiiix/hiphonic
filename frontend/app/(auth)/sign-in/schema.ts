@@ -1,9 +1,6 @@
 import { z } from "zod";
 
-export const signUpSchema = z.object({
-  username: z
-    .string({ required_error: "Provide a username." })
-    .min(3, { message: "Username must be at least 3 characters long." }),
+export const signInSchema = z.object({
   email: z
     .string({ required_error: "Provide a valid email address." })
     .email({ message: "Please enter a valid email address." }),
@@ -20,9 +17,11 @@ export const signUpSchema = z.object({
     .regex(/[^a-zA-Z0-9]/, {
       message: "Password must contain at least one special character",
     }),
-  termsAccepted: z.literal(true, {
-    errorMap: () => ({
-      message: "You must accept the terms and conditions to continue.",
-    }),
-  }),
+  rememberMe: z.boolean().optional(),
 });
+
+export const defaultSignInValue: z.infer<typeof signInSchema> = {
+  email: "",
+  password: "",
+  rememberMe: false,
+};

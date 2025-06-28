@@ -5,13 +5,13 @@ import { signUpSchema } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { FormBase, FormField } from "@/components/reuseable/base-form";
-import { Button } from "@/components/ui/button";
 import { AuthInput } from "../../components/auth-input";
 import { Mail, User } from "lucide-react";
 import { PasswordInput } from "../../components/password-input";
 import { BaseCheckbox } from "@/components/reuseable/base-checkbox";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { ConfirmationButton } from "../../components/confirmation-button";
 
 export default function SignUpForm() {
   const form = useForm<z.infer<typeof signUpSchema>>({
@@ -30,7 +30,10 @@ export default function SignUpForm() {
           name="username"
           placeholder="Username"
           icon={
-            <User size={24} className="text-grey-400 absolute top-4 left-4" />
+            <User
+              size={24}
+              className="size-[18px] xl:size-6 text-grey-400 absolute top-4 left-4"
+            />
           }
         />
 
@@ -39,7 +42,10 @@ export default function SignUpForm() {
           name="email"
           placeholder="Email"
           icon={
-            <Mail size={24} className="text-grey-400 absolute top-4 left-4" />
+            <Mail
+              size={24}
+              className="size-[18px] xl:size-6 text-grey-400 absolute top-4 left-4"
+            />
           }
         />
 
@@ -56,9 +62,7 @@ export default function SignUpForm() {
         )}
       </FormField>
 
-      <Button className="w-full h-14 rounded-[12px] text-base font-bold leading-[140%] tracking-[0.2px]">
-        Sign Up
-      </Button>
+      <ConfirmationButton name="Sign Up" />
     </FormBase>
   );
 }
