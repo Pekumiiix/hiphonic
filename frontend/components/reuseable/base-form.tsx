@@ -25,25 +25,26 @@
  * )
  * ```
  */
-import React, { type ReactNode } from "react";
-import {
-  FormControl,
-  FormDescription,
-  FormField as ShadcnFormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Form,
-} from "@/components/ui/form";
+import type React from 'react';
+import type { ReactNode } from 'react';
 import type {
+  ControllerRenderProps,
+  FieldErrors,
   FieldValues,
   Path,
   UseFormReturn,
-  FieldErrors,
-  ControllerRenderProps,
-} from "react-hook-form";
-import { cn } from "@/lib/utils";
-import { get } from "react-hook-form";
+} from 'react-hook-form';
+import { get } from 'react-hook-form';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormField as ShadcnFormField,
+} from '@/components/ui/form';
+import { cn } from '@/lib/utils';
 
 export interface FormBaseProps<T extends FieldValues> {
   /** React Hook Form instance */
@@ -67,8 +68,8 @@ export function FormBase<T extends FieldValues>({
   className,
 }: FormBaseProps<T>) {
   function onError(errors: FieldErrors<T>) {
-    console.log("Form validation failed!");
-    console.log("Validation errors:", errors);
+    console.log('Form validation failed!');
+    console.log('Validation errors:', errors);
   }
 
   return (
@@ -96,7 +97,7 @@ interface FormFieldProps<TFormValues extends FieldValues> {
       error: FieldErrors<TFormValues>[Path<TFormValues>];
       /** Whether the field is valid (touched, no errors, and has value) */
       isValid: boolean;
-    }
+    },
   ) => React.ReactNode;
   /** Optional label text to display above the field */
   label?: string;
@@ -131,7 +132,7 @@ export function FormField<TFormValues extends FieldValues>({
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>{children(field, { error, isValid })}</FormControl>
           {description && (
-            <FormDescription className="text-xs text-grey-500 leading-[150%]">
+            <FormDescription className='text-xs text-grey-500 leading-[150%]'>
               {description}
             </FormDescription>
           )}
