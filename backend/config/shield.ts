@@ -1,4 +1,4 @@
-import { defineConfig } from '@adonisjs/shield'
+import { defineConfig } from '@adonisjs/shield';
 
 const shieldConfig = defineConfig({
   /**
@@ -17,7 +17,7 @@ const shieldConfig = defineConfig({
    */
   csrf: {
     enabled: true,
-    exceptRoutes: [],
+    exceptRoutes: ['/sign-up', '/sign-in', '/verify-email', '/reset-password'],
     enableXsrfCookie: false,
     methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
   },
@@ -46,6 +46,6 @@ const shieldConfig = defineConfig({
   contentTypeSniffing: {
     enabled: true,
   },
-})
+});
 
-export default shieldConfig
+export default shieldConfig;
