@@ -91,8 +91,12 @@ export default class AuthController {
           .to(email)
           .from('Amaopelumi96@gmail.com')
           .subject('Here is your link to reset your password.')
-          .html(
-            `<p>Click the link to reset your password: <a href="${resetLink}">Reset Password</a></p>`,
+          .htmlView(
+            "emails/reset_password", {
+              username: user.username,
+              resetLink,
+              year: new Date().getFullYear()
+            }
           );
       });
 
