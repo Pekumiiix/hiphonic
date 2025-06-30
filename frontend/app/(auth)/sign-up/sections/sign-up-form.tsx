@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
@@ -15,6 +16,7 @@ import { PasswordInput } from '../../components/password-input';
 import { signUpSchema } from '../schema';
 
 export default function SignUpForm() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof signUpSchema>>({
@@ -22,6 +24,8 @@ export default function SignUpForm() {
   });
 
   async function onSubmit(data: z.infer<typeof signUpSchema>) {
+    setIsLoading(true);
+
     try {
       const res = await fetch('http://localhost:3333/sign-up', {
         method: 'POST',
@@ -52,6 +56,8 @@ export default function SignUpForm() {
     } catch (err) {
       console.error(err);
       form.setError('root', { type: 'server', message: 'Something went wrong' });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -108,7 +114,10 @@ export default function SignUpForm() {
         )}
       </FormField>
 
-      <ConfirmationButton name='Sign Up' />
+      <ConfirmationButton
+        isLoading={isLoading}
+        name='Sign Up'
+      />
     </FormBase>
   );
 }

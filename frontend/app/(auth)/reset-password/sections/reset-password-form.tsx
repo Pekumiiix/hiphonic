@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
@@ -18,6 +19,7 @@ const resetPasswordSchema = z.object({
 });
 
 export default function ResetPasswordForm() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
@@ -28,6 +30,7 @@ export default function ResetPasswordForm() {
   });
 
   async function onSubmit(data: z.infer<typeof resetPasswordSchema>) {
+    setIsLoading(true);
     try {
       const res = await fetch('http://localhost:3333/verify-email', {
         method: 'POST',
@@ -51,6 +54,8 @@ export default function ResetPasswordForm() {
     } catch (err) {
       console.error(err);
       form.setError('root', { type: 'server', message: 'Something went wrong' });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -72,7 +77,10 @@ export default function ResetPasswordForm() {
         }
       />
 
-      <ConfirmationButton name='Continue' />
+      <ConfirmationButton
+        isLoading={isLoading}
+        name='Continue'
+      />
 
       <Button
         type='button'

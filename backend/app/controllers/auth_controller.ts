@@ -84,7 +84,7 @@ export default class AuthController {
       user.resetPasswordExpiresAt = expiresAt;
       await user.save();
 
-      const resetLink = `https://localhost:3000/reset-password?token=${token}`;
+      const resetLink = `https://localhost:3000/create-new-password?token=${token}`;
 
       await mail.send((message) => {
         message
@@ -98,6 +98,7 @@ export default class AuthController {
 
       return response.ok({ message: 'Email is tied to an account.', username: user.username });
     } catch (error) {
+      console.error('Mail send error:', error);
       if (error.code === 'E_ROW_NOT_FOUND') {
         return response.unauthorized({ message: 'The email is not tied to any account.' });
       }

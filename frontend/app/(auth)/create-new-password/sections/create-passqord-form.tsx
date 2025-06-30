@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
@@ -33,6 +34,8 @@ const createPasswordSchema = z
   });
 
 export default function CreateNewPasswordForm() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const router = useRouter();
   const searchParam = useSearchParams();
 
@@ -45,6 +48,8 @@ export default function CreateNewPasswordForm() {
   });
 
   async function onSubmit(data: z.infer<typeof createPasswordSchema>) {
+    setIsLoading(true);
+
     const newPassword = data.password;
     const token = searchParam.get('token');
 
@@ -69,6 +74,8 @@ export default function CreateNewPasswordForm() {
     } catch (err) {
       console.error(err);
       form.setError('confirmPassword', { message: 'Something went wrong.' });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -90,7 +97,10 @@ export default function CreateNewPasswordForm() {
         />
       </div>
 
-      <ConfirmationButton name='Continue' />
+      <ConfirmationButton
+        isLoading={isLoading}
+        name='Continue'
+      />
     </FormBase>
   );
 }
