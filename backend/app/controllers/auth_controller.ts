@@ -59,6 +59,8 @@ export default class AuthController {
         path: '/',
       });
 
+      // await auth.use('web').login(user);
+
       return { user: user.serialize() };
     } catch (error) {
       if (error.code === 'E_ROW_NOT_FOUND') {
@@ -91,13 +93,10 @@ export default class AuthController {
           .to(email)
           .from('Amaopelumi96@gmail.com')
           .subject('Here is your link to reset your password.')
-          .htmlView(
-            "emails/reset_password", {
-              username: user.username,
-              resetLink,
-              year: new Date().getFullYear()
-            }
-          );
+          .htmlView('emails/reset_password', {
+            email: user.email,
+            link: resetLink,
+          });
       });
 
       return response.ok({ message: 'Email is tied to an account.', username: user.username });

@@ -1,8 +1,5 @@
-import FormContainer from '../components/form-container';
-import CreateNewPasswordForm from './sections/create-passqord-form';
+import CreateNewPasswordForm from './sections/create-password-form';
 
 export default function CreateNewPasswordPage() {
-  return (
-    <CreateNewPasswordForm />
-  );
+  return <CreateNewPasswordForm />;
 }

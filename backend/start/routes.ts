@@ -16,6 +16,9 @@ router.get('/db-check', async () => {
 });
 
 router.on('/').render('pages/home');
+// router
+//   .on('/reset')
+//   .render('emails/reset_password', { link: 'https://google.com', email: 'test@test.com' });
 router.post('/sign-in', [() => import('#controllers/auth_controller'), 'signIn']);
 router.post('/sign-up', [() => import('#controllers/auth_controller'), 'signUp']);
 router.post('/verify-email', [() => import('#controllers/auth_controller'), 'verifyEmail']);
