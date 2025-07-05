@@ -3,11 +3,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
 import { Button } from '@/components/ui/button';
+import { formatTime } from '@/utils/format-time';
 import { AuthInput } from '../../components/auth-input';
 import { ConfirmationButton } from '../../components/confirmation-button';
 import FormContainer from '../../components/form-container';
@@ -20,8 +21,18 @@ const resetPasswordSchema = z.object({
 
 export default function ResetPasswordForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [success, setSuccess] = useState<boolean>(true);
+  const [success, setSuccess] = useState<boolean>(false);
   const [formData, setFormData] = useState<z.infer<typeof resetPasswordSchema>>();
+  const [countdown, setCountdown] = useState<number>(0);
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
 
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
     resolver: zodResolver(resetPasswordSchema),
@@ -45,6 +56,7 @@ export default function ResetPasswordForm() {
         console.log(result);
         setSuccess(true);
         setFormData(data);
+        setCountdown(1200);
       } else {
         if (result.message === 'The email is not tied to any account.') {
           form.setError('email', {
@@ -65,6 +77,8 @@ export default function ResetPasswordForm() {
     <SuccessState
       onResend={() => formData && onSubmit(formData)}
       isLoading={isLoading}
+      countdown={countdown}
+      formatTime={formatTime}
     />
   ) : (
     <EmailForm
@@ -128,23 +142,38 @@ function EmailForm({
   );
 }
 
-function SuccessState({ onResend, isLoading }: { onResend: () => void; isLoading: boolean }) {
+function SuccessState({
+  onResend,
+  isLoading,
+  countdown,
+  formatTime,
+}: {
+  onResend: () => void;
+  isLoading: boolean;
+  countdown: number;
+  formatTime: (seconds: number) => string;
+}) {
+  const canResend = countdown === 0;
+
   return (
     <FormContainer
       headline='Verify your Email'
       description='Thank you, check your email for instructions to reset your password'
     >
       <div className='w-fit flex gap-1'>
-        <p className='text-black text-sm leading-[160%]'>Didn’t receive an email?</p>
+        <p className='text-black text-sm leading-[160%]'>Didn&apos;t receive an email?</p>
         <Button
           onClick={onResend}
+          disabled={!canResend || isLoading}
           variant='ghost'
-          className='text-sm font-bold text-primary-600 hover:text-primary-400 transition-colors duration-200 p-0 w-fit h-fit hover:bg-transparent'
+          className='text-sm font-bold text-primary-600 hover:text-primary-400 transition-colors duration-200 p-0 w-fit h-fit hover:bg-transparent disabled:opacity-50 disabled:cursor-not-allowed'
         >
           {isLoading ? (
             <div className='w-5 h-5 border-4 border-primary-600 border-t-transparent rounded-full animate-spin' />
-          ) : (
+          ) : canResend ? (
             'Resend'
+          ) : (
+            `Resend in ${formatTime(countdown)}`
           )}
         </Button>
       </div>
