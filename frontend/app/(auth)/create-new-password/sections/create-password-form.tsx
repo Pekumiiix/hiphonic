@@ -5,37 +5,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { type FieldValues, type Path, type UseFormReturn, useForm } from 'react-hook-form';
+import type { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
 import { Button } from '@/components/ui/button';
 import { ConfirmationButton } from '../../components/confirmation-button';
 import FormContainer from '../../components/form-container';
 import { PasswordInput } from '../../components/password-input';
-
-const createPasswordSchema = z
-  .object({
-    password: z
-      .string({ required_error: 'Provide a valid password.' })
-      .min(8, { message: 'Password must be at least 8 characters long' })
-      .regex(/[a-z]/, {
-        message: 'Password must contain at least one lowercase letter',
-      })
-      .regex(/[A-Z]/, {
-        message: 'Password must contain at least one uppercase letter',
-      })
-      .regex(/[0-9]/, { message: 'Password must contain at least one number' })
-      .regex(/[^a-zA-Z0-9]/, {
-        message: 'Password must contain at least one special character',
-      }),
-    confirmPassword: z.string({
-      required_error: 'Please confirm your password.',
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  });
+import { createPasswordSchema } from '../schema';
 
 export default function CreateNewPasswordForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -64,7 +41,7 @@ export default function CreateNewPasswordForm() {
     const newPassword = data.password;
 
     try {
-      const res = await fetch('http://localhost:3333/reset-password', {
+      const res = await fetch('/api/create-new-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, newPassword }),
@@ -90,6 +67,22 @@ export default function CreateNewPasswordForm() {
   return success ? (
     <SuccessfullyChangedPassword />
   ) : (
+    <CreatePasswordForm
+      form={form}
+      onSubmit={onSubmit}
+      name={['password', 'confirmPassword']}
+      isLoading={isLoading}
+    />
+  );
+}
+
+function CreatePasswordForm<T extends FieldValues>({
+  form,
+  onSubmit,
+  name,
+  isLoading,
+}: ICreatePasswordForm<T>) {
+  return (
     <FormContainer headline='Create a new password'>
       <FormBase
         form={form}
@@ -97,15 +90,13 @@ export default function CreateNewPasswordForm() {
         className='flex flex-col gap-8'
       >
         <div className='flex flex-col gap-4'>
-          <PasswordInput
-            form={form}
-            name='password'
-          />
-          <PasswordInput
-            form={form}
-            name='confirmPassword'
-            placeholder='Confirm password'
-          />
+          {name.map((item) => (
+            <PasswordInput
+              key={item}
+              form={form}
+              name={item}
+            />
+          ))}
         </div>
 
         <ConfirmationButton
@@ -140,4 +131,11 @@ function SuccessfullyChangedPassword() {
       </Button>
     </div>
   );
+}
+
+interface ICreatePasswordForm<T extends FieldValues> {
+  form: UseFormReturn<T>;
+  onSubmit: (data: T) => void;
+  name: Path<T>[];
+  isLoading: boolean;
 }

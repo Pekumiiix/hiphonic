@@ -3,7 +3,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
@@ -16,7 +15,6 @@ import { defaultSignInValue, signInSchema } from '../schema';
 
 export default function SignInForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -27,7 +25,7 @@ export default function SignInForm() {
     setIsLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3333/sign-in', {
+      const res = await fetch('/api/sign-in', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -36,12 +34,17 @@ export default function SignInForm() {
       const result = await res.json();
 
       if (res.ok) {
-        console.log(result);
-        router.push('/');
+        if (result.redirectTo) {
+          window.location.href = result.redirectTo;
+        }
       } else {
-        if (result.message === 'Invalid credentials') {
-          form.setError('password', { message: `${result.message}.` });
-        } else form.setError('rememberMe', { type: 'server', message: 'Signin failed.' });
+        if (result.message) {
+          form.setError('email', { type: 'server' });
+          form.setError('password', { type: 'server', message: result.message });
+        } else {
+          form.setError('email', { type: 'server' });
+          form.setError('password', { type: 'server', message: 'Sign In failed.' });
+        }
       }
     } catch (err) {
       console.error(err);
@@ -62,12 +65,7 @@ export default function SignInForm() {
           form={form}
           name='email'
           placeholder='Email'
-          icon={
-            <Mail
-              size={24}
-              className='size-[18px] xl:size-6 text-grey-400 absolute top-4 left-4'
-            />
-          }
+          Icon={Mail}
         />
 
         <PasswordInput

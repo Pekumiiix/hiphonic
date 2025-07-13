@@ -30,6 +30,7 @@ export default class AuthController {
         user: user.serialize(),
       });
     } catch (error) {
+      console.error(error);
       return response.internalServerError({
         message: 'Failed to create user',
         error: error.message,
@@ -37,43 +38,32 @@ export default class AuthController {
     }
   }
 
-  async signIn({ request, response }: HttpContext) {
+  async signIn({ request, response, auth }: HttpContext) {
     try {
       const { email, password, rememberMe } = request.only(['email', 'password', 'rememberMe']);
 
-      const user = await User.findByOrFail('email', email);
+      const user = await User.verifyCredentials(email, password);
 
-      const isValid = await user.verifyPassword(password);
+      if (user) {
+        await auth.use('web').login(user, rememberMe);
 
-      if (!isValid) {
-        return response.unauthorized({ message: 'Invalid credentials' });
+        return response.ok({ redirectTo: '/dashboard' });
       }
 
-      const token = await User.accessTokens.create(user);
-
-      response.cookie('token', token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
-        maxAge: rememberMe ? 60 * 60 * 24 * 5 : undefined,
-        path: '/',
-      });
-
-      // await auth.use('web').login(user);
-
-      return { user: user.serialize() };
+      // return { user: user.serialize() };
     } catch (error) {
-      if (error.code === 'E_ROW_NOT_FOUND') {
+      if (error.code === 'E_INVALID_CREDENTIALS') {
         return response.unauthorized({ message: 'Invalid credentials' });
       }
+      // console.error(error);
       return response.internalServerError({
-        message: 'Failed to sign in',
+        message: 'Something went wrong.',
         error: error.message,
       });
     }
   }
 
-  async verifyEmail({ request, response }: HttpContext) {
+  async resetPassword({ request, response }: HttpContext) {
     try {
       const { email } = request.only(['email']);
 
@@ -86,7 +76,7 @@ export default class AuthController {
       user.resetPasswordExpiresAt = expiresAt;
       await user.save();
 
-      const resetLink = `https://localhost:3000/create-new-password?token=${token}`;
+      const resetLink = `http://localhost:3000/create-new-password?token=${token}`;
 
       await mail.send((message) => {
         message
@@ -99,11 +89,10 @@ export default class AuthController {
           });
       });
 
-      return response.ok({ message: 'Email is tied to an account.', username: user.username });
+      return response.ok({ message: 'Reset email sent if account exists.' });
     } catch (error) {
-      console.error('Mail send error:', error);
       if (error.code === 'E_ROW_NOT_FOUND') {
-        return response.unauthorized({ message: 'The email is not tied to any account.' });
+        return response.unauthorized({ message: 'This email is not tied to any account.' });
       }
       return response.internalServerError({
         message: 'Something went wrong.',
@@ -112,7 +101,7 @@ export default class AuthController {
     }
   }
 
-  async resetPassword({ request, response }: HttpContext) {
+  async createNewPassword({ request, response }: HttpContext) {
     const { token, newPassword } = request.only(['token', 'newPassword']);
     const user = await User.findBy('resetPasswordToken', token);
 
@@ -129,12 +118,12 @@ export default class AuthController {
   }
 
   async me({ auth }: HttpContext) {
-    await auth.use('api').authenticate();
+    await auth.use('web').authenticate();
     return auth.user;
   }
 
   async logout({ auth }: HttpContext) {
-    await auth.use('api').authenticate();
+    await auth.use('web').logout();
     return { message: 'Logged out successfully' };
   }
 }

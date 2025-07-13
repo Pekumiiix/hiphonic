@@ -1,16 +1,17 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { AuthProvider } from '@/components/custom/auth-provider';
 
 const inter = Inter({
-  variable: "--inter",
-  subsets: ["latin"],
+  variable: '--inter',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Hiphonic",
-  description: "Project Manager",
-  icons: "/assets/logo.png",
+  title: 'Hiphonic',
+  description: 'Project Manager',
+  icons: '/assets/logo.png',
 };
 
 export default function RootLayout({
@@ -19,9 +20,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body className={`${inter.variable} antialiased flex justify-center`}>
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

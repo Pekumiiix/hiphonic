@@ -1,5 +1,6 @@
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens';
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid';
+import { DbRememberMeTokensProvider } from '@adonisjs/auth/session';
 import { compose } from '@adonisjs/core/helpers';
 import hash from '@adonisjs/core/services/hash';
 import { BaseModel, column } from '@adonisjs/lucid/orm';
@@ -36,4 +37,5 @@ export default class User extends compose(BaseModel, AuthFinder) {
   public resetPasswordExpiresAt!: DateTime | null;
 
   static accessTokens = DbAccessTokensProvider.forModel(User);
+  static rememberMeTokens = DbRememberMeTokensProvider.forModel(User);
 }

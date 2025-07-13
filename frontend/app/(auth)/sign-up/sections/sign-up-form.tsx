@@ -27,7 +27,7 @@ export default function SignUpForm() {
     setIsLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3333/sign-up', {
+      const res = await fetch('/api/sign-up', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -36,18 +36,17 @@ export default function SignUpForm() {
       const result = await res.json();
 
       if (res.ok) {
-        console.log(result);
-        router.push('/');
+        router.push('/dashboard');
       } else {
         if (result.message === 'Email is already registered') {
           form.setError('email', {
             type: 'server',
-            message: 'This email is already registered',
+            message: result.message,
           });
         } else if (result.message === 'Username is already taken') {
           form.setError('username', {
             type: 'server',
-            message: 'This username is already taken',
+            message: result.message,
           });
         } else {
           form.setError('termsAccepted', { type: 'server', message: 'Sign up failed.' });
@@ -55,7 +54,7 @@ export default function SignUpForm() {
       }
     } catch (err) {
       console.error(err);
-      form.setError('root', { type: 'server', message: 'Something went wrong' });
+      form.setError('termsAccepted', { type: 'server', message: 'Something went wrong' });
     } finally {
       setIsLoading(false);
     }
@@ -72,24 +71,14 @@ export default function SignUpForm() {
           form={form}
           name='username'
           placeholder='Username'
-          icon={
-            <User
-              size={24}
-              className='size-[18px] xl:size-6 text-grey-400 absolute top-4 left-4'
-            />
-          }
+          Icon={User}
         />
 
         <AuthInput
           form={form}
           name='email'
           placeholder='Email'
-          icon={
-            <Mail
-              size={24}
-              className='size-[18px] xl:size-6 text-grey-400 absolute top-4 left-4'
-            />
-          }
+          Icon={Mail}
         />
 
         <PasswordInput
@@ -116,6 +105,7 @@ export default function SignUpForm() {
 
       <ConfirmationButton
         isLoading={isLoading}
+        disabled={!form.getValues('termsAccepted')}
         name='Sign Up'
       />
     </FormBase>
