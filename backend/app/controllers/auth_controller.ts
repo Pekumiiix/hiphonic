@@ -9,13 +9,6 @@ export default class AuthController {
     try {
       const data = request.only(['email', 'password', 'username']);
 
-      const existingUserByEmail = await User.findBy('email', data.email);
-      if (existingUserByEmail) {
-        return response.badRequest({
-          message: 'Email is already registered',
-        });
-      }
-
       const existingUserByUsername = await User.findBy('username', data.username);
       if (existingUserByUsername) {
         return response.badRequest({
@@ -23,12 +16,36 @@ export default class AuthController {
         });
       }
 
+      const existingUserByEmail = await User.findBy('email', data.email);
+      if (existingUserByEmail) {
+        return response.badRequest({
+          message: 'Email is already registered',
+        });
+      }
+
       const user = await User.create(data);
 
-      return response.created({
-        message: 'User created successfully',
-        user: user.serialize(),
+      const verificationToken = cuid();
+      const verificationExpiresAt = DateTime.now().plus({ hours: 24 });
+
+      user.emailVerificationToken = verificationToken;
+      user.emailVerificationExpiresAt = verificationExpiresAt;
+      await user.save();
+
+      const verificationLink = `http://localhost:3000/verify-email?token=${verificationToken}`;
+
+      await mail.send((message) => {
+        message
+          .to(user.email)
+          .from('Amaopelumi96@gmail.com')
+          .subject('Verify your email address')
+          .htmlView('emails/verify_email', {
+            name: user.username,
+            link: verificationLink,
+          });
       });
+
+      return response.ok({ message: 'Email verification link sent' });
     } catch (error) {
       console.error(error);
       return response.internalServerError({
@@ -36,6 +53,26 @@ export default class AuthController {
         error: error.message,
       });
     }
+  }
+
+  async verifyEmail({ request, response }: HttpContext) {
+    const { token } = request.only(['token']);
+    const user = await User.findBy('emailVerificationToken', token);
+
+    if (
+      !user ||
+      !user.emailVerificationExpiresAt ||
+      user.emailVerificationExpiresAt < DateTime.now()
+    ) {
+      return response.badRequest({ message: 'Token is invalid or has expired.' });
+    }
+
+    user.emailVerified = true;
+    user.emailVerificationToken = null;
+    user.emailVerificationExpiresAt = null;
+    await user.save();
+
+    return response.ok({ message: 'Email verified successfully.' });
   }
 
   async signIn({ request, response, auth }: HttpContext) {
@@ -49,13 +86,10 @@ export default class AuthController {
 
         return response.ok({ redirectTo: '/dashboard' });
       }
-
-      // return { user: user.serialize() };
     } catch (error) {
       if (error.code === 'E_INVALID_CREDENTIALS') {
         return response.unauthorized({ message: 'Invalid credentials' });
       }
-      // console.error(error);
       return response.internalServerError({
         message: 'Something went wrong.',
         error: error.message,
@@ -82,7 +116,7 @@ export default class AuthController {
         message
           .to(email)
           .from('Amaopelumi96@gmail.com')
-          .subject('Here is your link to reset your password.')
+          .subject('Reset your password.')
           .htmlView('emails/reset_password', {
             email: user.email,
             link: resetLink,

@@ -3,21 +3,44 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, User } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
 import { Label } from '@/components/ui/label';
+import AlternativeAuthMethod from '../../components/alternative-auth-method';
 import { AuthInput } from '../../components/auth-input';
+import { AuthLogo } from '../../components/auth-logo';
 import { ConfirmationButton } from '../../components/confirmation-button';
+import FormContainer from '../../components/form-container';
 import { PasswordInput } from '../../components/password-input';
+import { ResultState } from '../../components/result-state';
 import { signUpSchema } from '../schema';
 
 export default function SignUpForm() {
+  const [success, setSuccess] = useState<boolean>(false);
+
+  return success ? (
+    <div className='w-full h-full flex flex-col'>
+      <AuthLogo />
+
+      <ResultState
+        name='Check your email for your verification link.'
+        showButton={false}
+      />
+    </div>
+  ) : (
+    <FormContainer headline='Sign Up for an Account'>
+      <AuthForm setSuccess={setSuccess} />
+
+      <AlternativeAuthMethod />
+    </FormContainer>
+  );
+}
+
+function AuthForm({ setSuccess }: { setSuccess: (success: boolean) => void }) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
@@ -36,7 +59,7 @@ export default function SignUpForm() {
       const result = await res.json();
 
       if (res.ok) {
-        router.push('/dashboard');
+        setSuccess(true);
       } else {
         if (result.message === 'Email is already registered') {
           form.setError('email', {

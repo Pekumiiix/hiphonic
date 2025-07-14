@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Password Reset</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+  </head>
+  <body style="font-family: 'Lexend', sans-serif; padding: 0; margin: 0;">
+    <div
+   style="
+    font-size: 14px;
+    color: #333;
+    padding: 20px 14px;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+  "
+>
+  <div style="max-width: 600px; margin: auto; background-color: #fff">
+    <div style="text-align: center; background-color: #3b82f6; padding: 14px">
+      <a style="text-decoration: none; outline: none" href="https://hiphonic-blue.vercel.app/" target="_blank">
+        {{--  <img
+          style="height: 32px; vertical-align: middle"
+          height="32px"
+          src="https://github.com/Pekumiiix/hiphonic/blob/main/frontend/public/assets/logo.png"
+          alt="logo"
+        />  --}}
+
+        <p style="color: #fff; font-size: 22px; font-weight: 600;">Hiphonic</p>
+      </a>
+    </div>
+    <div style="padding: 14px">
+      <h1 style="font-size: 22px; margin-bottom: 26px">Verify Your Email Address</h1>
+      <p>
+        Hello <b>{{name}}</b>, thank you for registering with us! To complete your registration and activate your account, please verify your email address by clicking the button below:
+      </p>
+      <p style="margin-top: 20px; margin-bottom: 10px; padding: 10px; background-color: #3b82f6; border-radius: 5px; width:fit-content; color: #ffffff;">
+        <a href="{{link}}" style="color: #ffffff; text-decoration: none;">Verify Email</a>
+      </p>
+      <p style="margin-top: 0px; margin-bottom: 20px;">This link will expire in 24 hours.</p>
+      <p style="margin-top: 20px; margin-bottom: 20px;">
+         If you did not create an account, you can safely ignore this email.
+      </p>
+      <p style="margin-top: 20px; margin-bottom: 20px;">Best regards,<br />Hiphonic Team</p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

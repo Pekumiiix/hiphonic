@@ -26,6 +26,7 @@ router.post('/create-new-password', [
   () => import('#controllers/auth_controller'),
   'createNewPassword',
 ]);
+router.post('/verify-email', [() => import('#controllers/auth_controller'), 'verifyEmail']);
 router
   .get('/me', [() => import('#controllers/auth_controller'), 'me'])
   .middleware(() => import('#middleware/auth_middleware'));

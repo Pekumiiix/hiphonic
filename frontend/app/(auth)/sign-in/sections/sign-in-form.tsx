@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
@@ -15,6 +16,8 @@ import { defaultSignInValue, signInSchema } from '../schema';
 
 export default function SignInForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -35,7 +38,7 @@ export default function SignInForm() {
 
       if (res.ok) {
         if (result.redirectTo) {
-          window.location.href = result.redirectTo;
+          router.push(result.redirectTo);
         }
       } else {
         if (result.message) {

@@ -36,6 +36,15 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column.dateTime()
   public resetPasswordExpiresAt!: DateTime | null;
 
+  @column()
+  public emailVerificationToken!: string | null;
+
+  @column.dateTime()
+  public emailVerificationExpiresAt!: DateTime | null;
+
+  @column()
+  public emailVerified!: boolean;
+
   static accessTokens = DbAccessTokensProvider.forModel(User);
   static rememberMeTokens = DbRememberMeTokensProvider.forModel(User);
 }

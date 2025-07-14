@@ -1,22 +1,21 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { type FieldValues, type Path, type UseFormReturn, useForm } from 'react-hook-form';
 import type { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
-import { Button } from '@/components/ui/button';
+import { AuthLogo } from '../../components/auth-logo';
 import { ConfirmationButton } from '../../components/confirmation-button';
 import FormContainer from '../../components/form-container';
 import { PasswordInput } from '../../components/password-input';
+import { ResultState } from '../../components/result-state';
 import { createPasswordSchema } from '../schema';
 
 export default function CreateNewPasswordForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [success, setSuccess] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(true);
 
   const router = useRouter();
   const searchParam = useSearchParams();
@@ -65,7 +64,10 @@ export default function CreateNewPasswordForm() {
   }
 
   return success ? (
-    <SuccessfullyChangedPassword />
+    <div className='w-full h-full flex flex-col'>
+      <AuthLogo />
+      <ResultState name='Successfully changed password.' />
+    </div>
   ) : (
     <CreatePasswordForm
       form={form}
@@ -105,31 +107,6 @@ function CreatePasswordForm<T extends FieldValues>({
         />
       </FormBase>
     </FormContainer>
-  );
-}
-
-function SuccessfullyChangedPassword() {
-  return (
-    <div className='w-full h-full md:w-[404px] flex flex-col justify-center items-center gap-3'>
-      <Image
-        src='/assets/auth/successful.gif'
-        alt='Checkmark'
-        width={150}
-        height={150}
-      />
-      <p className='font-medium'>Successfully changed password.</p>
-      <Button
-        asChild
-        className='w-fit h-fit'
-      >
-        <Link
-          href='/sign-in'
-          className='text-sm'
-        >
-          Sign In
-        </Link>
-      </Button>
-    </div>
   );
 }
 
