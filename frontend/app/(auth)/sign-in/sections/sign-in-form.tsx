@@ -5,10 +5,12 @@ import { Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import type { z } from 'zod';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
-import { useSignIn } from '@/lib/hooks/useSignIn';
+import { ToastComponent } from '@/components/reuseable/toast-variants';
+import { useSignIn } from '@/lib/hooks/use-sign-in';
 import { AuthInput } from '../../components/auth-input';
 import { ConfirmationButton } from '../../components/confirmation-button';
 import { PasswordInput } from '../../components/password-input';
@@ -25,14 +27,22 @@ export default function SignInForm() {
 
   async function onSubmit(data: z.infer<typeof signInSchema>) {
     mutate(data, {
-      onSuccess: (data) => {
-        if (data.redirectTo) {
-          router.push(data.redirectTo);
-        }
+      onSuccess: () => {
+        router.push('/dashboard');
       },
       onError: (data) => {
-        form.setError('email', { type: 'server' });
-        form.setError('password', { type: 'server', message: data.message });
+        if (data.message === 'Something went wrong.') {
+          toast(
+            <ToastComponent
+              variant='error'
+              message={data.message}
+            />,
+            { position: 'top-right' },
+          );
+        } else {
+          form.setError('email', { type: 'server' });
+          form.setError('password', { type: 'server', message: data.message });
+        }
       },
     });
   }

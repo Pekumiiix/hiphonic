@@ -83,8 +83,6 @@ export default class AuthController {
 
       if (user) {
         await auth.use('web').login(user, rememberMe);
-
-        return response.ok({ redirectTo: '/dashboard' });
       }
     } catch (error) {
       if (error.code === 'E_INVALID_CREDENTIALS') {

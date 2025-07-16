@@ -5,9 +5,12 @@ import { Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { type Path, type UseFormReturn, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
+import { ToastComponent } from '@/components/reuseable/toast-variants';
 import { Button } from '@/components/ui/button';
+import { useResetPassword } from '@/lib/hooks/use-reset-password';
 import { formatTime } from '@/utils/format-time';
 import { AuthInput } from '../../components/auth-input';
 import { ConfirmationButton } from '../../components/confirmation-button';
@@ -20,10 +23,11 @@ const resetPasswordSchema = z.object({
 });
 
 export default function ResetPasswordForm() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [formData, setFormData] = useState<z.infer<typeof resetPasswordSchema>>();
   const [countdown, setCountdown] = useState<number>(0);
+
+  const { mutate, isPending } = useResetPassword();
 
   useEffect(() => {
     if (countdown > 0) {
@@ -42,51 +46,43 @@ export default function ResetPasswordForm() {
   });
 
   async function onSubmit(data: z.infer<typeof resetPasswordSchema>) {
-    setIsLoading(true);
-    try {
-      const res = await fetch('/api/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (res.ok) {
-        console.log(result);
+    mutate(data, {
+      onSuccess: () => {
         setSuccess(true);
         setFormData(data);
         setCountdown(1200);
-      } else {
-        if (result.message === 'This email is not tied to any account.') {
-          form.setError('email', {
-            type: 'server',
-            message: result.message,
-          });
+      },
+      onError: (data) => {
+        const errorMap: Record<string, 'email'> = {
+          'This email is not tied to any account.': 'email',
+        };
+        const field = errorMap[data.message];
+        if (field) {
+          form.setError(field, { type: 'server', message: data.message });
+        } else {
+          toast(
+            <ToastComponent
+              variant='error'
+              message={data.message}
+            />,
+            { position: 'top-right' },
+          );
         }
-      }
-    } catch (err) {
-      console.error(err);
-      form.setError('email', {
-        type: 'server',
-        message: 'Something went wrong',
-      });
-    } finally {
-      setIsLoading(false);
-    }
+      },
+    });
   }
 
   return success ? (
     <SuccessState
       onResend={() => formData && onSubmit(formData)}
-      isLoading={isLoading}
+      isLoading={isPending}
       countdown={countdown}
       formatTime={formatTime}
     />
   ) : (
     <EmailForm
       onSubmit={onSubmit}
-      isLoading={isLoading}
+      isLoading={isPending}
       form={form}
       name='email'
     />

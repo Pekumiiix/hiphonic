@@ -5,11 +5,13 @@ import { Mail, User } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import type { z } from 'zod';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
+import { ToastComponent } from '@/components/reuseable/toast-variants';
 import { Label } from '@/components/ui/label';
-import { useSignUp } from '@/lib/hooks/useSignUp';
+import { useSignUp } from '@/lib/hooks/use-sign-up';
 import AlternativeAuthMethod from '../../components/alternative-auth-method';
 import { AuthInput } from '../../components/auth-input';
 import { AuthLogo } from '../../components/auth-logo';
@@ -61,7 +63,13 @@ function AuthForm({ setSuccess }: { setSuccess: (success: boolean) => void }) {
         if (field) {
           form.setError(field, { type: 'server', message: data.message });
         } else {
-          form.setError('termsAccepted', { type: 'server', message: 'Sign up failed.' });
+          toast(
+            <ToastComponent
+              variant='error'
+              message={data.message}
+            />,
+            { position: 'top-right' },
+          );
         }
       },
     });
