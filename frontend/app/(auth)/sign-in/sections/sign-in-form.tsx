@@ -4,19 +4,18 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
+import { useSignIn } from '@/lib/hooks/useSignIn';
 import { AuthInput } from '../../components/auth-input';
 import { ConfirmationButton } from '../../components/confirmation-button';
 import { PasswordInput } from '../../components/password-input';
 import { defaultSignInValue, signInSchema } from '../schema';
 
 export default function SignInForm() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const { mutate, isPending } = useSignIn();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof signInSchema>>({
@@ -25,36 +24,17 @@ export default function SignInForm() {
   });
 
   async function onSubmit(data: z.infer<typeof signInSchema>) {
-    setIsLoading(true);
-
-    try {
-      const res = await fetch('/api/sign-in', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (res.ok) {
-        if (result.redirectTo) {
-          router.push(result.redirectTo);
+    mutate(data, {
+      onSuccess: (data) => {
+        if (data.redirectTo) {
+          router.push(data.redirectTo);
         }
-      } else {
-        if (result.message) {
-          form.setError('email', { type: 'server' });
-          form.setError('password', { type: 'server', message: result.message });
-        } else {
-          form.setError('email', { type: 'server' });
-          form.setError('password', { type: 'server', message: 'Sign In failed.' });
-        }
-      }
-    } catch (err) {
-      console.error(err);
-      form.setError('root', { type: 'server', message: 'Something went wrong.' });
-    } finally {
-      setIsLoading(false);
-    }
+      },
+      onError: (data) => {
+        form.setError('email', { type: 'server' });
+        form.setError('password', { type: 'server', message: data.message });
+      },
+    });
   }
 
   return (
@@ -103,7 +83,7 @@ export default function SignInForm() {
       </div>
 
       <ConfirmationButton
-        isLoading={isLoading}
+        isLoading={isPending}
         name='Sign In'
       />
     </FormBase>

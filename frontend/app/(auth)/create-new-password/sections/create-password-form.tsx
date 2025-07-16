@@ -3,9 +3,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { type FieldValues, type Path, type UseFormReturn, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import type { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
+import { useCreateNewPassword } from '@/lib/hooks/use-create-new-password';
 import { AuthLogo } from '../../components/auth-logo';
 import { ConfirmationButton } from '../../components/confirmation-button';
 import FormContainer from '../../components/form-container';
@@ -14,9 +16,20 @@ import { ResultState } from '../../components/result-state';
 import { createPasswordSchema } from '../schema';
 
 export default function CreateNewPasswordForm() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [success, setSuccess] = useState<boolean>(true);
+  const [success, setSuccess] = useState<boolean>(false);
 
+  return success ? (
+    <div className='w-full h-full flex flex-col'>
+      <AuthLogo />
+      <ResultState name='Successfully changed password.' />
+    </div>
+  ) : (
+    <CreatePasswordForm setSuccess={setSuccess} />
+  );
+}
+
+function CreatePasswordForm({ setSuccess }: ICreatePasswordForm) {
+  const { mutate, isPending } = useCreateNewPassword();
   const router = useRouter();
   const searchParam = useSearchParams();
 
@@ -35,55 +48,24 @@ export default function CreateNewPasswordForm() {
   }
 
   async function onSubmit(data: z.infer<typeof createPasswordSchema>) {
-    setIsLoading(true);
-
     const newPassword = data.password;
 
-    try {
-      const res = await fetch('/api/create-new-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, newPassword }),
-      });
-
-      const result = await res.json();
-
-      if (res.ok) {
-        setSuccess(true);
-      } else {
-        form.setError('confirmPassword', {
-          message: result.message || 'Password reset failed',
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      form.setError('confirmPassword', { message: 'Something went wrong.' });
-    } finally {
-      setIsLoading(false);
-    }
+    mutate(
+      { newPassword, token: token ?? '' },
+      {
+        onSuccess: (data) => {
+          setSuccess(true);
+          toast.success(data.message);
+          router.push('/sign-in');
+        },
+        onError: () => {
+          setSuccess(false);
+          toast.error('Failed to update password. Try again.');
+        },
+      },
+    );
   }
 
-  return success ? (
-    <div className='w-full h-full flex flex-col'>
-      <AuthLogo />
-      <ResultState name='Successfully changed password.' />
-    </div>
-  ) : (
-    <CreatePasswordForm
-      form={form}
-      onSubmit={onSubmit}
-      name={['password', 'confirmPassword']}
-      isLoading={isLoading}
-    />
-  );
-}
-
-function CreatePasswordForm<T extends FieldValues>({
-  form,
-  onSubmit,
-  name,
-  isLoading,
-}: ICreatePasswordForm<T>) {
   return (
     <FormContainer headline='Create a new password'>
       <FormBase
@@ -92,7 +74,7 @@ function CreatePasswordForm<T extends FieldValues>({
         className='flex flex-col gap-8'
       >
         <div className='flex flex-col gap-4'>
-          {name.map((item) => (
+          {['password' as const, 'confirmPassword' as const].map((item) => (
             <PasswordInput
               key={item}
               form={form}
@@ -102,7 +84,7 @@ function CreatePasswordForm<T extends FieldValues>({
         </div>
 
         <ConfirmationButton
-          isLoading={isLoading}
+          isLoading={isPending}
           name='Continue'
         />
       </FormBase>
@@ -110,9 +92,6 @@ function CreatePasswordForm<T extends FieldValues>({
   );
 }
 
-interface ICreatePasswordForm<T extends FieldValues> {
-  form: UseFormReturn<T>;
-  onSubmit: (data: T) => void;
-  name: Path<T>[];
-  isLoading: boolean;
+interface ICreatePasswordForm {
+  setSuccess: (success: boolean) => void;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, use, useEffect, useMemo, useState } from 'react';
+import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 type User = {
   id: number;
@@ -14,16 +14,18 @@ type AuthProviderContextValue = {
   refresh: () => Promise<void>;
 };
 
-const AuthContextProvider = createContext<AuthProviderContextValue | undefined>(undefined);
+export const AuthContext = createContext<AuthProviderContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   async function fetchUser() {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3333/me', { credentials: 'include' });
+      const res = await fetch('http://localhost:3333/me', {
+        credentials: 'include',
+      });
       if (res.ok) {
         const data = await res.json();
         setUser(data);
@@ -49,11 +51,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [user, loading],
   );
 
-  return <AuthContextProvider value={value}>{children}</AuthContextProvider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const context = use(AuthContextProvider);
+  const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }

@@ -2,18 +2,20 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useVerifyEmail } from '@/lib/hooks/use-verify-email';
 import { AuthLogo } from '../components/auth-logo';
 import { ResultState } from '../components/result-state';
+import Loading from './loading';
 
 export default function VerifyEmailPage() {
-  const [error, setError] = useState<string>('');
-  const [success, setSuccess] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [success, setSuccess] = useState<boolean | null>(null);
 
-  const router = useRouter();
+  const { mutate, isPending } = useVerifyEmail();
 
   const searchParam = useSearchParams();
   const token = searchParam.get('token');
+  const router = useRouter();
 
   useEffect(() => {
     if (!token || token === undefined) {
@@ -21,42 +23,41 @@ export default function VerifyEmailPage() {
       return;
     }
 
-    const verify = async () => {
-      setIsLoading(true);
-
-      try {
-        const res = await fetch('/api/verify-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token }),
-        });
-
-        const result = await res.json();
-
-        if (res.ok) {
-          setSuccess(true);
-        } else {
-          setError(result.message);
-        }
-      } catch (err) {
-        console.log(err);
-        setError('Something went wrong.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    async function verify() {
+      mutate(
+        { token: token ?? '' },
+        {
+          onSuccess: () => {
+            setSuccess(true);
+          },
+          onError: (data) => {
+            setErrorMessage(data.message);
+            setSuccess(false);
+          },
+        },
+      );
+    }
     verify();
   }, [router, token]);
+
+  if (success === null) {
+    return (
+      <div className='w-full h-full flex flex-col'>
+        <AuthLogo />
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className='w-full h-full flex flex-col'>
       <AuthLogo />
       <ResultState
-        image={success ? '/assets/auth/successful.gif' : '/assets/auth/error.gif'}
-        name={success ? 'Successfully verified email, procced to sign in.' : error}
+        image={success ? '/assets/auth/check.gif' : '/assets/auth/error.gif'}
+        name={success ? 'Email has been verified successfully, procced to sign in.' : errorMessage}
         alt={success ? 'Checkmark' : 'Error'}
-        isLoading={isLoading}
-        showButton={success}
+        isLoading={isPending}
+        showButton={success ? success : false}
       />
     </div>
   );

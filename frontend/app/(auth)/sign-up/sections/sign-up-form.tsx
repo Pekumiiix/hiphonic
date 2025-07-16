@@ -9,6 +9,7 @@ import type { z } from 'zod';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
 import { Label } from '@/components/ui/label';
+import { useSignUp } from '@/lib/hooks/useSignUp';
 import AlternativeAuthMethod from '../../components/alternative-auth-method';
 import { AuthInput } from '../../components/auth-input';
 import { AuthLogo } from '../../components/auth-logo';
@@ -40,47 +41,30 @@ export default function SignUpForm() {
 }
 
 function AuthForm({ setSuccess }: { setSuccess: (success: boolean) => void }) {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { mutate, isPending } = useSignUp();
 
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
   });
 
   async function onSubmit(data: z.infer<typeof signUpSchema>) {
-    setIsLoading(true);
-
-    try {
-      const res = await fetch('/api/sign-up', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (res.ok) {
+    mutate(data, {
+      onSuccess: () => {
         setSuccess(true);
-      } else {
-        if (result.message === 'Email is already registered') {
-          form.setError('email', {
-            type: 'server',
-            message: result.message,
-          });
-        } else if (result.message === 'Username is already taken') {
-          form.setError('username', {
-            type: 'server',
-            message: result.message,
-          });
+      },
+      onError: (data) => {
+        const errorMap: Record<string, 'email' | 'username'> = {
+          'Email is already registered': 'email',
+          'Username is already taken': 'username',
+        };
+        const field = errorMap[data.message];
+        if (field) {
+          form.setError(field, { type: 'server', message: data.message });
         } else {
           form.setError('termsAccepted', { type: 'server', message: 'Sign up failed.' });
         }
-      }
-    } catch (err) {
-      console.error(err);
-      form.setError('termsAccepted', { type: 'server', message: 'Something went wrong' });
-    } finally {
-      setIsLoading(false);
-    }
+      },
+    });
   }
 
   return (
@@ -127,7 +111,7 @@ function AuthForm({ setSuccess }: { setSuccess: (success: boolean) => void }) {
       </FormField>
 
       <ConfirmationButton
-        isLoading={isLoading}
+        isLoading={isPending}
         disabled={!form.getValues('termsAccepted')}
         name='Sign Up'
       />
