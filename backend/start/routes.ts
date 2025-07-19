@@ -9,7 +9,6 @@
 
 import router from '@adonisjs/core/services/router';
 import db from '@adonisjs/lucid/services/db';
-import { middleware } from './kernel.js';
 
 // Server status routes
 router.on('/').render('pages/home');
@@ -27,12 +26,7 @@ router.post('/create-new-password', [
   'createNewPassword',
 ]);
 router.post('/verify-email', [() => import('#controllers/auth_controller'), 'verifyEmail']);
-router
-  .get('/me', [() => import('#controllers/auth_controller'), 'me'])
-  .middleware(() => import('#middleware/auth_middleware'));
+router.get('/me', [() => import('#controllers/auth_controller'), 'me']);
 router
   .post('/logout', [() => import('#controllers/auth_controller'), 'logout'])
   .middleware(() => import('#middleware/auth_middleware'));
-
-// Protected Routes
-router.get('dashboard', () => {}).use(middleware.auth());

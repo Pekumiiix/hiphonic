@@ -5,12 +5,12 @@ import { Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import type { z } from 'zod';
+import { useAuth } from '@/components/custom/auth-provider';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
-import { ToastComponent } from '@/components/reuseable/toast-variants';
 import { useSignIn } from '@/lib/hooks/use-sign-in';
+import { globalToasts } from '@/lib/toasts';
 import { AuthInput } from '../../components/auth-input';
 import { ConfirmationButton } from '../../components/confirmation-button';
 import { PasswordInput } from '../../components/password-input';
@@ -19,6 +19,7 @@ import { defaultSignInValue, signInSchema } from '../schema';
 export default function SignInForm() {
   const { mutate, isPending } = useSignIn();
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -27,18 +28,13 @@ export default function SignInForm() {
 
   async function onSubmit(data: z.infer<typeof signInSchema>) {
     mutate(data, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         router.push('/dashboard');
+        setUser({ ...data.user });
       },
       onError: (data) => {
         if (data.message === 'Something went wrong.') {
-          toast(
-            <ToastComponent
-              variant='error'
-              message={data.message}
-            />,
-            { position: 'top-right' },
-          );
+          globalToasts.globalError(data.message);
         } else {
           form.setError('email', { type: 'server' });
           form.setError('password', { type: 'server', message: data.message });

@@ -8,13 +8,7 @@ export function ResultState({
   name,
   isLoading = false,
   showButton = true,
-}: {
-  image?: string;
-  alt?: string;
-  name: string;
-  isLoading?: boolean;
-  showButton?: boolean;
-}) {
+}: IResultStateProps) {
   return (
     <div className='w-full h-full md:w-[404px] flex flex-col justify-center items-center gap-3'>
       <Image
@@ -49,4 +43,12 @@ export function ResultState({
       </div>
     </div>
   );
+}
+
+interface IResultStateProps {
+  image?: string;
+  alt?: string;
+  name: string;
+  isLoading?: boolean;
+  showButton?: boolean;
 }

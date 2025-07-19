@@ -5,12 +5,11 @@ import { Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { type Path, type UseFormReturn, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
-import { ToastComponent } from '@/components/reuseable/toast-variants';
 import { Button } from '@/components/ui/button';
 import { useResetPassword } from '@/lib/hooks/use-reset-password';
+import { globalToasts } from '@/lib/toasts';
 import { formatTime } from '@/utils/format-time';
 import { AuthInput } from '../../components/auth-input';
 import { ConfirmationButton } from '../../components/confirmation-button';
@@ -60,13 +59,7 @@ export default function ResetPasswordForm() {
         if (field) {
           form.setError(field, { type: 'server', message: data.message });
         } else {
-          toast(
-            <ToastComponent
-              variant='error'
-              message={data.message}
-            />,
-            { position: 'top-right' },
-          );
+          globalToasts.globalError(data.message);
         }
       },
     });

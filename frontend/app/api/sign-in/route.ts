@@ -1,11 +1,12 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { BACKEND_URL } from '@/utils/config';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
   const cookieHeader = req.headers.get('cookie') || '';
 
-  const backendRes = await fetch('http://localhost:3333/sign-in', {
+  const backendRes = await fetch(`${BACKEND_URL}/sign-in`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

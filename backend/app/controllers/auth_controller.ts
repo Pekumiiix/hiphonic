@@ -47,7 +47,6 @@ export default class AuthController {
 
       return response.ok({ message: 'Email verification link sent' });
     } catch (error) {
-      console.error(error);
       return response.internalServerError({
         message: 'Failed to create user',
         error: error.message,
@@ -83,6 +82,7 @@ export default class AuthController {
 
       if (user) {
         await auth.use('web').login(user, rememberMe);
+        return response.ok({ message: 'Login successful', user });
       }
     } catch (error) {
       if (error.code === 'E_INVALID_CREDENTIALS') {
@@ -149,9 +149,15 @@ export default class AuthController {
     return response.ok({ message: 'Password updated successfully.' });
   }
 
-  async me({ auth }: HttpContext) {
-    await auth.use('web').authenticate();
-    return auth.user;
+  async me({ auth, response }: HttpContext) {
+    await auth.use('web').check();
+
+    if (auth.user) {
+      return response.ok(auth.user);
+    } else {
+      console.log('Not authenticated');
+      return response.unauthorized({ error: 'Not authenticated' });
+    }
   }
 
   async logout({ auth }: HttpContext) {

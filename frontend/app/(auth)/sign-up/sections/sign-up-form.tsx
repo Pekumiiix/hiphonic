@@ -5,13 +5,12 @@ import { Mail, User } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import type { z } from 'zod';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
-import { ToastComponent } from '@/components/reuseable/toast-variants';
 import { Label } from '@/components/ui/label';
 import { useSignUp } from '@/lib/hooks/use-sign-up';
+import { globalToasts } from '@/lib/toasts';
 import AlternativeAuthMethod from '../../components/alternative-auth-method';
 import { AuthInput } from '../../components/auth-input';
 import { AuthLogo } from '../../components/auth-logo';
@@ -50,29 +49,26 @@ function AuthForm({ setSuccess }: { setSuccess: (success: boolean) => void }) {
   });
 
   async function onSubmit(data: z.infer<typeof signUpSchema>) {
-    mutate(data, {
-      onSuccess: () => {
-        setSuccess(true);
+    mutate(
+      { ...data, email: data.email.toLowerCase() },
+      {
+        onSuccess: () => {
+          setSuccess(true);
+        },
+        onError: (data) => {
+          const errorMap: Record<string, 'email' | 'username'> = {
+            'Email is already registered': 'email',
+            'Username is already taken': 'username',
+          };
+          const field = errorMap[data.message];
+          if (field) {
+            form.setError(field, { type: 'server', message: data.message });
+          } else {
+            globalToasts.globalError(data.message);
+          }
+        },
       },
-      onError: (data) => {
-        const errorMap: Record<string, 'email' | 'username'> = {
-          'Email is already registered': 'email',
-          'Username is already taken': 'username',
-        };
-        const field = errorMap[data.message];
-        if (field) {
-          form.setError(field, { type: 'server', message: data.message });
-        } else {
-          toast(
-            <ToastComponent
-              variant='error'
-              message={data.message}
-            />,
-            { position: 'top-right' },
-          );
-        }
-      },
-    });
+    );
   }
 
   return (
