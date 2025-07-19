@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
-import { useAuth } from '@/components/custom/auth-provider';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
 import { useSignIn } from '@/lib/hooks/use-sign-in';
@@ -19,7 +18,6 @@ import { defaultSignInValue, signInSchema } from '../schema';
 export default function SignInForm() {
   const { mutate, isPending } = useSignIn();
   const router = useRouter();
-  const { setUser } = useAuth();
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -28,9 +26,8 @@ export default function SignInForm() {
 
   async function onSubmit(data: z.infer<typeof signInSchema>) {
     mutate(data, {
-      onSuccess: (data) => {
+      onSuccess: (_data) => {
         router.push('/dashboard');
-        setUser({ ...data.user });
       },
       onError: (data) => {
         if (data.message === 'Something went wrong.') {
