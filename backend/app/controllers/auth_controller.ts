@@ -55,23 +55,30 @@ export default class AuthController {
   }
 
   async verifyEmail({ request, response }: HttpContext) {
-    const { token } = request.only(['token']);
-    const user = await User.findBy('emailVerificationToken', token);
+    try {
+      const { token } = request.only(['token']);
+      const user = await User.findBy('emailVerificationToken', token);
 
-    if (
-      !user ||
-      !user.emailVerificationExpiresAt ||
-      user.emailVerificationExpiresAt < DateTime.now()
-    ) {
-      return response.badRequest({ message: 'Token is invalid or has expired.' });
+      if (
+        !user ||
+        !user.emailVerificationExpiresAt ||
+        user.emailVerificationExpiresAt < DateTime.now()
+      ) {
+        return response.badRequest({ message: 'Token is invalid or has expired.' });
+      }
+
+      user.emailVerified = true;
+      user.emailVerificationToken = null;
+      user.emailVerificationExpiresAt = null;
+      await user.save();
+
+      return response.ok({ message: 'Email verified successfully.' });
+    } catch (error) {
+      return response.internalServerError({
+        message: 'Something went wrong.',
+        error: error.message,
+      });
     }
-
-    user.emailVerified = true;
-    user.emailVerificationToken = null;
-    user.emailVerificationExpiresAt = null;
-    await user.save();
-
-    return response.ok({ message: 'Email verified successfully.' });
   }
 
   async signIn({ request, response, auth }: HttpContext) {
@@ -82,6 +89,7 @@ export default class AuthController {
 
       if (user) {
         await auth.use('web').login(user, rememberMe);
+
         return response.ok({ message: 'Login successful', user });
       }
     } catch (error) {
@@ -134,28 +142,33 @@ export default class AuthController {
   }
 
   async createNewPassword({ request, response }: HttpContext) {
-    const { token, newPassword } = request.only(['token', 'newPassword']);
-    const user = await User.findBy('resetPasswordToken', token);
+    try {
+      const { token, newPassword } = request.only(['token', 'newPassword']);
+      const user = await User.findBy('resetPasswordToken', token);
 
-    if (!user || !user.resetPasswordExpiresAt || user.resetPasswordExpiresAt < DateTime.now()) {
-      return response.badRequest({ message: 'Token is invalid or has expired.' });
+      if (!user || !user.resetPasswordExpiresAt || user.resetPasswordExpiresAt < DateTime.now()) {
+        return response.badRequest({ message: 'Token is invalid or has expired.' });
+      }
+
+      user.password = newPassword;
+      user.resetPasswordToken = null;
+      user.resetPasswordExpiresAt = null;
+      await user.save();
+
+      return response.ok({ message: 'Password updated successfully.' });
+    } catch (error) {
+      return response.internalServerError({
+        message: 'Something went wrong.',
+        error: error.message,
+      });
     }
-
-    user.password = newPassword;
-    user.resetPasswordToken = null;
-    user.resetPasswordExpiresAt = null;
-    await user.save();
-
-    return response.ok({ message: 'Password updated successfully.' });
   }
 
   async me({ auth, response }: HttpContext) {
-    await auth.use('web').check();
-
+    await auth.check();
     if (auth.user) {
       return response.ok(auth.user);
     } else {
-      console.log('Not authenticated');
       return response.unauthorized({ error: 'Not authenticated' });
     }
   }
