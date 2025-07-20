@@ -1,9 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 
-export function useVerifyEmail() {
+export function useCreateNewPassword() {
   return useMutation({
-    mutationFn: async (payload: ISignInPayLoad) => {
-      const res = await fetch('/api/verify-email', {
+    mutationFn: async (payload: ISignUpPayLoad) => {
+      const res = await fetch('/api/auth/create-new-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -20,6 +20,7 @@ export function useVerifyEmail() {
   });
 }
 
-interface ISignInPayLoad {
+interface ISignUpPayLoad {
   token: string;
+  newPassword: string;
 }

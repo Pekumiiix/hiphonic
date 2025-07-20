@@ -19,7 +19,7 @@ export default function DashboardNav() {
           <AvatarFallback> {user ? user.username : 'Guest'}</AvatarFallback>
         </Avatar>
 
-        <p className='text-sm font-bold leading-[160%] text-grey-900'>
+        <p className='text-sm font-bold leading-[160%] text-grey-900 capitalize'>
           {user ? user.username : 'Guest'}
         </p>
       </div>

@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import type { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
-import { useCreateNewPassword } from '@/lib/hooks/use-create-new-password';
+import { useCreateNewPassword } from '@/lib/hooks/auth/use-create-new-password';
 import { AuthLogo } from '../../components/auth-logo';
 import { ConfirmationButton } from '../../components/confirmation-button';
 import FormContainer from '../../components/form-container';

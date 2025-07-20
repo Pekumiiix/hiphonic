@@ -3,6 +3,7 @@ import type { HttpContext } from '@adonisjs/core/http';
 import mail from '@adonisjs/mail/services/main';
 import { DateTime } from 'luxon';
 import User from '#models/user';
+import { refreshValidator } from '#validators/auth_validator';
 
 export default class AuthController {
   async signUp({ request, response }: HttpContext) {
@@ -81,16 +82,35 @@ export default class AuthController {
     }
   }
 
-  async signIn({ request, response, auth }: HttpContext) {
+  async signIn({ request, response }: HttpContext) {
     try {
       const { email, password, rememberMe } = request.only(['email', 'password', 'rememberMe']);
 
       const user = await User.verifyCredentials(email, password);
 
       if (user) {
-        await auth.use('web').login(user, rememberMe);
+        const tokenConfig = {
+          name: rememberMe ? 'Remember Me Session' : 'Regular Session',
+          expiresIn: rememberMe ? '30 days' : '7 days',
+          abilities: ['*'],
+        };
 
-        return response.ok({ message: 'Login successful', user });
+        const token = await User.accessTokens.create(user, tokenConfig.abilities, {
+          name: tokenConfig.name,
+          expiresIn: tokenConfig.expiresIn,
+        });
+
+        return response.ok({
+          type: 'bearer',
+          token: token.value?.release(),
+          expiresAt: token.expiresAt?.toISOString(),
+          rememberMe: rememberMe || false,
+          user: {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+          },
+        });
       }
     } catch (error) {
       if (error.code === 'E_INVALID_CREDENTIALS') {
@@ -165,16 +185,83 @@ export default class AuthController {
   }
 
   async me({ auth, response }: HttpContext) {
-    await auth.check();
-    if (auth.user) {
-      return response.ok(auth.user);
-    } else {
-      return response.unauthorized({ error: 'Not authenticated' });
+    try {
+      const user = await auth.authenticateUsing(['api']);
+      const { currentAccessToken: token } = user as User & { currentAccessToken?: any };
+
+      return response.ok({
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+        },
+        token: {
+          name: token?.name,
+          expiresAt: token?.expiresAt?.toISOString(),
+          lastUsedAt: token?.lastUsedAt?.toISOString(),
+          isExpired: token?.isExpired(),
+        },
+      });
+    } catch (error) {
+      return response.unauthorized({
+        message: 'Unauthenticated',
+        error: error.message,
+      });
     }
   }
 
-  async logout({ auth }: HttpContext) {
-    await auth.use('web').logout();
-    return { message: 'Logged out successfully' };
+  async signout({ auth, response }: HttpContext) {
+    try {
+      const user = await auth.authenticateUsing(['api']);
+      const { currentAccessToken } = user as User & { currentAccessToken?: { identifier: string } };
+
+      if (currentAccessToken?.identifier) {
+        await User.accessTokens.delete(user, currentAccessToken.identifier);
+      }
+
+      return response.ok({
+        message: 'Logged out successfully',
+      });
+    } catch (error) {
+      return response.unauthorized({
+        message: 'Unable to logout',
+        error: error.message,
+      });
+    }
+  }
+
+  async refresh({ auth, request, response }: HttpContext) {
+    try {
+      const { extendRememberMe } = await request.validateUsing(refreshValidator);
+      const user = await auth.authenticateUsing(['api']);
+      const { currentAccessToken: currentToken } = user as User & { currentAccessToken?: any };
+
+      if (!currentToken) {
+        return response.unauthorized({ message: 'No current access token found' });
+      }
+
+      // Create new token with same or extended expiration
+      const newExpiration = extendRememberMe ? '30 days' : '7 days';
+      const tokenName = extendRememberMe ? 'Extended Remember Me Session' : 'Refreshed Session';
+
+      const newToken = await User.accessTokens.create(user, currentToken.abilities, {
+        name: tokenName,
+        expiresIn: newExpiration,
+      });
+
+      // Delete the old token
+      await User.accessTokens.delete(user, currentToken.identifier);
+
+      return response.ok({
+        type: 'bearer',
+        token: newToken.value?.release(),
+        expiresAt: newToken.expiresAt?.toISOString(),
+        refreshed: true,
+      });
+    } catch {
+      return response.unauthorized({
+        message: 'Unable to refresh token',
+      });
+    }
   }
 }

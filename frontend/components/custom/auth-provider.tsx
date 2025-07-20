@@ -1,54 +1,36 @@
 'use client';
 
-import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, type ReactNode, useContext, useMemo } from 'react';
+import { useCurrentUser } from '@/lib/hooks/auth/use-current-user';
+import { useRefreshToken } from '@/lib/hooks/auth/use-refresh-token';
+import { useSignIn } from '@/lib/hooks/auth/use-sign-in';
+import { useSignout } from '@/lib/hooks/auth/use-sign-out';
+import type { AuthContextType } from '@/lib/types';
 
-type User = {
-  id: number;
-  username: string;
-  email: string;
-};
-
-type AuthProviderContextValue = {
-  user: User | null;
-  loading: boolean;
-  refresh: () => Promise<void>;
-};
-
-export const AuthContext = createContext<AuthProviderContextValue | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const signIn = useSignIn();
+  const signout = useSignout();
+  const refreshToken = useRefreshToken();
+  const { data: user, isLoading } = useCurrentUser();
 
-  async function fetchUser() {
-    setLoading(true);
-    try {
-      const res = await fetch('http://localhost:3333/me', {
-        credentials: 'include',
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data);
-      } else {
-        setUser(null);
-      }
-    } catch {
-      setUser(null);
-    }
-    setLoading(false);
-  }
+  const token =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token')
+      : null;
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
-  const value = useMemo(
+  const value: AuthContextType = useMemo(
     () => ({
-      user,
-      loading,
-      refresh: fetchUser,
+      user: user?.user ?? null,
+      token,
+      isLoading: isLoading || signIn.isPending || signout.isPending || refreshToken.isPending,
+      signIn, // Expose the mutation object directly
+      signOut: async () => signout.mutateAsync(),
+      refreshToken: async (extendRememberMe = false) => refreshToken.mutateAsync(extendRememberMe),
+      isAuthenticated: !!user?.user && !!token,
     }),
-    [user, loading],
+    [user, token, isLoading, signIn, signout, refreshToken],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -56,55 +38,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}
-
-{
-  /**
-  
-  'use client';
-
-import { createContext, type ReactNode, useContext, useMemo, useState } from 'react';
-
-type User = {
-  id: number;
-  username: string;
-  email: string;
-};
-
-type AuthProviderContextValue = {
-  user: User | null;
-  loading: boolean;
-  setUser: (user: User | null) => void;
-};
-
-export const AuthContext = createContext<AuthProviderContextValue | null>(null);
-
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, _setLoading] = useState<boolean>(false); // No async fetch, so loading is false
-
-  const value = useMemo(
-    () => ({
-      user,
-      loading,
-      setUser,
-    }),
-    [user, loading],
-  );
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-}
-*/
 }

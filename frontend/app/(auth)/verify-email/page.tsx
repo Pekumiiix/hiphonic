@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useVerifyEmail } from '@/lib/hooks/use-verify-email';
+import { useVerifyEmail } from '@/lib/hooks/auth/use-verify-email';
 import { AuthLogo } from '../components/auth-logo';
 import { ResultState } from '../components/result-state';
 import Loading from './loading';

@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { BACKEND_URL } from './utils/config';
 
 const protectedRoutes = ['/dashboard'];
 
@@ -8,24 +9,32 @@ export async function middleware(request: NextRequest) {
 
   if (!isProtected) return NextResponse.next();
 
+  const token =
+    request.cookies.get('auth_token')?.value ||
+    request.headers.get('authorization')?.replace('Bearer ', '');
+
+  if (!token) {
+    const loginUrl = new URL('/sign-in', request.url);
+    loginUrl.searchParams.set('redirect', request.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/me`, {
+    const res = await fetch(`${BACKEND_URL}/auth/me`, {
       headers: {
-        cookie: request.headers.get('cookie') || '',
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
       },
-      credentials: 'include',
     });
 
     if (!res.ok) {
       throw new Error('Not authenticated');
     }
 
-    console.log(NextResponse.next());
     return NextResponse.next();
-  } catch (err) {
+  } catch (_err) {
     const loginUrl = new URL('/sign-in', request.url);
     loginUrl.searchParams.set('redirect', request.nextUrl.pathname);
-    console.log(err);
     return NextResponse.redirect(loginUrl);
   }
 }

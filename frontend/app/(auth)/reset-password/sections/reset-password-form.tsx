@@ -8,7 +8,7 @@ import { type Path, type UseFormReturn, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
 import { Button } from '@/components/ui/button';
-import { useResetPassword } from '@/lib/hooks/use-reset-password';
+import { useResetPassword } from '@/lib/hooks/auth/use-reset-password';
 import { globalToasts } from '@/lib/toasts';
 import { formatTime } from '@/utils/format-time';
 import { AuthInput } from '../../components/auth-input';

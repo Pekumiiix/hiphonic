@@ -4,7 +4,7 @@ import { sessionGuard, sessionUserProvider } from '@adonisjs/auth/session';
 import type { Authenticators, InferAuthEvents, InferAuthenticators } from '@adonisjs/auth/types';
 
 const authConfig = defineConfig({
-  default: 'web',
+  default: 'api',
   guards: {
     api: tokensGuard({
       provider: tokensUserProvider({

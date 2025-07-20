@@ -1,14 +1,15 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import Cookies from 'js-cookie';
 import { Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
+import { useAuth } from '@/components/custom/auth-provider';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
-import { useSignIn } from '@/lib/hooks/use-sign-in';
 import { globalToasts } from '@/lib/toasts';
 import { AuthInput } from '../../components/auth-input';
 import { ConfirmationButton } from '../../components/confirmation-button';
@@ -16,7 +17,7 @@ import { PasswordInput } from '../../components/password-input';
 import { defaultSignInValue, signInSchema } from '../schema';
 
 export default function SignInForm() {
-  const { mutate, isPending } = useSignIn();
+  const { signIn, isLoading } = useAuth();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof signInSchema>>({
@@ -24,9 +25,14 @@ export default function SignInForm() {
     defaultValues: defaultSignInValue,
   });
 
+  function setAuthTokenCookie(token: string, days = 30) {
+    Cookies.set('auth_token', token, { expires: days, path: '/', sameSite: 'lax' });
+  }
+
   async function onSubmit(data: z.infer<typeof signInSchema>) {
-    mutate(data, {
-      onSuccess: (_data) => {
+    signIn.mutate(data, {
+      onSuccess: (data) => {
+        setAuthTokenCookie(data.token);
         router.push('/dashboard');
       },
       onError: (data) => {
@@ -86,7 +92,7 @@ export default function SignInForm() {
       </div>
 
       <ConfirmationButton
-        isLoading={isPending}
+        isLoading={isLoading}
         name='Sign In'
       />
     </FormBase>

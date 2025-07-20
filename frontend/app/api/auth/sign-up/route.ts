@@ -4,7 +4,7 @@ import { BACKEND_URL } from '@/utils/config';
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
-  const backendRes = await fetch(`${BACKEND_URL}/sign-up`, {
+  const backendRes = await fetch(`${BACKEND_URL}/auth/sign-up`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

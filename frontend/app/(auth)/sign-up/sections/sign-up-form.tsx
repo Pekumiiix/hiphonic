@@ -9,7 +9,7 @@ import type { z } from 'zod';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
 import { Label } from '@/components/ui/label';
-import { useSignUp } from '@/lib/hooks/use-sign-up';
+import { useSignUp } from '@/lib/hooks/auth/use-sign-up';
 import { globalToasts } from '@/lib/toasts';
 import AlternativeAuthMethod from '../../components/alternative-auth-method';
 import { AuthInput } from '../../components/auth-input';
