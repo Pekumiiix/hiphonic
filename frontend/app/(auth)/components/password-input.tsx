@@ -46,6 +46,7 @@ export function PasswordInput<T extends FieldValues>({
             variant='ghost'
             type='button'
             className='absolute !p-0 max-w-fit h-fit hover:bg-transparent top-4 xl:top-5 right-4'
+            aria-label='Show password text'
           >
             {showPassword ? (
               <EyeOff
