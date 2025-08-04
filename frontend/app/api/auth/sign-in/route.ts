@@ -29,7 +29,3 @@ export async function POST(req: NextRequest) {
 
   return response;
 }
-
-export const config = {
-  maxDuration: 45,
-};

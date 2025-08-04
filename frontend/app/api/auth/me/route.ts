@@ -20,7 +20,3 @@ export async function GET(req: NextRequest) {
 
   return response;
 }
-
-export const config = {
-  maxDuration: 45,
-};

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { Calendar } from '@/components/ui/calendar';
 import ActivitySummary from './sections/activity-summary';
 import DashboardNav from './sections/dashboard-nav';
@@ -5,6 +6,46 @@ import NotificationsCard from './sections/notifications';
 import RecentProjects from './sections/recents-projects';
 import TaskSummary from './sections/task-summary';
 import TodaysTasks from './sections/todays-tasks';
+
+export const metadata: Metadata = {
+  title: 'Dashboard',
+  description:
+    'View your project activity, recent projects, tasks, and notifications in your Hiphonic dashboard. Stay organized and up-to-date with your team’s progress.',
+  keywords: [
+    'Dashboard',
+    'Project Management',
+    'Tasks',
+    'Activity',
+    'Notifications',
+    'Hiphonic',
+    'Team Collaboration',
+    'Productivity',
+  ],
+  openGraph: {
+    title: 'Dashboard | Hiphonic',
+    description:
+      'Your Hiphonic dashboard: track project activity, manage tasks, and stay updated with notifications.',
+    url: 'https://hiphonic-blue.vercel.app/dashboard',
+    siteName: 'Hiphonic',
+    images: [
+      {
+        url: '/assets/logo.png',
+        width: 512,
+        height: 512,
+        alt: 'Hiphonic Logo',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Dashboard | Hiphonic',
+    description:
+      'Your Hiphonic dashboard: track project activity, manage tasks, and stay updated with notifications.',
+    images: ['/assets/logo.png'],
+  },
+};
 
 export default function DashboardPage() {
   return (

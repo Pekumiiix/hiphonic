@@ -4,9 +4,10 @@ import Image from 'next/image';
 import { useAuth } from '@/components/custom/auth-provider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function DashboardNav() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
 
   return (
     <div className='w-full flex items-center justify-between px-4 md:px-8 py-[23px] bg-white border-l-2 border-grey-50'>
@@ -37,9 +38,13 @@ export default function DashboardNav() {
           <AvatarFallback> {user ? user.username : 'Guest'}</AvatarFallback>
         </Avatar>
 
-        <p className='max-md:hidden text-sm font-bold leading-[160%] text-grey-900 capitalize'>
-          {user ? user.username : 'Guest'}
-        </p>
+        {isLoading ? (
+          <Skeleton className='max-md:hidden h-[14px] w-24' />
+        ) : (
+          <p className='max-md:hidden text-sm font-bold leading-[160%] text-grey-900 capitalize'>
+            {user?.username}
+          </p>
+        )}
 
         <SidebarTrigger className='md:hidden' />
       </div>
