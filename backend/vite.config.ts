@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import adonisjs from '@adonisjs/vite/client'
+import adonisjs from '@adonisjs/vite/client';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
@@ -16,4 +16,7 @@ export default defineConfig({
       reload: ['resources/views/**/*.edge'],
     }),
   ],
-})
+  server: {
+    allowedHosts: ['hiphonic.onrender.com'],
+  },
+});
