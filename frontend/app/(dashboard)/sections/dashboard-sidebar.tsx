@@ -24,17 +24,20 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 
 export default function DashboardSidebar() {
+  const { isMobile } = useSidebar();
+
   return (
     <Sidebar
       side='left'
-      collapsible='none'
-      className='max-w-[250px] h-screen sticky top-0 py-8 px-4 bg-white shadow-[10px_10px_50px_0px_#64748B0A]'
+      collapsible={isMobile ? undefined : 'none'}
+      className='max-w-[250px] h-screen sticky top-0 pb-8 px-4 bg-white shadow-[10px_10px_50px_0px_#64748B0A]'
     >
-      <SidebarHeader className='flex flex-row items-center gap-[9px] px-4'>
+      <SidebarHeader className='h-20 flex flex-row items-center gap-[9px] border-b border-grey-100'>
         <Image
           src='/assets/logo.png'
           alt='Logo'
@@ -45,8 +48,6 @@ export default function DashboardSidebar() {
           Hiphonic
         </p>
       </SidebarHeader>
-
-      <SidebarSeparator className='mt-[27px] mb-8 border-grey-100' />
 
       <SidebarContent className='w-full flex flex-col gap-6 p-0 scrollbar-none'>
         <CustomSidebarGroup
@@ -84,7 +85,10 @@ function CustomSidebarGroup({
         </SidebarGroupLabel>
 
         {action && (
-          <SidebarGroupAction onClick={action}>
+          <SidebarGroupAction
+            title='New project'
+            onClick={action}
+          >
             <Plus
               size={16}
               color='#64748B'

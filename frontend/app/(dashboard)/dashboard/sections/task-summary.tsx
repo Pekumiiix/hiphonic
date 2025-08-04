@@ -3,42 +3,48 @@ import { cn } from '@/lib/utils';
 
 export default function TaskSummary() {
   return (
-    <div className='flex flex-col gap-5 p-5 rounded-xl bg-white -mt-[115px]'>
+    <div className='col-span-2 xl:col-span-1 h-fit flex flex-col gap-5 p-4 md:p-5 rounded-xl bg-white'>
       <p className='font-bold text-grey-900 leading-[150%]'>Task Summary</p>
 
-      <div className='grid grid-cols-3 gap-3'>
-        <SummaryCards
-          className='border-white bg-primary-600 text-white'
-          name='Projects'
-          value={12}
-          src='/assets/dashboard/projects.png'
-        />
-        <SummaryCards
-          className='border-white bg-sky text-white'
-          name='Assigned'
-          value={79}
-          src='/assets/dashboard/assigned.png'
-        />
-        <SummaryCards
-          className='border-grey-300 bg-grey-50 text-grey-900'
-          name='Closed'
-          value={79}
-          src='/assets/dashboard/check.png'
-        />
-      </div>
+      <div className='w-full flex flex-col lg:flex-row lg:items-end xl:items-start xl:flex-col gap-5'>
+        <div className='w-full grid md:flex xl:grid grid-cols-3 gap-6 xl:gap-3'>
+          <SummaryCards
+            className='border-white bg-primary-600 text-white max-w-[144px] max-xl:justify-center'
+            name='Projects'
+            value={12}
+            src='/assets/dashboard/projects.png'
+            isSpecial={false}
+          />
 
-      <div className='flex flex-col gap-2'>
-        <p className='text-xs text-grey-500 leading-[160%]'>On-time Completion Rate</p>
-        <div className='flex items-end gap-2'>
-          <p className='text-2xl text-grey-900 font-bold leading-[125%] tracking-[0.2px]'>92%</p>
-          <p className='text-xs font-medium leading-[160%] text-algal-500'>+2.5%</p>
+          <div className='grid md:flex flex-col gap-4 w-full col-span-2 xl:w-full xl:grid grid-cols-2 xl:gap-3'>
+            <SummaryCards
+              className='border-white bg-sky text-white flex-col md:flex-row xl:flex-col'
+              name='Assigned'
+              value={79}
+              src='/assets/dashboard/assigned.png'
+            />
+            <SummaryCards
+              className='border-grey-300 bg-grey-50 text-grey-900 flex-col md:flex-row xl:flex-col'
+              name='Closed'
+              value={79}
+              src='/assets/dashboard/check.png'
+            />
+          </div>
+        </div>
+
+        <div className='min-w-fit flex flex-col gap-2'>
+          <p className='text-xs text-grey-500 leading-[160%]'>On-time Completion Rate</p>
+          <div className='flex items-end gap-2'>
+            <p className='text-2xl text-grey-900 font-bold leading-[125%] tracking-[0.2px]'>92%</p>
+            <p className='text-xs font-medium leading-[160%] text-algal-500'>+2.5%</p>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function SummaryCards({ className, name, value, src }: ISummaryCardProps) {
+function SummaryCards({ className, name, value, src, isSpecial = true }: ISummaryCardProps) {
   return (
     <div
       className={cn(
@@ -55,7 +61,12 @@ function SummaryCards({ className, name, value, src }: ISummaryCardProps) {
         />
       </div>
 
-      <div className='flex flex-col items-center text-inherit'>
+      <div
+        className={cn('flex flex-col text-inherit', {
+          'items-center': !isSpecial,
+          'max-md:items-center xl:items-center': isSpecial,
+        })}
+      >
         <p className='text-xs leading-[160%] text-inherit'>{name}</p>
         <p className='font-bold leading-[150%] text-inherit'>{value}</p>
       </div>
@@ -68,4 +79,5 @@ interface ISummaryCardProps {
   name: string;
   value: number;
   src: string;
+  isSpecial?: boolean;
 }

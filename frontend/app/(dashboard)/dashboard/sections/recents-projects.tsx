@@ -6,12 +6,12 @@ import { Separator } from '@/components/ui/separator';
 
 export default function RecentProjects() {
   return (
-    <div className='col-span-2 h-fit flex flex-col gap-4 py-6 px-5 rounded-xl bg-white'>
+    <div className='w-full col-span-2 h-fit flex flex-col gap-4 p-4 md:py-6 md:px-5 rounded-xl bg-white'>
       <p className='font-bold text-grey-900'>Recents Projects</p>
 
       <Separator className='bg-grey-100' />
 
-      <div className='grid grid-cols-3 gap-4'>
+      <div className='flex flex-col md:grid grid-cols-3 gap-4'>
         <RecentCards />
         <RecentCards />
         <RecentCards />
