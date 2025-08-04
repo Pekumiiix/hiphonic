@@ -7,13 +7,13 @@ export const globalToasts = {
       position: 'top-right',
       duration: 6000,
       icon: <CircleX size={14} />,
-      style: { backgroundColor: '#FF00001A' },
+      style: { backgroundColor: '#FFE6EA' },
     }),
   globalSuccess: (message: string) =>
     toast.success(message, {
       position: 'top-right',
       duration: 6000,
       icon: <BadgeCheck size={14} />,
-      style: { backgroundColor: '#dbeafe' },
+      style: { backgroundColor: '#E6FFE6' },
     }),
 };

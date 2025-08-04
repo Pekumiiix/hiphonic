@@ -4,10 +4,10 @@ import { AuthLogo } from './components/auth-logo';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <section className='container min-w-full min-h-screen h-fit flex bg-red-800'>
+    <section className='container min-w-full min-h-screen h-fit flex'>
       <HiphonicDescriptionSection />
 
-      <div className='w-full md:w-1/2 min-h-screen px-10 xl:pl-[164px] py-10 md:pt-[160px] md:pb-[104px] bg-background'>
+      <div className='w-full md:w-1/2 min-h-screen px-5 md:px-10 xl:pl-[164px] py-10 md:pt-[160px] md:pb-[104px] bg-background'>
         {children}
       </div>
     </section>
