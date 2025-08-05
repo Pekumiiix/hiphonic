@@ -1,10 +1,4 @@
-export interface INotifications {
-  type: 'success' | 'user' | 'warning' | 'info';
-  title: string;
-  message: string;
-  timestamp: string;
-  isRead: boolean;
-}
+import type { INotifications } from '@/types';
 
 export const notifications: INotifications[] = [
   {
