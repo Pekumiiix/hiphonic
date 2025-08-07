@@ -42,7 +42,8 @@
       "style": {
         "noUnusedTemplateLiteral": "off",
         "useDefaultParameterLast": "off",
-        "useConst": "error"
+        "useConst": "error",
+        "useSelfClosingElements": "error"
       }
     }
   },

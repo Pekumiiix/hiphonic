@@ -12,3 +12,21 @@ export interface IProjects {
 }
 
 export type TCategory = 'development' | 'design' | 'planning';
+
+export interface ITaskCardProps {
+  image?: string;
+  category: TCategory;
+  title: string;
+  description: string;
+  comment: number;
+  due_date: string;
+}
+
+export interface ITaskProps {
+  title: string;
+  category: TCategory;
+  description: string;
+  comment: number;
+  due_date: string;
+  status: 'to-do' | 'in-progress' | 'in-review' | 'done';
+}

@@ -107,6 +107,8 @@ interface FormFieldProps<TFormValues extends FieldValues> {
   showError?: boolean;
   /** Whether to show the form message component (default: true) */
   showMessage?: boolean;
+  /** For Styling */
+  className?: string;
 }
 
 export function FormField<TFormValues extends FieldValues>({
@@ -117,6 +119,7 @@ export function FormField<TFormValues extends FieldValues>({
   description,
   showError = true,
   showMessage = true,
+  className,
 }: FormFieldProps<TFormValues>) {
   const error = get(form.formState.errors, name);
   const touched = get(form.formState.touchedFields, name);
@@ -128,8 +131,8 @@ export function FormField<TFormValues extends FieldValues>({
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem>
-          {label && <FormLabel>{label}</FormLabel>}
+        <FormItem className={className}>
+          {label && <FormLabel className='text-inherit'>{label}</FormLabel>}
           <FormControl>{children(field, { error, isValid })}</FormControl>
           {description && (
             <FormDescription className='text-xs text-grey-500 leading-[150%]'>
