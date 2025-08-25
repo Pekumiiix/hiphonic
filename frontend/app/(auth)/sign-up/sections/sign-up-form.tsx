@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Mail, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -9,8 +10,8 @@ import type { z } from "zod";
 import { BaseCheckbox } from "@/components/reuseable/base-checkbox";
 import { FormBase, FormField } from "@/components/reuseable/base-form";
 import { Label } from "@/components/ui/label";
-import { useSignUp } from "@/hooks/auth/use-sign-up";
 import { globalToasts } from "@/lib/toasts";
+import { authService } from "@/services/auth.service";
 import AlternativeAuthMethod from "../../components/alternative-auth-method";
 import { AuthInput } from "../../components/auth-input";
 import { AuthLogo } from "../../components/auth-logo";
@@ -18,7 +19,7 @@ import { ConfirmationButton } from "../../components/confirmation-button";
 import FormContainer from "../../components/form-container";
 import { PasswordInput } from "../../components/password-input";
 import { ResultState } from "../../components/result-state";
-import { signUpSchema } from "../schema";
+import { type SignUpData, signUpSchema } from "../schema";
 
 export default function SignUpForm() {
   const [success, setSuccess] = useState<boolean>(false);
@@ -42,33 +43,25 @@ export default function SignUpForm() {
 }
 
 function AuthForm({ setSuccess }: { setSuccess: (success: boolean) => void }) {
-  const { mutate, isPending } = useSignUp();
-
-  const form = useForm<z.infer<typeof signUpSchema>>({
+  const form = useForm<SignUpData>({
     resolver: zodResolver(signUpSchema),
   });
 
-  async function onSubmit(data: z.infer<typeof signUpSchema>) {
-    mutate(
-      { ...data, email: data.email.toLowerCase() },
-      {
-        onSuccess: () => {
-          setSuccess(true);
-        },
-        onError: (data) => {
-          const errorMap: Record<string, "email" | "username"> = {
-            "Email is already registered": "email",
-            "Username is already taken": "username",
-          };
-          const field = errorMap[data.message];
-          if (field) {
-            form.setError(field, { type: "server", message: data.message });
-          } else {
-            globalToasts.globalError(data.message);
-          }
-        },
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data: SignUpData) => authService.signUp(data),
+    onSuccess: () => setSuccess(true),
+    onError: (data) => {
+      const field = errorMap[data.message];
+      if (field) {
+        form.setError(field, { type: "server", message: data.message });
+      } else {
+        globalToasts.globalError(data.message);
       }
-    );
+    },
+  });
+
+  async function onSubmit(data: z.infer<typeof signUpSchema>) {
+    mutate({ ...data, email: data.email.toLowerCase() });
   }
 
   return (
@@ -121,3 +114,8 @@ function CheckboxLabel() {
     </Label>
   );
 }
+
+const errorMap: Record<string, "email" | "username"> = {
+  "Email is already registered": "email",
+  "Username is already taken": "username",
+};

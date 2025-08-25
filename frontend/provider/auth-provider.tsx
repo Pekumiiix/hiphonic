@@ -5,7 +5,7 @@ import { useCurrentUser } from "@/hooks/auth/use-current-user";
 import { useRefreshToken } from "@/hooks/auth/use-refresh-token";
 import { useSignIn } from "@/hooks/auth/use-sign-in";
 import { useSignout } from "@/hooks/auth/use-sign-out";
-import type { AuthContextType } from "@/lib/types";
+import type { AuthContextType } from "@/types";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

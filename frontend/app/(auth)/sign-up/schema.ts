@@ -26,3 +26,5 @@ export const signUpSchema = z.object({
     }),
   }),
 });
+
+export type SignUpData = z.infer<typeof signUpSchema>;

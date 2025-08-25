@@ -1,8 +1,9 @@
 "use client";
 
+import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useVerifyEmail } from "@/hooks/auth/use-verify-email";
+import { authService } from "@/services/auth.service";
 import { AuthLogo } from "../components/auth-logo";
 import { ResultState } from "../components/result-state";
 import Loading from "./loading";
@@ -13,7 +14,16 @@ export default function VerifyEmailPage() {
   );
   const [success, setSuccess] = useState<boolean | null>(null);
 
-  const { mutate, isPending } = useVerifyEmail();
+  const { mutate, isPending } = useMutation({
+    mutationFn: (token: string) => authService.verfifyEmail(token),
+    onSuccess: () => {
+      setSuccess(true);
+    },
+    onError: (data) => {
+      setErrorMessage(data.message);
+      setSuccess(false);
+    },
+  });
 
   const searchParam = useSearchParams();
   const token = searchParam.get("token");
@@ -25,21 +35,7 @@ export default function VerifyEmailPage() {
       return;
     }
 
-    async function verify() {
-      mutate(
-        { token: token ?? "" },
-        {
-          onSuccess: () => {
-            setSuccess(true);
-          },
-          onError: (data) => {
-            setErrorMessage(data.message);
-            setSuccess(false);
-          },
-        }
-      );
-    }
-    verify();
+    mutate(token);
   }, [router, token, mutate]);
 
   if (success === null) {

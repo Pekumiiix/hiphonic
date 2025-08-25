@@ -1,13 +1,14 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
 import { FormBase } from "@/components/reuseable/base-form";
-import { useCreateNewPassword } from "@/hooks/auth/use-create-new-password";
+import { authService } from "@/services/auth.service";
 import { AuthLogo } from "../../components/auth-logo";
 import { ConfirmationButton } from "../../components/confirmation-button";
 import FormContainer from "../../components/form-container";
@@ -29,7 +30,6 @@ export default function CreateNewPasswordForm() {
 }
 
 function CreatePasswordForm({ setSuccess }: ICreatePasswordForm) {
-  const { mutate, isPending } = useCreateNewPassword();
   const router = useRouter();
   const searchParam = useSearchParams();
 
@@ -41,6 +41,20 @@ function CreatePasswordForm({ setSuccess }: ICreatePasswordForm) {
     },
   });
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: (payload: { token: string; newPassword: string }) =>
+      authService.createNewPassword(payload),
+    onSuccess: (data) => {
+      setSuccess(true);
+      toast.success(data.message);
+      router.push("/sign-in");
+    },
+    onError: () => {
+      setSuccess(false);
+      toast.error("Failed to update password. Try again.");
+    },
+  });
+
   const token = searchParam.get("token");
 
   if (!token || token === undefined) {
@@ -49,21 +63,7 @@ function CreatePasswordForm({ setSuccess }: ICreatePasswordForm) {
 
   async function onSubmit(data: z.infer<typeof createPasswordSchema>) {
     const newPassword = data.password;
-
-    mutate(
-      { newPassword, token: token ?? "" },
-      {
-        onSuccess: (data) => {
-          setSuccess(true);
-          toast.success(data.message);
-          router.push("/sign-in");
-        },
-        onError: () => {
-          setSuccess(false);
-          toast.error("Failed to update password. Try again.");
-        },
-      }
-    );
+    mutate({ newPassword, token: token ?? "" });
   }
 
   return (
