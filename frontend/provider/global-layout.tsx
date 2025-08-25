@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider } from './auth-provider';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from "./auth-provider";
 
 export function GlobalLayout({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
