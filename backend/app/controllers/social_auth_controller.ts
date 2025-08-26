@@ -1,5 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
+import env from '#start/env'
 
 export default class SocialAuthController {
   async facebookRedirect({ ally }: HttpContext) {
@@ -15,15 +16,11 @@ export default class SocialAuthController {
       const facebook = ally.use('facebook')
 
       if (facebook.accessDenied()) {
-        return 'Access was denied'
+        return response.redirect(`${env.get('FRONTEND_URL')}/sign-in?error=access_denied`)
       }
 
-      if (facebook.stateMisMatch()) {
-        return 'Request expired. Retry again'
-      }
-
-      if (facebook.hasError()) {
-        return facebook.getError()
+      if (facebook.stateMisMatch() || facebook.hasError()) {
+        return response.redirect(`${env.get('FRONTEND_URL')}/sign-in?error=oauth_failed`)
       }
 
       const facebookUser = await facebook.user()
@@ -65,15 +62,11 @@ export default class SocialAuthController {
       const google = ally.use('google')
 
       if (google.accessDenied()) {
-        return 'Access was denied'
+        return response.redirect(`${env.get('FRONTEND_URL')}/sign-in?error=access_denied`)
       }
 
-      if (google.stateMisMatch()) {
-        return 'Request expired. Retry again'
-      }
-
-      if (google.hasError()) {
-        return google.getError()
+      if (google.stateMisMatch() || google.hasError()) {
+        return response.redirect(`${env.get('FRONTEND_URL')}/sign-in?error=oauth_failed`)
       }
 
       const googleUser = await google.user()

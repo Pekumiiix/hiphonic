@@ -2,12 +2,14 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
 import { FormBase } from "@/components/reuseable/base-form";
+import { Button } from "@/components/ui/button";
 import { authService } from "@/services/auth.service";
 import { AuthLogo } from "../../components/auth-logo";
 import { ConfirmationButton } from "../../components/confirmation-button";
@@ -16,22 +18,35 @@ import { PasswordInput } from "../../components/password-input";
 import { ResultState } from "../../components/result-state";
 import { createPasswordSchema } from "../schema";
 
-export default function CreateNewPasswordForm() {
+export default function CreateNewPasswordForm({ token }: { token: string }) {
   const [success, setSuccess] = useState<boolean>(false);
 
   return success ? (
     <div className="w-full h-full flex flex-col">
       <AuthLogo />
-      <ResultState name="Successfully changed password." />
+      <ResultState name="You have successfully changed password." showButton />
     </div>
   ) : (
-    <CreatePasswordForm setSuccess={setSuccess} />
+    <CreatePasswordForm token={token} setSuccess={setSuccess} />
   );
 }
 
-function CreatePasswordForm({ setSuccess }: ICreatePasswordForm) {
+function CreatePasswordForm({ setSuccess, token }: ICreatePasswordForm) {
+  const { mutate, isPending } = useMutation({
+    mutationFn: (payload: { token: string; newPassword: string }) =>
+      authService.createNewPassword(payload),
+    onSuccess: (data) => {
+      setSuccess(true);
+      toast.success(data.message);
+      router.replace("/create-new-password");
+    },
+    onError: () => {
+      setSuccess(false);
+      toast.error("Failed to update password. Try again.");
+    },
+  });
+
   const router = useRouter();
-  const searchParam = useSearchParams();
 
   const form = useForm<z.infer<typeof createPasswordSchema>>({
     resolver: zodResolver(createPasswordSchema),
@@ -40,26 +55,6 @@ function CreatePasswordForm({ setSuccess }: ICreatePasswordForm) {
       confirmPassword: "",
     },
   });
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: (payload: { token: string; newPassword: string }) =>
-      authService.createNewPassword(payload),
-    onSuccess: (data) => {
-      setSuccess(true);
-      toast.success(data.message);
-      router.push("/sign-in");
-    },
-    onError: () => {
-      setSuccess(false);
-      toast.error("Failed to update password. Try again.");
-    },
-  });
-
-  const token = searchParam.get("token");
-
-  if (!token || token === undefined) {
-    router.push("/sign-in");
-  }
 
   async function onSubmit(data: z.infer<typeof createPasswordSchema>) {
     const newPassword = data.password;
@@ -75,7 +70,16 @@ function CreatePasswordForm({ setSuccess }: ICreatePasswordForm) {
           ))}
         </div>
 
-        <ConfirmationButton isLoading={isPending} name="Continue" />
+        <div className="flex flex-col gap-2.5">
+          <ConfirmationButton isLoading={isPending} name="Continue" />
+          <Button
+            asChild
+            variant="outline"
+            className="w-full h-12 xl:h-14 rounded-[12px] text-base font-bold leading-[140%] tracking-[0.2px]"
+          >
+            <Link href="/sign-in">Back to sign in</Link>
+          </Button>
+        </div>
       </FormBase>
     </FormContainer>
   );
@@ -83,4 +87,5 @@ function CreatePasswordForm({ setSuccess }: ICreatePasswordForm) {
 
 interface ICreatePasswordForm {
   setSuccess: (success: boolean) => void;
+  token: string;
 }

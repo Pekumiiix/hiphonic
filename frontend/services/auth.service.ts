@@ -14,9 +14,9 @@ class AuthService {
     }
   }
 
-  async verfifyEmail(token: string) {
+  async verfifyEmail(payload: { token: string }) {
     try {
-      const res = await api.post("/auth/verify-email", token);
+      const res = await api.post("/auth/verify-email", payload);
       return res.data;
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;

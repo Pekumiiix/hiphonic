@@ -1,8 +1,9 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "@/hooks/use-search-params";
 import { authService } from "@/services/auth.service";
 import { AuthLogo } from "../components/auth-logo";
 import { ResultState } from "../components/result-state";
@@ -15,7 +16,8 @@ export default function VerifyEmailPage() {
   const [success, setSuccess] = useState<boolean | null>(null);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (token: string) => authService.verfifyEmail(token),
+    mutationFn: (payload: { token: string }) =>
+      authService.verfifyEmail(payload),
     onSuccess: () => {
       setSuccess(true);
     },
@@ -25,8 +27,9 @@ export default function VerifyEmailPage() {
     },
   });
 
-  const searchParam = useSearchParams();
-  const token = searchParam.get("token");
+  const { get } = useSearchParams();
+
+  const token = get("token");
   const router = useRouter();
 
   useEffect(() => {
@@ -35,7 +38,7 @@ export default function VerifyEmailPage() {
       return;
     }
 
-    mutate(token);
+    mutate({ token: token });
   }, [router, token, mutate]);
 
   if (success === null) {
@@ -59,7 +62,6 @@ export default function VerifyEmailPage() {
         }
         alt={success ? "Checkmark" : "Error"}
         isLoading={isPending}
-        showButton={success ? success : false}
       />
     </div>
   );

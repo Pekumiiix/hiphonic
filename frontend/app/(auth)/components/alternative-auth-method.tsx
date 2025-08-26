@@ -9,14 +9,6 @@ export default function AlternativeAuthMethod({
 }: {
   type?: "sign-in" | "sign-up";
 }) {
-  function handleGoogleSignIn() {
-    window.location.href = `${BACKEND_URL}/auth/google/redirect`;
-  }
-
-  function handleFacebookSignIn() {
-    window.location.href = `${BACKEND_URL}/auth/facebook/redirect`;
-  }
-
   return (
     <div className="w-full flex flex-col items-center gap-8">
       <div className="w-full flex items-center justify-center gap-4">
@@ -65,4 +57,12 @@ export default function AlternativeAuthMethod({
       </div>
     </div>
   );
+}
+
+function handleGoogleSignIn() {
+  window.location.href = `${BACKEND_URL}/auth/google/redirect`;
+}
+
+function handleFacebookSignIn() {
+  window.location.href = `${BACKEND_URL}/auth/facebook/redirect`;
 }
