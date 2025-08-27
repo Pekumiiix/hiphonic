@@ -34,20 +34,26 @@ export default function SignInForm() {
   }
 
   async function onSubmit(data: z.infer<typeof signInSchema>) {
-    signIn.mutate(data, {
-      onSuccess: (data) => {
-        setAuthTokenCookie(data.token);
-        router.push("/dashboard");
-      },
-      onError: (data) => {
-        if (data.message === "Something went wrong.") {
-          globalToasts.globalError(data.message);
-        } else {
-          form.setError("email", { type: "server" });
-          form.setError("password", { type: "server", message: data.message });
-        }
-      },
-    });
+    signIn.mutate(
+      { ...data, email: data.email.toLocaleLowerCase() },
+      {
+        onSuccess: (data) => {
+          setAuthTokenCookie(data.token);
+          router.push("/dashboard");
+        },
+        onError: (data) => {
+          if (data.message === "Something went wrong.") {
+            globalToasts.globalError(data.message);
+          } else {
+            form.setError("email", { type: "server" });
+            form.setError("password", {
+              type: "server",
+              message: data.message,
+            });
+          }
+        },
+      }
+    );
   }
 
   return (

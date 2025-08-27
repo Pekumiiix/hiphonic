@@ -46,7 +46,9 @@ export default function AlternativeAuthMethod({
       </div>
       <div className="w-fit flex gap-1">
         <p className="text-black text-sm leading-[160%]">
-          Already have an account?
+          {type === "sign-up"
+            ? "Already have an account?"
+            : "Dont have an account?"}
         </p>
         <Link
           href={type === "sign-up" ? "/sign-in" : "/sign-up"}

@@ -30,7 +30,7 @@ export default function SignInPage() {
       );
       set({ error: undefined });
     }
-  }, [isAuthenticated, router, set]);
+  }, [isAuthenticated, router, set, error]);
 
   return (
     <FormContainer
