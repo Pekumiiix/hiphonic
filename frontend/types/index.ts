@@ -1,11 +1,12 @@
-import type { UrlObject } from "node:url";
-import type { UseMutationResult } from "@tanstack/react-query";
-import type { Route } from "next";
+import type { UrlObject } from 'node:url';
+import type { UseMutationResult } from '@tanstack/react-query';
+import type { Route } from 'next';
 
 export interface User {
   id: number;
   email: string;
-  username: string | null;
+  username: string;
+  avatarUrl: string | null;
 }
 
 export interface AuthToken {
@@ -40,7 +41,7 @@ export interface AuthContextType {
 export type TRoute = Route | UrlObject;
 
 export interface INotifications {
-  type: "success" | "user" | "warning" | "info";
+  type: 'success' | 'user' | 'warning' | 'info';
   title: string;
   message: string;
   timestamp: string;
@@ -52,7 +53,7 @@ export interface IProjects {
   name: string;
 }
 
-export type TCategory = "development" | "design" | "planning";
+export type TCategory = 'development' | 'design' | 'planning';
 
 export interface ITaskCardProps {
   image?: string;
@@ -69,5 +70,5 @@ export interface ITaskProps {
   description: string;
   comment: number;
   due_date: string;
-  status: "to-do" | "in-progress" | "in-review" | "done";
+  status: 'to-do' | 'in-progress' | 'in-review' | 'done';
 }

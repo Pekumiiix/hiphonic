@@ -1,3 +1,4 @@
+import { LoaderCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function ConfirmationButton({
@@ -15,7 +16,11 @@ export function ConfirmationButton({
       className='w-full h-12 xl:h-14 rounded-[12px] text-base font-bold leading-[140%] tracking-[0.2px]'
     >
       {isLoading ? (
-        <div className='w-5 h-5 border-4 border-white border-t-transparent rounded-full animate-spin' />
+        <LoaderCircle
+          size={20}
+          color='#ffffff'
+          className='animate-spin'
+        />
       ) : (
         name
       )}
