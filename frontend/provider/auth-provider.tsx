@@ -1,18 +1,16 @@
 'use client';
 
 import { createContext, type ReactNode, useContext, useMemo } from 'react';
-import { useCurrentUser } from '@/hooks/auth/use-current-user';
-import { useRefreshToken } from '@/hooks/auth/use-refresh-token';
-import { useSignIn } from '@/hooks/auth/use-sign-in';
-import { useSignout } from '@/hooks/auth/use-sign-out';
+import { useCurrentUser, useRefreshToken, useSignIn, useSignOut } from '@/hooks/use-auth';
 import type { AuthContextType } from '@/types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = useSignIn();
-  const signout = useSignout();
+  const signout = useSignOut();
   const refreshToken = useRefreshToken();
+
   const { data: user, isLoading } = useCurrentUser();
 
   const token =
@@ -25,9 +23,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user: user?.user ?? null,
       token,
       isLoading: isLoading || signIn.isPending || signout.isPending || refreshToken.isPending,
-      signIn, // Expose the mutation object directly
+      signIn,
       signOut: async () => signout.mutateAsync(),
-      refreshToken: async (extendRememberMe = false) => refreshToken.mutateAsync(extendRememberMe),
+      refreshToken: async (extendRememberMe = false) =>
+        refreshToken.mutateAsync({ extendRememberMe }),
       isAuthenticated: !!user?.user && !!token,
     }),
     [user, token, isLoading, signIn, signout, refreshToken],

@@ -112,6 +112,7 @@ export default class AuthController {
             id: user.id,
             email: user.email,
             username: user.username,
+            avatarUrl: user.avatarUrl,
           },
         };
 

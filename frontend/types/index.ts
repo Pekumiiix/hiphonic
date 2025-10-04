@@ -1,40 +1,16 @@
 import type { UrlObject } from 'node:url';
-import type { UseMutationResult } from '@tanstack/react-query';
 import type { Route } from 'next';
-
-export interface User {
-  id: number;
-  email: string;
-  username: string;
-  avatarUrl: string | null;
-}
-
-export interface AuthToken {
-  name?: string;
-  expiresAt?: string;
-  lastUsedAt?: string;
-  isExpired?: boolean;
-}
-
-export interface SignInResponse {
-  type: string;
-  token: string;
-  expiresAt?: string;
-  rememberMe: boolean;
-  user: User;
-}
+import type { useSignIn } from '@/hooks/use-auth';
+import type { IApiResponse } from './api';
+import type { IRefreshTokenResponse, IUser } from './auth';
 
 export interface AuthContextType {
-  user: User | null;
+  user: IUser | null;
   token: string | null;
   isLoading: boolean;
-  signIn: UseMutationResult<
-    SignInResponse,
-    Error,
-    { email: string; password: string; rememberMe?: boolean }
-  >;
-  signOut: () => Promise<void>;
-  refreshToken: (extendRememberMe?: boolean) => Promise<void>;
+  signIn: ReturnType<typeof useSignIn>;
+  signOut: () => Promise<IApiResponse>;
+  refreshToken: (extendRememberMe?: boolean) => Promise<IRefreshTokenResponse>;
   isAuthenticated: boolean;
 }
 
