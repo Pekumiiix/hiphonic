@@ -4,6 +4,7 @@ import type { HttpContext } from '@adonisjs/core/http';
 import mail from '@adonisjs/mail/services/main';
 import { DateTime } from 'luxon';
 import User from '#models/user';
+import env from '#start/env';
 import { refreshValidator } from '#validators/auth_validator';
 
 export default class AuthController {
@@ -34,7 +35,7 @@ export default class AuthController {
       user.emailVerificationExpiresAt = verificationExpiresAt;
       await user.save();
 
-      const verificationLink = `http://localhost:3000/verify-email?token=${verificationToken}`;
+      const verificationLink = `${env.get('FRONTEND_URL')}/verify-email?token=${verificationToken}`;
 
       await mail.send((message) => {
         message
@@ -142,7 +143,7 @@ export default class AuthController {
       user.resetPasswordExpiresAt = expiresAt;
       await user.save();
 
-      const resetLink = `http://localhost:3000/create-new-password?token=${token}`;
+      const resetLink = `${env.get('FRONTEND_URL')}/create-new-password?token=${token}`;
 
       await mail.send((message) => {
         message
