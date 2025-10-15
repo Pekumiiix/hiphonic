@@ -1,59 +1,57 @@
-import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
-import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
-import { DbRememberMeTokensProvider } from '@adonisjs/auth/session'
-import { compose } from '@adonisjs/core/helpers'
-import hash from '@adonisjs/core/services/hash'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
-import type { DateTime } from 'luxon'
+import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens';
+import { withAuthFinder } from '@adonisjs/auth/mixins/lucid';
+import { compose } from '@adonisjs/core/helpers';
+import hash from '@adonisjs/core/services/hash';
+import { BaseModel, column } from '@adonisjs/lucid/orm';
+import type { DateTime } from 'luxon';
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
   passwordColumnName: 'password',
-})
+});
 
 export default class User extends compose(BaseModel, AuthFinder) {
   @column({ isPrimary: true })
-  declare id: number
+  declare id: number;
 
   @column()
-  declare username: string
+  declare username: string;
 
   @column()
-  declare email: string
+  declare email: string;
 
   @column({ serializeAs: null })
-  declare password: string | null
+  declare password: string | null;
 
   @column()
-  declare provider: string
+  declare provider: string;
 
   @column()
-  declare providerId: string | null
+  declare providerId: string | null;
 
   @column()
-  declare avatarUrl: string | null
+  declare avatarUrl: string | null;
 
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  declare createdAt: DateTime;
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime | null
+  declare updatedAt: DateTime | null;
 
   @column()
-  declare resetPasswordToken: string | null
+  declare resetPasswordToken: string | null;
 
   @column.dateTime()
-  declare resetPasswordExpiresAt: DateTime | null
+  declare resetPasswordExpiresAt: DateTime | null;
 
   @column()
-  declare emailVerificationToken: string | null
+  declare emailVerificationToken: string | null;
 
   @column.dateTime()
-  declare emailVerificationExpiresAt: DateTime | null
+  declare emailVerificationExpiresAt: DateTime | null;
 
   @column()
-  declare emailVerified: boolean
+  declare emailVerified: boolean;
 
-  static accessTokens = DbAccessTokensProvider.forModel(User)
-  static rememberMeTokens = DbRememberMeTokensProvider.forModel(User)
+  static accessTokens = DbAccessTokensProvider.forModel(User);
 }

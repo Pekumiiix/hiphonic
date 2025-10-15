@@ -21,18 +21,7 @@ export function useSignIn() {
 
   return useMutation({
     mutationFn: (payload: ISignInPayLoad) => authService.signIn(payload),
-    onSuccess: (data) => {
-      const storage =
-        typeof window !== 'undefined' ? (data.rememberMe ? localStorage : sessionStorage) : null;
-
-      if (storage) {
-        storage.setItem('auth_token', data.token);
-        storage.setItem('remember_me', (data.rememberMe ?? false).toString());
-        if (data.expiresAt) {
-          storage.setItem('token_expires_at', data.expiresAt);
-        }
-      }
-
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentUser'] });
     },
   });
@@ -49,23 +38,7 @@ export function useRefreshToken() {
 
   return useMutation({
     mutationFn: (payload: IRefreshTokenPayload) => authService.refreshToken(payload),
-    onSuccess: (data) => {
-      const rememberMe =
-        typeof window !== 'undefined'
-          ? localStorage.getItem('remember_me') === 'true' ||
-            sessionStorage.getItem('remember_me') === 'true'
-          : false;
-
-      const storage =
-        typeof window !== 'undefined' ? (rememberMe ? localStorage : sessionStorage) : null;
-
-      if (storage) {
-        storage.setItem('auth_token', data.token || '');
-        if (data.expiresAt) {
-          storage.setItem('token_expires_at', data.expiresAt);
-        }
-      }
-
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentUser'] });
     },
   });
@@ -77,7 +50,7 @@ export function useSignOut() {
   return useMutation({
     mutationFn: () => authService.signOut(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      queryClient.setQueryData(['currentUser'], null);
     },
   });
 }

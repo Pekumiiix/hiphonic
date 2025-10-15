@@ -1,4 +1,4 @@
-import type { AxiosError } from 'axios';
+import { apiRequest } from '@/lib/api-request';
 import type { IApiResponse } from '@/types/api';
 import type {
   ICreateNewPasswordPayLoad,
@@ -14,88 +14,40 @@ import type {
 import api from './http.service';
 
 class AuthService {
-  async signUp(payload: ISignUpPayLoad): Promise<IApiResponse> {
-    try {
-      const res = await api.post('/auth/sign-up', payload);
-      return res.data;
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      throw {
-        message: err.response?.data?.message || err.message,
-      };
-    }
+  async signUp(payload: ISignUpPayLoad) {
+    return apiRequest<IApiResponse, ISignUpPayLoad>('post', '/auth/sign-up', payload);
   }
 
-  async signIn(payload: ISignInPayLoad): Promise<ISignInResponse> {
-    try {
-      const res = await api.post('/auth/sign-in', payload);
-      return res.data;
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      throw {
-        message: err.response?.data?.message || err.message,
-      };
-    }
+  async signIn(payload: ISignInPayLoad) {
+    return apiRequest<ISignInResponse, ISignInPayLoad>('post', '/auth/sign-in', payload);
   }
 
-  async signOut(): Promise<IApiResponse> {
-    try {
-      const res = await api.delete('/auth/sign-out');
-      return res.data;
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      throw {
-        message: err.response?.data?.message || err.message,
-      };
-    }
+  async signOut() {
+    return apiRequest<IApiResponse>('delete', '/auth/sign-out');
   }
 
-  async verfifyEmail(payload: IVerifyEmailPayload): Promise<IApiResponse> {
-    try {
-      const res = await api.post('/auth/verify-email', payload);
-      return res.data;
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      throw {
-        message: err.response?.data?.message || err.message,
-      };
-    }
+  async verfifyEmail(payload: IVerifyEmailPayload) {
+    return apiRequest<IApiResponse, IVerifyEmailPayload>('post', '/auth/verify-email', payload);
   }
 
-  async resetPassword(payload: IResetPasswordPayload): Promise<IApiResponse> {
-    try {
-      const res = await api.post('/auth/reset-password', payload);
-      return res.data;
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      throw {
-        message: err.response?.data?.message || err.message,
-      };
-    }
+  async resetPassword(payload: IResetPasswordPayload) {
+    return apiRequest<IApiResponse, IResetPasswordPayload>('post', '/auth/reset-password', payload);
   }
 
   async createNewPassword(payload: ICreateNewPasswordPayLoad): Promise<IApiResponse> {
-    try {
-      const res = await api.post('/auth/create-new-password', payload);
-      return res.data;
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      throw {
-        message: err.response?.data?.message || err.message,
-      };
-    }
+    return apiRequest<IApiResponse, ICreateNewPasswordPayLoad>(
+      'post',
+      '/auth/create-new-password',
+      payload,
+    );
   }
 
   async refreshToken(payload: IRefreshTokenPayload): Promise<IRefreshTokenResponse> {
-    try {
-      const res = await api.post('/auth/refresh', payload);
-      return res.data;
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      throw {
-        message: err.response?.data?.message || err.message,
-      };
-    }
+    return apiRequest<IRefreshTokenResponse, IRefreshTokenPayload>(
+      'post',
+      '/auth/refresh',
+      payload,
+    );
   }
 
   async currentUser(): Promise<ICurrentUserResponse> {

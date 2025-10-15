@@ -13,6 +13,7 @@ export default class AuthController {
       const data = request.only(['email', 'password', 'username']);
 
       const existingUserByUsername = await User.findBy('username', data.username);
+
       if (existingUserByUsername) {
         return response.badRequest({
           message: 'Username is already taken',
@@ -20,6 +21,7 @@ export default class AuthController {
       }
 
       const existingUserByEmail = await User.findBy('email', data.email);
+
       if (existingUserByEmail) {
         return response.badRequest({
           message: 'Email is already registered',
@@ -33,6 +35,7 @@ export default class AuthController {
 
       user.emailVerificationToken = verificationToken;
       user.emailVerificationExpiresAt = verificationExpiresAt;
+
       await user.save();
 
       const verificationLink = `${env.get('FRONTEND_URL')}/verify-email?token=${verificationToken}`;
@@ -60,6 +63,7 @@ export default class AuthController {
   async verifyEmail({ request, response }: HttpContext) {
     try {
       const { token } = request.only(['token']);
+
       const user = await User.findBy('emailVerificationToken', token);
 
       if (
@@ -73,6 +77,7 @@ export default class AuthController {
       user.emailVerified = true;
       user.emailVerificationToken = null;
       user.emailVerificationExpiresAt = null;
+
       await user.save();
 
       return response.ok({ message: 'Email verified successfully.' });
@@ -86,39 +91,40 @@ export default class AuthController {
 
   async signIn({ request, response }: HttpContext) {
     try {
-      const { email, password, rememberMe } = request.only(['email', 'password', 'rememberMe']);
+      const {
+        email,
+        password,
+        rememberMe = false,
+      } = request.only(['email', 'password', 'rememberMe']);
 
       const user = await User.verifyCredentials(email, password);
 
-      if (user) {
-        const tokenConfig = {
-          name: rememberMe ? 'Remember Me Session' : 'Regular Session',
-          expiresIn: rememberMe ? '30 days' : '7 days',
-          abilities: ['*'],
-        };
+      const sessionDuration = rememberMe ? '30 days' : '7 days';
+      const sessionName = rememberMe ? 'Remembered Web Session' : 'Regular Web Session';
 
-        const token = await User.accessTokens.create(user, tokenConfig.abilities, {
-          name: tokenConfig.name,
-          expiresIn: tokenConfig.expiresIn,
-        });
+      const token = await User.accessTokens.create(user, ['*'], {
+        name: sessionName,
+        expiresIn: sessionDuration,
+      });
 
-        const tokenValue = token.value?.release();
+      const tokenValue = token.value?.release();
 
-        const responseData = {
-          type: 'bearer',
-          token: tokenValue,
-          expiresAt: token.expiresAt?.toISOString(),
-          rememberMe: rememberMe || false,
-          user: {
-            id: user.id,
-            email: user.email,
-            username: user.username,
-            avatarUrl: user.avatarUrl,
-          },
-        };
+      response.cookie('access_token', tokenValue, {
+        httpOnly: true,
+        secure: env.get('NODE_ENV') === 'production',
+        sameSite: 'lax',
+        maxAge: sessionDuration,
+        path: '/',
+      });
 
-        return response.ok(responseData);
-      }
+      return response.ok({
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          avatarUrl: user.avatarUrl,
+        },
+      });
     } catch (error) {
       if (error.code === 'E_INVALID_CREDENTIALS') {
         return response.unauthorized({ message: 'Invalid credentials' });
@@ -141,6 +147,7 @@ export default class AuthController {
 
       user.resetPasswordToken = token;
       user.resetPasswordExpiresAt = expiresAt;
+
       await user.save();
 
       const resetLink = `${env.get('FRONTEND_URL')}/create-new-password?token=${token}`;
@@ -171,6 +178,7 @@ export default class AuthController {
   async createNewPassword({ request, response }: HttpContext) {
     try {
       const { token, newPassword } = request.only(['token', 'newPassword']);
+
       const user = await User.findBy('resetPasswordToken', token);
 
       if (!user || !user.resetPasswordExpiresAt || user.resetPasswordExpiresAt < DateTime.now()) {
@@ -180,6 +188,7 @@ export default class AuthController {
       user.password = newPassword;
       user.resetPasswordToken = null;
       user.resetPasswordExpiresAt = null;
+
       await user.save();
 
       return response.ok({ message: 'Password updated successfully.' });
@@ -195,8 +204,6 @@ export default class AuthController {
     try {
       const user = await auth.authenticateUsing(['api']);
 
-      const { currentAccessToken: token } = user as User & { currentAccessToken?: AccessToken };
-
       return response.ok({
         user: {
           id: user.id,
@@ -204,34 +211,28 @@ export default class AuthController {
           username: user.username,
           avatarUrl: user.avatarUrl,
         },
-        token: {
-          name: token?.name,
-          expiresAt: token?.expiresAt?.toISOString(),
-          lastUsedAt: token?.lastUsedAt?.toISOString(),
-          isExpired: token?.isExpired(),
-        },
       });
-    } catch (error) {
-      return response.unauthorized({
-        message: 'Unauthenticated',
-        error: error.message,
-      });
+    } catch (_) {
+      return response.unauthorized({ message: 'Unauthenticated' });
     }
   }
 
   async signout({ auth, response }: HttpContext) {
     try {
       const user = await auth.authenticateUsing(['api']);
-      const { currentAccessToken } = user as User & { currentAccessToken?: { identifier: string } };
 
-      if (currentAccessToken?.identifier) {
-        await User.accessTokens.delete(user, currentAccessToken.identifier);
+      const token = (auth.user as User & { currentAccessToken: AccessToken }).currentAccessToken;
+
+      if (token) {
+        await User.accessTokens.delete(user, token.identifier);
       }
 
-      return response.ok({
-        message: 'Logged out successfully',
-      });
+      response.clearCookie('access_token');
+
+      return response.ok({ message: 'Logged out successfully' });
     } catch (error) {
+      response.clearCookie('access_token');
+
       return response.unauthorized({
         message: 'Unable to logout',
         error: error.message,
@@ -239,33 +240,32 @@ export default class AuthController {
     }
   }
 
-  async refresh({ auth, request, response }: HttpContext) {
+  async refresh({ auth, response, request }: HttpContext) {
     try {
-      const { extendRememberMe } = await request.validateUsing(refreshValidator);
-      const user = await auth.authenticateUsing(['api']);
-      const { currentAccessToken: currentToken } = user as User & {
-        currentAccessToken?: AccessToken;
-      };
+      const { extendRememberMe = false } = await request.validateUsing(refreshValidator);
 
-      if (!currentToken) {
-        return response.unauthorized({ message: 'No current access token found' });
-      }
+      const user = auth.getUserOrFail();
 
-      const newExpiration = extendRememberMe ? '30 days' : '7 days';
-      const tokenName = extendRememberMe ? 'Extended Remember Me Session' : 'Refreshed Session';
+      const sessionDuration = extendRememberMe ? '30 days' : '7 days';
+      const sessionName = extendRememberMe ? 'Remembered Web Session' : 'Regular Web Session';
 
-      const newToken = await User.accessTokens.create(user, currentToken.abilities, {
-        name: tokenName,
-        expiresIn: newExpiration,
+      const newToken = await User.accessTokens.create(user, ['*'], {
+        expiresIn: sessionDuration,
+        name: sessionName,
       });
 
-      await User.accessTokens.delete(user, currentToken.identifier);
+      const tokenValue = newToken.value?.release();
+
+      response.cookie('access_token', tokenValue, {
+        httpOnly: true,
+        secure: env.get('NODE_ENV') === 'production',
+        sameSite: 'lax',
+        maxAge: '30d',
+        path: '/',
+      });
 
       return response.ok({
-        type: 'bearer',
-        token: newToken.value?.release(),
-        expiresAt: newToken.expiresAt?.toISOString(),
-        refreshed: true,
+        message: 'Token refreshed successfully.',
       });
     } catch {
       return response.unauthorized({
