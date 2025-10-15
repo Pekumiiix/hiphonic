@@ -4,7 +4,6 @@ import type {
   ICreateNewPasswordPayLoad,
   ICurrentUserResponse,
   IRefreshTokenPayload,
-  IRefreshTokenResponse,
   IResetPasswordPayload,
   ISignInPayLoad,
   ISignInResponse,
@@ -34,7 +33,7 @@ class AuthService {
     return apiRequest<IApiResponse, IResetPasswordPayload>('post', '/auth/reset-password', payload);
   }
 
-  async createNewPassword(payload: ICreateNewPasswordPayLoad): Promise<IApiResponse> {
+  async createNewPassword(payload: ICreateNewPasswordPayLoad) {
     return apiRequest<IApiResponse, ICreateNewPasswordPayLoad>(
       'post',
       '/auth/create-new-password',
@@ -42,12 +41,8 @@ class AuthService {
     );
   }
 
-  async refreshToken(payload: IRefreshTokenPayload): Promise<IRefreshTokenResponse> {
-    return apiRequest<IRefreshTokenResponse, IRefreshTokenPayload>(
-      'post',
-      '/auth/refresh',
-      payload,
-    );
+  async refreshToken(payload: IRefreshTokenPayload) {
+    return apiRequest<IApiResponse, IRefreshTokenPayload>('post', '/auth/refresh', payload);
   }
 
   async currentUser(): Promise<ICurrentUserResponse> {

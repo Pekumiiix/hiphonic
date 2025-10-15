@@ -1,28 +1,39 @@
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - auth (authentication pages)
-     */
-    // '/((?!api|_next/static|_next/image|favicon.ico|auth).*)',
-    '/dashboard',
-  ],
+  matcher: ['/dashboard/:path*', '/profile/:path*', '/settings/:path*', '/admin/:path*'],
 };
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get('access_token')?.value;
+  const signInUrl = new URL('/sign-in', request.url);
 
+  // 1. If there's no token cookie at all, redirect immediately.
   if (!accessToken) {
-    const signInUrl = new URL('/sign-in', request.url);
     return NextResponse.redirect(signInUrl);
   }
 
+  // 2. If a token exists, verify it by calling your backend.
+  // We use the Next.js server as a proxy to securely forward the cookie.
+  const verifyUrl = new URL('/api/auth/me', request.url);
+
+  try {
+    const response = await fetch(verifyUrl, {
+      headers: {
+        Cookie: `access_token=${accessToken}`,
+      },
+    });
+
+    // 3. If the backend says the token is invalid (401), redirect.
+    if (!response.ok) {
+      return NextResponse.redirect(signInUrl);
+    }
+  } catch (error) {
+    // If the API route itself fails, redirect.
+    console.error('Error verifying token in middleware:', error);
+    return NextResponse.redirect(signInUrl);
+  }
+
+  // 4. If the token is valid, allow the user to proceed.
   return NextResponse.next();
 }

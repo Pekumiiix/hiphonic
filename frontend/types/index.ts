@@ -2,15 +2,14 @@ import type { UrlObject } from 'node:url';
 import type { Route } from 'next';
 import type { useSignIn } from '@/hooks/use-auth';
 import type { IApiResponse } from './api';
-import type { IRefreshTokenResponse, IUser } from './auth';
+import type { IUser } from './auth';
 
 export interface AuthContextType {
   user: IUser | null;
-  token: string | null;
   isLoading: boolean;
   signIn: ReturnType<typeof useSignIn>;
   signOut: () => Promise<IApiResponse>;
-  refreshToken: (extendRememberMe?: boolean) => Promise<IRefreshTokenResponse>;
+  refreshToken: (extendRememberMe?: boolean) => Promise<IApiResponse>;
   isAuthenticated: boolean;
 }
 

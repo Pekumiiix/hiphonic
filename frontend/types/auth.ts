@@ -24,10 +24,6 @@ export interface ISignInPayLoad {
 }
 
 export interface ISignInResponse {
-  type: string;
-  token: string;
-  expiresAt?: string;
-  rememberMe: boolean;
   user: IUser;
 }
 
@@ -35,21 +31,8 @@ export interface IRefreshTokenPayload {
   extendRememberMe?: boolean;
 }
 
-export interface IRefreshTokenResponse {
-  type: string;
-  token?: string;
-  expiresAt?: string;
-  refreshed: boolean;
-}
-
 export interface ICurrentUserResponse {
   user: IUser;
-  token: {
-    name?: string;
-    expiresAt?: string;
-    lastUsedAt?: string;
-    isExpired?: boolean;
-  };
 }
 
 export interface IVerifyEmailPayload {
