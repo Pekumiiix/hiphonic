@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/provider/auth-provider';
 
-export default function DashboardNav({ variant = 'default' }: { variant?: 'default' | 'mobile' }) {
+export default function AppNav({ variant = 'default' }: IAppNav) {
   const { user, isLoading } = useAuth();
 
   return (
@@ -54,4 +54,8 @@ export default function DashboardNav({ variant = 'default' }: { variant?: 'defau
       </div>
     </div>
   );
+}
+
+interface IAppNav {
+  variant?: 'default' | 'mobile';
 }

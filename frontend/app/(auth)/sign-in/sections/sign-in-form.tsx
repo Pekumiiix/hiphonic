@@ -17,6 +17,7 @@ import { defaultSignInValue, signInSchema } from '../schema';
 
 export default function SignInForm() {
   const { signIn } = useAuth();
+
   const router = useRouter();
 
   const form = useForm<z.infer<typeof signInSchema>>({
@@ -29,7 +30,7 @@ export default function SignInForm() {
       { ...data, email: data.email.toLocaleLowerCase() },
       {
         onSuccess: () => {
-          router.push('/dashboard');
+          router.replace('/dashboard');
         },
         onError: (data) => {
           if (data.message === 'Something went wrong.') {

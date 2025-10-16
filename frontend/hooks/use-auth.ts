@@ -51,6 +51,7 @@ export function useSignOut() {
     mutationFn: () => authService.signOut(),
     onSuccess: () => {
       queryClient.setQueryData(['currentUser'], null);
+      globalToasts.globalSuccess('Signed out successfully');
     },
   });
 }
