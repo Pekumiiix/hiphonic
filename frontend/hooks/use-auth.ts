@@ -53,6 +53,9 @@ export function useSignOut() {
       queryClient.setQueryData(['currentUser'], null);
       globalToasts.globalSuccess('Signed out successfully');
     },
+    onError: () => {
+      globalToasts.globalError('Failed to sign out. Try again.');
+    },
   });
 }
 

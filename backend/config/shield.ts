@@ -23,9 +23,8 @@ const shieldConfig = defineConfig({
       '/auth/verify-email',
       '/auth/reset-password',
       '/auth/create-new-password',
-      '/auth/signout',
     ],
-    enableXsrfCookie: false,
+    enableXsrfCookie: true,
     methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
   },
 

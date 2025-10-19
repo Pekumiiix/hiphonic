@@ -212,12 +212,12 @@ export default class AuthController {
           avatarUrl: user.avatarUrl,
         },
       });
-    } catch (_) {
-      return response.unauthorized({ message: 'Unauthenticated' });
+    } catch (error) {
+      return response.unauthorized({ message: 'Unauthenticated', error: error.message });
     }
   }
 
-  async signout({ auth, response }: HttpContext) {
+  async signOut({ auth, response }: HttpContext) {
     try {
       const user = await auth.authenticateUsing(['api']);
 
@@ -229,7 +229,7 @@ export default class AuthController {
 
       response.clearCookie('access_token');
 
-      return response.ok({ message: 'Logged out successfully' });
+      return response.ok({ message: 'Signed out successfully' });
     } catch (error) {
       response.clearCookie('access_token');
 

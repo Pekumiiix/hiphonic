@@ -15,6 +15,7 @@ export async function GET() {
 
   try {
     const headers = new Headers();
+
     headers.set('Cookie', `access_token=${tokenCookie.value}`);
 
     const backendRes = await fetch(`${BACKEND_URL}/auth/me`, {

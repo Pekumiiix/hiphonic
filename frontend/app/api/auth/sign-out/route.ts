@@ -1,20 +1,45 @@
+import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { BACKEND_URL } from '@/utils/config';
 
-export async function DELETE(req: NextRequest) {
-  const authHeader = req.headers.get('authorization');
+export async function POST(req: NextRequest) {
+  const cookieStore = await cookies();
 
-  const backendRes = await fetch(`${BACKEND_URL}/auth/signout`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(authHeader ? { Authorization: authHeader } : {}),
-    },
-  });
+  const incomingCookies = req.headers.get('cookie');
 
-  const data = await backendRes.json();
-  return new NextResponse(JSON.stringify(data), {
-    status: backendRes.status,
-    headers: { 'Content-Type': 'application/json' },
-  });
+  const tokenCookie = cookieStore.get('access_token');
+  const xsrfCookie = cookieStore.get('XSRF-TOKEN');
+
+  if (!tokenCookie || !xsrfCookie || !incomingCookies) {
+    return NextResponse.json({ message: 'No active session' }, { status: 401 });
+  }
+
+  try {
+    const headers = new Headers();
+
+    headers.set('Cookie', incomingCookies);
+    headers.set('x-xsrf-token', xsrfCookie.value);
+
+    const backendResponse = await fetch(`${BACKEND_URL}/auth/sign-out`, {
+      method: 'POST',
+      headers: headers,
+      credentials: 'include',
+    });
+
+    const backendData = await backendResponse.json();
+
+    const response = NextResponse.json(backendData, {
+      status: backendResponse.status,
+    });
+
+    if (backendResponse.ok) {
+      response.cookies.set('access_token', '', { httpOnly: true, path: '/', maxAge: 0 });
+    }
+
+    return response;
+  } catch (error) {
+    console.error('Sign-out fetch error:', error);
+
+    return NextResponse.json({ message: 'An unexpected network error occurred.' }, { status: 500 });
+  }
 }

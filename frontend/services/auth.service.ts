@@ -22,7 +22,7 @@ class AuthService {
   }
 
   async signOut() {
-    return apiRequest<IApiResponse>('delete', '/auth/sign-out');
+    return apiRequest<IApiResponse>('post', '/auth/sign-out');
   }
 
   async verfifyEmail(payload: IVerifyEmailPayload) {

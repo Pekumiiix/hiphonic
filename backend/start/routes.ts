@@ -36,8 +36,7 @@ router
       .get('/me', [() => import('#controllers/auth_controller'), 'me'])
       .use(middleware.cookieAuth());
     router
-      .delete('/signout', [() => import('#controllers/auth_controller'), 'signout'])
-      .middleware(() => import('#middleware/auth_middleware'))
+      .post('/sign-out', [() => import('#controllers/auth_controller'), 'signOut'])
       .use(middleware.cookieAuth());
 
     //Social Auth
