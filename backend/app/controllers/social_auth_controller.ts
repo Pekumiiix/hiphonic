@@ -2,12 +2,6 @@ import type { HttpContext } from '@adonisjs/core/http';
 import User from '#models/user';
 import env from '#start/env';
 
-const tokenConfig = {
-  name: 'Regular Session',
-  expiresIn: '7 days',
-  abilities: ['*'],
-};
-
 export default class SocialAuthController {
   async facebookRedirect({ ally }: HttpContext) {
     return ally.use('facebook').redirect();
@@ -44,9 +38,9 @@ export default class SocialAuthController {
         });
       }
 
-      const token = await User.accessTokens.create(user, tokenConfig.abilities, {
-        name: tokenConfig.name,
-        expiresIn: tokenConfig.expiresIn,
+      const token = await User.accessTokens.create(user, ['*'], {
+        name: 'Regular Web Session',
+        expiresIn: '7 days',
       });
 
       const tokenValue = token.value?.release();
@@ -59,7 +53,8 @@ export default class SocialAuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7,
+        maxAge: '7 days',
+        path: '/',
       });
 
       return response.redirect(`${env.get('FRONTEND_URL')}/callback=${tokenValue}`);
@@ -98,9 +93,9 @@ export default class SocialAuthController {
         });
       }
 
-      const token = await User.accessTokens.create(user, tokenConfig.abilities, {
-        name: tokenConfig.name,
-        expiresIn: tokenConfig.expiresIn,
+      const token = await User.accessTokens.create(user, ['*'], {
+        name: 'Regular Web Session',
+        expiresIn: '7 days',
       });
 
       const tokenValue = token.value?.release();
@@ -113,7 +108,8 @@ export default class SocialAuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7,
+        maxAge: '7 days',
+        path: '/',
       });
 
       return response.redirect(`${env.get('FRONTEND_URL')}/callback?token=${tokenValue}`);

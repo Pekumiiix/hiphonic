@@ -3,16 +3,12 @@
 import { Funnel, LayoutGrid, List, type LucideIcon } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
-import { BaseSelect } from '@/components/reuseable/base-select';
+import { BaseUISelect } from '@/components/reuseable/base-ui-select';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { CreateTaskButton } from '../component/create-task-button';
 
-export default function ProjectContentWrapper({
-  children,
-}: {
-  children: (display: TDisplay, activeTab: Triggers) => React.ReactNode;
-}) {
+export default function ProjectContentWrapper({ children }: IProjectContentWrapper) {
   const [display, setDisplay] = useState<TDisplay>('board');
   const [activeTab, setActiveTab] = useState<Triggers>('to-do');
 
@@ -77,16 +73,22 @@ function MobileListNavSelect({ activeTab, setActiveTab }: INavProps) {
   };
 
   return (
-    <BaseSelect
-      triggerClassName='w-fit h-[42px] bg-white border-none rounded-[8px] py-2 px-3 md:hidden'
+    <BaseUISelect
+      classNames={{
+        trigger: 'w-fit h-[42px] bg-white border-none rounded-[8px] py-2 px-3 md:hidden',
+      }}
       value={activeTab}
-      onValueChange={handleChange}
-      groupLabel='Select status'
-      items={[
-        { value: 'to-do', label: 'To Do' },
-        { value: 'in-progress', label: 'In Progress' },
-        { value: 'in-review', label: 'In Review' },
-        { value: 'done', label: 'Done' },
+      onValueChange={(value) => handleChange(value as string)}
+      group={[
+        {
+          label: 'Task status',
+          item: [
+            { value: 'to-do', label: 'To Do' },
+            { value: 'in-progress', label: 'In Progress' },
+            { value: 'in-review', label: 'In Review' },
+            { value: 'done', label: 'Done' },
+          ],
+        },
       ]}
     />
   );
@@ -159,6 +161,10 @@ function TriggerButton({ name, action, isActive }: ITriggerButtonProps) {
 
 type TDisplay = 'list' | 'board';
 type Triggers = 'to-do' | 'in-progress' | 'in-review' | 'done';
+
+interface IProjectContentWrapper {
+  children: (display: TDisplay, activeTab: Triggers) => React.ReactNode;
+}
 
 interface IToggleButtonProps {
   isActive?: boolean;

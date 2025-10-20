@@ -7,6 +7,38 @@ import RecentProjects from './sections/recents-projects';
 import TaskSummary from './sections/task-summary';
 import TodaysTasks from './sections/todays-tasks';
 
+export default function DashboardPage() {
+  return (
+    <>
+      <AppNav />
+
+      <section className='w-full grid grid-cols-2 xl:grid-cols-3 gap-6 px-4 md:px-8 py-6'>
+        <div className='w-full h-fit col-span-2 flex flex-col md:grid grid-col-2 max-md:justify-center gap-6'>
+          <RecentProjects />
+
+          <ActivitySummary />
+
+          <TaskSummary />
+
+          <div className='col-span-2 xl:hidden grid lg:grid-cols-2 gap-6'>
+            <CalendarSection />
+
+            <NotificationsCard />
+          </div>
+
+          <TodaysTasks />
+        </div>
+
+        <div className='hidden xl:flex flex-col gap-6'>
+          <CalendarSection />
+
+          <NotificationsCard />
+        </div>
+      </section>
+    </>
+  );
+}
+
 export const metadata: Metadata = {
   title: 'Dashboard',
   description:
@@ -46,35 +78,3 @@ export const metadata: Metadata = {
     images: ['/assets/logo.png'],
   },
 };
-
-export default function DashboardPage() {
-  return (
-    <>
-      <AppNav />
-
-      <section className='w-full grid grid-cols-2 xl:grid-cols-3 gap-6 px-4 md:px-8 py-6'>
-        <div className='w-full h-fit col-span-2 flex flex-col md:grid grid-col-2 max-md:justify-center gap-6'>
-          <RecentProjects />
-
-          <ActivitySummary />
-
-          <TaskSummary />
-
-          <div className='col-span-2 xl:hidden grid lg:grid-cols-2 gap-6'>
-            <CalendarSection />
-
-            <NotificationsCard />
-          </div>
-
-          <TodaysTasks />
-        </div>
-
-        <div className='hidden xl:flex flex-col gap-6'>
-          <CalendarSection />
-
-          <NotificationsCard />
-        </div>
-      </section>
-    </>
-  );
-}

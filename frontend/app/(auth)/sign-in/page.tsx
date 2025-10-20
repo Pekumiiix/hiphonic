@@ -14,13 +14,10 @@ export default function SignInPage() {
   const { isAuthenticated, isLoading } = useAuth();
 
   const router = useRouter();
+
   const error = get('error');
 
   useEffect(() => {
-    if (isAuthenticated && !isLoading) {
-      router.push('/dashboard');
-    }
-
     if (error === 'access_denied') {
       globalToasts.globalError('You have denied the access your account.');
       set({ error: undefined });

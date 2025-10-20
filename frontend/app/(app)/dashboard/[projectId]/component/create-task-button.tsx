@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { Calendar1, Plus } from 'lucide-react';
+import Image from 'next/image';
 import type React from 'react';
 import {
   type ControllerRenderProps,
@@ -10,9 +11,10 @@ import {
   useForm,
 } from 'react-hook-form';
 import { z } from 'zod';
+import { BaseAvatar } from '@/components/reuseable/base-avatar';
 import { BaseDatePicker } from '@/components/reuseable/base-date-picker';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
-import { BaseSelect } from '@/components/reuseable/base-select';
+import { BaseUISelect } from '@/components/reuseable/base-ui-select';
 import {
   Accordion,
   AccordionContent,
@@ -37,11 +39,7 @@ export function CreateTaskButton() {
   const form = useForm<z.infer<typeof taskSchema>>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
-      name: '',
-      assignee: [],
       category: 'development',
-      description: '',
-      due_date: new Date(),
     },
   });
 
@@ -102,20 +100,17 @@ export function CreateTaskButton() {
                   label='assigned to'
                 >
                   {(field) => (
-                    <Input
-                      {...field}
-                      placeholder='Assigned to'
-                      className='!w-[120px] p-0 border-transparent placeholder:font-bold placeholder:leading-[22px] placeholder:text-grey-400 shadow-none focus-visible:ring-0 focus-visible:border-0'
+                    <AsigneeSelect
+                      value={field.value}
+                      onValueChange={field.onChange}
                     />
                   )}
                 </CustomFormField>
 
                 <div className='flex flex-col gap-3 -mt-1'>
                   <p className='text-sm font-medium text-grey-400'>CREATED</p>
-                  <div className='h-8 p-2 rounded-[8px] bg-grey-50 text-grey-900 font-semibold flex items-center gap-2 max-md:text-xs'>
-                    <Calendar1 size={20} />
-                    <p>{format(new Date(), 'PPP')}</p>
-                  </div>
+
+                  <RenderDate date={new Date()} />
                 </div>
 
                 <CustomFormField
@@ -124,13 +119,15 @@ export function CreateTaskButton() {
                   label='category'
                 >
                   {(field) => (
-                    <BaseSelect
-                      placeholder='Select category'
-                      groupLabel='Categories'
-                      items={categories}
-                      triggerClassName='!p-0 border-none shadow-none w-[100px]'
+                    <BaseUISelect
+                      placeholder='Category'
+                      classNames={{
+                        trigger: '!p-0 border-none shadow-none w-[100px] cursor-pointer z-0',
+                      }}
                       value={field.value}
                       onValueChange={field.onChange}
+                      icon={<></>}
+                      group={[{ label: 'Categories', item: categories }]}
                     />
                   )}
                 </CustomFormField>
@@ -143,7 +140,9 @@ export function CreateTaskButton() {
                   {(field) => (
                     <BaseDatePicker
                       {...field}
-                      className='text-xs font-medium leading-[160%] text-grey-500 !p-0 w-[130px] hover:bg-transparent'
+                      placeholder={<DueDatePlaceholder />}
+                      renderValue={(date) => <RenderDate date={date} />}
+                      className='w-[130px] hover:bg-transparent px-0'
                     />
                   )}
                 </CustomFormField>
@@ -162,7 +161,7 @@ export function CreateTaskButton() {
             <Textarea
               {...field}
               placeholder='Add more details to this task'
-              className='w-full border-none shadow-none focus-visible:border-none focus-visible:ring-0 p-0'
+              className='w-full border-none shadow-none focus-visible:border-none focus-visible:ring-0 p-0 rounded-none'
             />
           )}
         </FormField>
@@ -191,6 +190,81 @@ function CustomFormField<T extends FieldValues>({
   );
 }
 
+function RenderDate({ date }: { date: Date }) {
+  return (
+    <div className='h-8 p-2 rounded-[8px] bg-grey-50 text-grey-900 font-semibold flex items-center gap-2 max-md:text-xs'>
+      <Calendar1 size={20} />
+      <p>{format(date, 'PPP')}</p>
+    </div>
+  );
+}
+
+function AsigneeSelect({ value, onValueChange }: IAsigneeSelect) {
+  function handleChange(value: string[]) {
+    console.log(value);
+    onValueChange?.(value);
+  }
+
+  return (
+    <BaseUISelect
+      multiple
+      value={value}
+      icon={<></>}
+      placeholder={<AsigneePlaceholder />}
+      onValueChange={(val) => handleChange(val as string[])}
+      classNames={{
+        trigger: 'p-0 rounded-[2px] border-none shadow-none w-full',
+        content: 'bg-white',
+      }}
+      group={[
+        {
+          item: [{ label: <AsigneeSelectItem />, value: 'me' }],
+        },
+      ]}
+    />
+  );
+}
+
+function AsigneeSelectItem() {
+  return (
+    <div className='flex items-center gap-3'>
+      <BaseAvatar
+        username='OU'
+        avatar='https://github.com/shadcn.png'
+      />
+      <p className='text-sm font-medium leading-[160%] text-grey-500'>Pelumi Amao</p>
+    </div>
+  );
+}
+
+function AsigneePlaceholder() {
+  return (
+    <div className='flex items-center gap-3'>
+      <Image
+        src='/assets/dashboard/task/asignee.png'
+        alt='placeholder'
+        width={32}
+        height={32}
+      />
+      <p className='text-xs font-medium leading-[160%] text-grey-500'>No assignee</p>
+    </div>
+  );
+}
+
+function DueDatePlaceholder() {
+  return (
+    <div className='w-full flex items-center gap-3'>
+      <Image
+        src='/assets/dashboard/task/due-date.png'
+        alt='placeholder'
+        width={32}
+        height={32}
+      />
+      <p className='text-xs font-medium leading-[160%] text-grey-500'>No due date</p>
+    </div>
+  );
+}
+
 const categories: { label: React.ReactNode; value: string }[] = [
   { label: <CategoryBlock category='development' />, value: 'development' },
   { label: <CategoryBlock category='design' />, value: 'design' },
@@ -202,4 +276,9 @@ interface ICustomFieldProps<T extends FieldValues> {
   name: Path<T>;
   label?: string;
   children: (field: Partial<ControllerRenderProps>) => React.ReactNode;
+}
+
+interface IAsigneeSelect {
+  value: string[];
+  onValueChange?: (value: string[]) => void;
 }

@@ -11,6 +11,7 @@ export function BaseDatePicker({
   onChange,
   onBlur,
   placeholder = 'Pick a date',
+  renderValue,
 }: BaseDatePickerProps) {
   const dateValue = value instanceof Date ? value : undefined;
 
@@ -22,14 +23,21 @@ export function BaseDatePicker({
           className={cn('w-fit flex items-center gap-3', className)}
           onBlur={onBlur}
         >
-          <CalendarIcon
-            size={20}
-            className='text-inherit'
-          />
+          {!renderValue && (
+            <CalendarIcon
+              size={20}
+              className='text-inherit'
+            />
+          )}
+
           {dateValue ? (
-            format(dateValue, 'PPP')
+            renderValue ? (
+              renderValue(dateValue)
+            ) : (
+              format(dateValue, 'PPP')
+            )
           ) : (
-            <span className='text-inherit'>{placeholder}</span>
+            <RenderPlaceholder placeholder={placeholder} />
           )}
         </Button>
       </PopoverTrigger>
@@ -44,10 +52,19 @@ export function BaseDatePicker({
   );
 }
 
+function RenderPlaceholder({ placeholder }: { placeholder: BaseDatePickerProps['placeholder'] }) {
+  return typeof placeholder === 'string' ? (
+    <span className='text-inherit'>{placeholder}</span>
+  ) : (
+    placeholder
+  );
+}
+
 interface BaseDatePickerProps {
   className?: string;
   value?: Date;
   onChange?: (date: Date | undefined) => void;
   onBlur?: () => void;
-  placeholder?: string;
+  placeholder?: string | React.ReactNode;
+  renderValue?: (date: Date) => React.ReactNode;
 }
