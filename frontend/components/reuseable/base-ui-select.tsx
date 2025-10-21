@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import {
   Select,
   SelectContent,
@@ -19,6 +20,7 @@ export function BaseUISelect({
   indicatorVisibility = true,
   placeholder,
   icon,
+  triggerStyle,
 }: IBaseUISelect) {
   return (
     <Select
@@ -30,7 +32,10 @@ export function BaseUISelect({
       indicatorVisibility={indicatorVisibility}
       icon={icon}
     >
-      <SelectTrigger className={classNames?.trigger}>
+      <SelectTrigger
+        style={triggerStyle}
+        className={classNames?.trigger}
+      >
         <SelectValue className={classNames?.value}>
           {(value) => {
             if (!value) return placeholder || '';
@@ -86,4 +91,5 @@ interface IBaseUISelect {
   indicatorPosition?: 'left' | 'right';
   placeholder?: string | React.ReactNode;
   icon?: React.ReactNode;
+  triggerStyle?: CSSProperties;
 }

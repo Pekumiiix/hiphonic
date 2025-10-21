@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
-import { CreateTaskButton } from '../component/create-task-button';
+import { CreateTaskDialog } from './create-task-dialog';
+// import { TaskDetailsDialog } from './task-details-dialog';
 
 export default function ProjectColumn({ name, children, display }: IProjectProps) {
   return (
@@ -21,7 +22,8 @@ export default function ProjectColumn({ name, children, display }: IProjectProps
           {name}
         </p>
 
-        {name === 'To Do' && <CreateTaskButton />}
+        {name === 'To Do' && <CreateTaskDialog />}
+        {/* <TaskDetailsDialog /> */}
       </div>
 
       <div className='w-full flex flex-col gap-4'>{children}</div>

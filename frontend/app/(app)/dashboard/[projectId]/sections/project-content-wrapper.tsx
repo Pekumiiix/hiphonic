@@ -6,10 +6,10 @@ import { useState } from 'react';
 import { BaseUISelect } from '@/components/reuseable/base-ui-select';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { CreateTaskButton } from '../component/create-task-button';
+import { CreateTaskDialog } from './create-task-dialog';
 
 export default function ProjectContentWrapper({ children }: IProjectContentWrapper) {
-  const [display, setDisplay] = useState<TDisplay>('board');
+  const [display, setDisplay] = useState<TDisplay>('list');
   const [activeTab, setActiveTab] = useState<Triggers>('to-do');
 
   return (
@@ -50,7 +50,7 @@ export default function ProjectContentWrapper({ children }: IProjectContentWrapp
               setActiveTab={setActiveTab}
             />
 
-            <CreateTaskButton />
+            <CreateTaskDialog />
           </div>
         )}
 
