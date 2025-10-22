@@ -40,7 +40,7 @@ export default function DashboardSidebar() {
   function handleSignOut() {
     signOutMutation.mutate(undefined, {
       onSuccess: () => {
-        router.push('/sign-in');
+        router.replace('/sign-in');
       },
     });
   }
@@ -172,9 +172,9 @@ const menu_links: IMenuLinkProps = {
       href: '#',
     },
     {
-      title: 'Achievements',
+      title: 'Goals',
       icon: Trophy,
-      href: '#',
+      href: '/goals',
     },
   ],
 };

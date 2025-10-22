@@ -23,15 +23,17 @@ export function OverlappingPfps({
         </Avatar>
       ))}
 
-      <div
-        className={cn(
-          'flex items-center justify-center bg-grey-100 border-2 border-white text-xs font-medium leading-[160%] text-grey-900 rounded-full z-50',
-          className,
-          margin,
-        )}
-      >
-        +{avatars.length - maxVisible}
-      </div>
+      {avatars.length > maxVisible && (
+        <div
+          className={cn(
+            'flex items-center justify-center bg-grey-100 border-2 border-white text-xs font-medium leading-[160%] text-grey-900 rounded-full z-50',
+            className,
+            margin,
+          )}
+        >
+          +{avatars.length - maxVisible}
+        </div>
+      )}
     </div>
   );
 }

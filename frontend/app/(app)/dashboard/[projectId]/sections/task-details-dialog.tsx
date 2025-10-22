@@ -90,7 +90,7 @@ function SelectStatus() {
 
 function AccordionContent() {
   return (
-    <div className='flex justify-between'>
+    <div className='w-full grid grid-cols-2 gap-x-2 gap-y-5 md:flex items-start justify-between md:gap-0'>
       <AccordionContentBlocks text='ASSIGNED TO'>
         <OverlappingPfps
           maxVisible={3}

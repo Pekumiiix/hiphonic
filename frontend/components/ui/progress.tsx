@@ -8,9 +8,9 @@ import { cn } from '@/lib/utils';
 function Progress({
   className,
   value,
-  indicatorColor,
+  indicatorStyle,
   ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Root> & { indicatorColor: string }) {
+}: React.ComponentProps<typeof ProgressPrimitive.Root> & { indicatorStyle?: React.CSSProperties }) {
   return (
     <ProgressPrimitive.Root
       data-slot='progress'
@@ -19,8 +19,8 @@ function Progress({
     >
       <ProgressPrimitive.Indicator
         data-slot='progress-indicator'
-        className={cn('h-full w-full flex-1 transition-all rounded-full', indicatorColor)}
-        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+        className='h-full w-full flex-1 transition-all rounded-full'
+        style={{ transform: `translateX(-${100 - (value || 0)}%)`, ...indicatorStyle }}
       />
     </ProgressPrimitive.Root>
   );

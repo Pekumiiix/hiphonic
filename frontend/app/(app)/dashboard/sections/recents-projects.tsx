@@ -42,7 +42,7 @@ function RecentCards() {
 
           <Progress
             value={55}
-            indicatorColor='bg-primary-600'
+            className='[&_[data-slot=progress-indicator]]:bg-primary-600'
           />
         </div>
       </div>

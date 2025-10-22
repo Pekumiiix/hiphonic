@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/provider/auth-provider';
 
-export default function AppNav({ variant = 'default' }: IAppNav) {
+export default function AppNav({ variant = 'default', title = 'Dashboard' }: IAppNav) {
   const { user, isLoading } = useAuth();
 
   return (
@@ -19,7 +19,7 @@ export default function AppNav({ variant = 'default' }: IAppNav) {
     >
       <div className='flex items-center gap-2.5'>
         <p className='hidden md:flex text-2xl font-bold text-grey-900 leading-[125%] traking-[0.2px]'>
-          Dashboard
+          {title}
         </p>
 
         <div className='flex md:hidden items-center gap-2'>
@@ -58,4 +58,5 @@ export default function AppNav({ variant = 'default' }: IAppNav) {
 
 interface IAppNav {
   variant?: 'default' | 'mobile';
+  title?: string;
 }

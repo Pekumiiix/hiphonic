@@ -47,3 +47,13 @@ export interface ITaskProps {
   due_date: string;
   status: 'to-do' | 'in-progress' | 'in-review' | 'done';
 }
+
+export interface IGoalCardProps {
+  status: 'active' | 'completed' | 'archived';
+  category: 'sales' | 'marketing' | 'engineering' | 'seo';
+  title: string;
+  description: string;
+  createdAt: Date;
+  dueDate: Date;
+  team: { username: string; src: string }[];
+}

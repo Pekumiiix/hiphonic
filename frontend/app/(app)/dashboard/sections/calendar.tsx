@@ -3,6 +3,8 @@
 import { ChevronLeft, ChevronRight, type LucideIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { months, weekDays } from '@/lib/constants';
+import { getDaysInMonth, getIsDateInCurrentMonth, getIsToday } from '@/lib/date';
 import { cn } from '@/lib/utils';
 
 export default function CalendarSection() {
@@ -10,7 +12,9 @@ export default function CalendarSection() {
 
   function navigateMonth(direction: number) {
     const newDate = new Date(currentDate);
+
     newDate.setMonth(newDate.getMonth() + direction);
+
     setCurrentDate(newDate);
   }
 
@@ -99,56 +103,6 @@ function DaysButton({ isToday = false, date, isCurrentMonth = false }: IDaysButt
 function DaysContainer({ day, className }: IDaysContainer) {
   return <div className={cn('w-full h-10 text-center', className)}>{day}</div>;
 }
-
-function getDaysInMonth(date: Date) {
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const firstDay = new Date(year, month, 1);
-  const startDate = new Date(firstDay);
-
-  startDate.setDate(startDate.getDate() - firstDay.getDay());
-
-  const days = [];
-  const current = new Date(startDate);
-
-  for (let i = 0; i < 42; i++) {
-    days.push(new Date(current));
-    current.setDate(current.getDate() + 1);
-  }
-
-  return days;
-}
-
-function getIsToday(date: Date) {
-  return (
-    date.getDate() === new Date().getDate() &&
-    date.getMonth() === new Date().getMonth() &&
-    date.getFullYear() === new Date().getFullYear()
-  );
-}
-
-function getIsDateInCurrentMonth(date: Date) {
-  return (
-    date.getMonth() === new Date().getMonth() && date.getFullYear() === new Date().getFullYear()
-  );
-}
-
-const months: string[] = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
-
-const weekDays: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 interface ICalendarButton {
   action: () => void;
