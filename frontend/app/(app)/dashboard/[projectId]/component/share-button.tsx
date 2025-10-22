@@ -17,8 +17,9 @@ export function ShareButton({ projectName }: IShareButtonProps) {
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-      } catch (_) {
+      } catch (error) {
         globalToasts.globalError('An error occurred while sharing.');
+        console.error(error);
       }
     } else {
       await handleCopyUrl();
@@ -36,8 +37,9 @@ export function ShareButton({ projectName }: IShareButtonProps) {
       await navigator.clipboard.writeText(currentUrl);
 
       globalToasts.globalSuccess('URL copied to clipboard!');
-    } catch (_) {
+    } catch (error) {
       globalToasts.globalError('Failed to copy URL. Please try again.');
+      console.error(error);
     }
   }
 
