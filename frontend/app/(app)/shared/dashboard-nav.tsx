@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/provider/auth-provider';
 
-export default function AppNav({ variant = 'default', title = 'Dashboard' }: IAppNav) {
+export default function DashboardNav({ variant = 'default', title = 'Dashboard' }: IAppNav) {
   const { user, isLoading } = useAuth();
 
   return (

@@ -1,10 +1,10 @@
 'use client';
 
 import {
+  Bell,
   LayoutDashboard,
   LogOut,
   type LucideIcon,
-  MessageCircleMore,
   Plus,
   SquareCheck,
   Trophy,
@@ -164,11 +164,11 @@ const menu_links: IMenuLinkProps = {
     {
       title: 'Tasks',
       icon: SquareCheck,
-      href: '#',
+      href: '/tasks',
     },
     {
-      title: 'Messages',
-      icon: MessageCircleMore,
+      title: 'Notifications',
+      icon: Bell,
       href: '#',
     },
     {

@@ -1,11 +1,17 @@
 'use client';
 
 import { SquareCheck } from 'lucide-react';
+import { QueryStateHandler } from '@/components/shared/query-state-handler';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { DashboardPopover } from '../components/dashboard-popover';
+import { ErrorState } from '../components/error-state';
 
 export default function RecentProjects() {
+  const isLoading = false;
+  const isError = false;
+
   return (
     <div className='w-full col-span-2 h-fit flex flex-col gap-4 p-4 md:py-6 md:px-5 rounded-xl bg-white'>
       <p className='font-bold text-grey-900'>Recents Projects</p>
@@ -13,9 +19,16 @@ export default function RecentProjects() {
       <Separator className='bg-grey-100' />
 
       <div className='flex flex-col md:grid grid-cols-3 gap-4'>
-        <RecentCards />
-        <RecentCards />
-        <RecentCards />
+        <QueryStateHandler
+          isLoading={isLoading}
+          isError={isError}
+          loading={<InnerLoadingState />}
+          error={<InnerErrorState />}
+        >
+          <RecentCards />
+          <RecentCards />
+          <RecentCards />
+        </QueryStateHandler>
       </div>
     </div>
   );
@@ -58,5 +71,24 @@ function RecentCards() {
         </p>
       </div>
     </div>
+  );
+}
+
+function InnerLoadingState() {
+  return Array.from({ length: 3 }).map((index) => (
+    <Skeleton
+      key={index + crypto.randomUUID()}
+      className='w-full !h-[115px]'
+    />
+  ));
+}
+
+function InnerErrorState() {
+  return (
+    <ErrorState
+      onRetry={() => console.log('Retry.')}
+      message='recent projects'
+      className='h-[115px] md:col-span-3'
+    />
   );
 }

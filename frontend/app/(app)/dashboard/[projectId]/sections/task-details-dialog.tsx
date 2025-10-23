@@ -68,7 +68,7 @@ function SelectStatus() {
       placeholder='Status'
       value={value}
       onValueChange={(val) => setValue(val as TStatus)}
-      triggerStyle={{ backgroundColor: RenderSelectBackground(value) }}
+      triggerStyle={{ backgroundColor: selectBackground[value] }}
       group={[
         {
           label: 'Status',
@@ -131,18 +131,12 @@ function AccordionContentBlocks({ children, text }: IAccordionContentBlocks) {
   );
 }
 
-function RenderSelectBackground(name: TStatus) {
-  if (name === 'in-progress') {
-    return '#2563EB';
-  }
-  if (name === 'in-review') {
-    return '#F6A723';
-  }
-  if (name === 'done') {
-    return '#24d164';
-  }
-  return '#0f172a';
-}
+const selectBackground: Record<TStatus, string> = {
+  'in-progress': '#2563EB',
+  'in-review': '#F6A723',
+  done: '#24d164',
+  '': '#0f172a',
+};
 
 const statusItem: IStatusItem[] = [
   { value: 'in-review', label: 'In review' },

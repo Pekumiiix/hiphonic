@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { projects } from '@/mock-data/projects';
-import AppNav from '../../shared/app-nav';
-import ProjectContent from './sections/project-content';
+import { tasks } from '@/mock-data/tasks';
+import DashboardNav from '../../shared/dashboard-nav';
+import TaskBoard from '../../shared/task/task-board';
 import ProjectNav from './sections/project-nav';
 
 export default async function ProjectPage({ params }: { params: Promise<{ projectId: string }> }) {
@@ -18,7 +19,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
     <>
       <ProjectNav projectName='Hiphonic' />
 
-      <AppNav variant='mobile' />
+      <DashboardNav variant='mobile' />
 
       <section className='w-full h-fit flex flex-col gap-6 max-md:mt-6'>
         <div className='px-4 md:hidden'>
@@ -28,7 +29,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
           />
         </div>
 
-        <ProjectContent />
+        <TaskBoard
+          tasks={tasks}
+          className='md:border-l-2'
+        />
       </section>
     </>
   );

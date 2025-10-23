@@ -3,12 +3,18 @@
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
+import { QueryStateHandler } from '@/components/shared/query-state-handler';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { DashboardPopover } from '../components/dashboard-popover';
+import { ErrorState } from '../components/error-state';
+import { LoadingState } from '../components/loading-state';
 
 export default function TodaysTasks() {
+  const isLoading = false;
+  const isError = false;
+
   return (
     <div className='col-span-2 flex flex-col gap-3'>
       <div className='flex items-center justify-between'>
@@ -26,8 +32,15 @@ export default function TodaysTasks() {
         </Button>
       </div>
 
-      <TaskListItem />
-      <TaskListItem />
+      <QueryStateHandler
+        isLoading={isLoading}
+        isError={isError}
+        loading={<InnerLoadingState />}
+        error={<InnerErrorState />}
+      >
+        <TaskListItem />
+        <TaskListItem />
+      </QueryStateHandler>
     </div>
   );
 }
@@ -63,5 +76,24 @@ function BadgeWrapper({ status }: { status: 'pending' | 'in review' | 'completed
     >
       {status}
     </Badge>
+  );
+}
+
+function InnerLoadingState() {
+  return (
+    <LoadingState
+      message='tasks'
+      className='h-[120px]'
+    />
+  );
+}
+
+function InnerErrorState() {
+  return (
+    <ErrorState
+      message='task'
+      onRetry={() => console.log('Retry')}
+      className='h-[120px]'
+    />
   );
 }

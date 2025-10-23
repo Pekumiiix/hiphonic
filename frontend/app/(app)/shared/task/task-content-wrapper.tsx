@@ -6,15 +6,20 @@ import { useState } from 'react';
 import { BaseUISelect } from '@/components/reuseable/base-ui-select';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { CreateTaskDialog } from './create-task-dialog';
+import { CreateTaskDialog } from '../../dashboard/[projectId]/sections/create-task-dialog';
 
-export default function ProjectContentWrapper({ children }: IProjectContentWrapper) {
+export function TaskContentWrapper({ children, className }: IProjectContentWrapper) {
   const [display, setDisplay] = useState<TDisplay>('list');
   const [activeTab, setActiveTab] = useState<Triggers>('to-do');
 
   return (
     <div className='w-full h-full flex flex-col px-4 max-md:gap-6 md:px-0'>
-      <div className='w-full flex items-center justify-between p-2 md:px-8 md:py-4 bg-white md:border-l-2 border-grey-100 max-md:rounded-[10px]'>
+      <div
+        className={cn(
+          'w-full flex items-center justify-between p-2 md:px-8 md:py-4 bg-white border-grey-100 max-md:rounded-[10px]',
+          className,
+        )}
+      >
         <div className='flex gap-2'>
           <ActionButtons
             Icon={List}
@@ -164,6 +169,7 @@ type Triggers = 'to-do' | 'in-progress' | 'in-review' | 'done';
 
 interface IProjectContentWrapper {
   children: (display: TDisplay, activeTab: Triggers) => React.ReactNode;
+  className?: string;
 }
 
 interface IToggleButtonProps {

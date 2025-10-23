@@ -1,17 +1,28 @@
-import { AlertCircle, CheckCircle, Info, User } from 'lucide-react';
+import { AlertCircle, CheckCircle, Info, type LucideIcon, User } from 'lucide-react';
+import { QueryStateHandler } from '@/components/shared/query-state-handler';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { notifications } from '@/mock-data/notification';
+import { ErrorState } from '../components/error-state';
 
 export default function NotificationsCard() {
+  const isLoading = false;
+  const isError = false;
+
   return (
     <div className='flex flex-col gap-4 p-4 md:py-5 md:px-6 rounded-xl bg-white'>
       <p className='font-bold text-grey-900 leading-[150%] tracking-[0.2px]'>Notifications</p>
 
       <Separator className='w-full border-grey-100' />
 
-      <div className='flex flex-col gap-2'>
+      <QueryStateHandler
+        isLoading={isLoading}
+        isError={isError}
+        loading={<InnerLoadingState />}
+        error={<InnerErrorState />}
+      >
         {notifications.slice(0, 2).map((notification) => (
           <NotificationItem
             key={notification.title}
@@ -22,14 +33,16 @@ export default function NotificationsCard() {
             isRead={notification.isRead}
           />
         ))}
-      </div>
+      </QueryStateHandler>
 
-      <Button
-        variant='ghost'
-        className='w-full h-12 text-sm font-bold leading-[160%] text-grey-900 hover:bg-grey-100'
-      >
-        See all
-      </Button>
+      {!isError && (
+        <Button
+          variant='ghost'
+          className='w-full h-12 text-sm font-bold leading-[160%] text-grey-900 hover:bg-grey-100'
+        >
+          See all
+        </Button>
+      )}
     </div>
   );
 }
@@ -68,14 +81,33 @@ function NotificationItem({ isRead, title, type, message }: INotificationItemPro
   );
 }
 
-const notificationIcons = {
+function InnerLoadingState() {
+  return Array.from({ length: 2 }).map((index) => (
+    <Skeleton
+      key={index + crypto.randomUUID()}
+      className='w-full !h-[90px]'
+    />
+  ));
+}
+
+function InnerErrorState() {
+  return (
+    <ErrorState
+      message='notifications'
+      onRetry={() => console.log('Retry')}
+      className='h-[236px]'
+    />
+  );
+}
+
+const notificationIcons: Record<INotificationItemProps['type'], LucideIcon> = {
   info: Info,
   success: CheckCircle,
   warning: AlertCircle,
   user: User,
 };
 
-const notificationColors = {
+const notificationColors: Record<INotificationItemProps['type'], string> = {
   info: 'text-blue-500 bg-blue-100',
   success: 'text-green-500 bg-green-100',
   warning: 'text-amber-500 bg-amber-100',

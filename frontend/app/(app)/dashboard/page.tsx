@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import AppNav from '../shared/app-nav';
+import DashboardNav from '../shared/dashboard-nav';
 import ActivitySummary from './sections/activity-summary';
 import CalendarSection from './sections/calendar';
 import NotificationsCard from './sections/notifications';
@@ -10,7 +10,7 @@ import TodaysTasks from './sections/todays-tasks';
 export default function DashboardPage() {
   return (
     <>
-      <AppNav />
+      <DashboardNav />
 
       <section className='w-full grid grid-cols-2 xl:grid-cols-3 gap-6 px-4 md:px-8 py-6'>
         <div className='w-full h-fit col-span-2 flex flex-col md:grid grid-col-2 max-md:justify-center gap-6'>

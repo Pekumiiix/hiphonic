@@ -1,26 +1,21 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-export function BasePopover({
-  className,
-  children,
-  trigger,
-}: {
+export function BasePopover({ className, children, trigger }: IBasePopover) {
+  return (
+    <Popover>
+      <PopoverTrigger
+        asChild
+        className={className}
+      >
+        <div className='flex'>{trigger}</div>
+      </PopoverTrigger>
+      <PopoverContent className='max-w-[120px] flex flex-col gap-1 p-2'>{children}</PopoverContent>
+    </Popover>
+  );
+}
+
+interface IBasePopover {
   className?: string;
   trigger: React.ReactNode;
   children: React.ReactNode;
-}) {
-  return (
-    <Popover>
-      <PopoverTrigger className={className}>
-        <div className="flex">{trigger}</div>
-      </PopoverTrigger>
-      <PopoverContent className="max-w-[120px] flex flex-col gap-1 p-2">
-        {children}
-      </PopoverContent>
-    </Popover>
-  );
 }

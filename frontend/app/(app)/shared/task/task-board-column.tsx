@@ -1,8 +1,7 @@
 import { cn } from '@/lib/utils';
-import { CreateTaskDialog } from './create-task-dialog';
-// import { TaskDetailsDialog } from './task-details-dialog';
+import { CreateTaskDialog } from '../../dashboard/[projectId]/sections/create-task-dialog';
 
-export default function ProjectColumn({ name, children, display }: IProjectProps) {
+export function TaskBoardColumn({ name, children, display }: IProjectProps) {
   return (
     <div
       className={cn('flex flex-col', {
@@ -17,7 +16,7 @@ export default function ProjectColumn({ name, children, display }: IProjectProps
       >
         <p
           className='font-bold leading-[160%]'
-          style={{ color: RenderColumnNameColor(name) }}
+          style={{ color: columnNameColor[name] }}
         >
           {name}
         </p>
@@ -31,18 +30,12 @@ export default function ProjectColumn({ name, children, display }: IProjectProps
   );
 }
 
-function RenderColumnNameColor(name: IProjectProps['name']) {
-  if (name === 'In Progress') {
-    return '#2563EB';
-  }
-  if (name === 'In Review') {
-    return '#F6A723';
-  }
-  if (name === 'Done') {
-    return '#24d164';
-  }
-  return '#0f172a';
-}
+const columnNameColor: Record<IProjectProps['name'], string> = {
+  'To Do': '#0f172a',
+  'In Progress': '#2563EB',
+  'In Review': '#F6A723',
+  Done: '#24d164',
+};
 
 interface IProjectProps {
   name: 'To Do' | 'In Progress' | 'In Review' | 'Done';
