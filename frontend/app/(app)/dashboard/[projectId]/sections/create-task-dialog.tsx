@@ -9,6 +9,7 @@ import {
   useForm,
 } from 'react-hook-form';
 import { z } from 'zod';
+import { TaskCategoryTag } from '@/app/(app)/shared/task/task-card-components';
 import { BaseAccordion } from '@/components/reuseable/base-accordion';
 import { BaseAvatar } from '@/components/reuseable/base-avatar';
 import { BaseDatePicker } from '@/components/reuseable/base-date-picker';
@@ -17,7 +18,6 @@ import { BaseUISelect } from '@/components/reuseable/base-ui-select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { CategoryBlock } from '../component/category-block';
 import { RenderTaskDate } from '../component/render-task-date';
 import { TaskDialogWrapper } from '../component/task-dialog-wrapper';
 
@@ -245,9 +245,9 @@ function Placeholder({ image, text }: { image: string; text: string }) {
 }
 
 const categories: { label: React.ReactNode; value: string }[] = [
-  { label: <CategoryBlock category='development' />, value: 'development' },
-  { label: <CategoryBlock category='design' />, value: 'design' },
-  { label: <CategoryBlock category='planning' />, value: 'planning' },
+  { label: <TaskCategoryTag category='development' />, value: 'development' },
+  { label: <TaskCategoryTag category='design' />, value: 'design' },
+  { label: <TaskCategoryTag category='planning' />, value: 'planning' },
 ];
 
 type TaskSchema = z.infer<typeof taskSchema>;

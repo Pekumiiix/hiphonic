@@ -8,9 +8,13 @@ export function TaskDialogWrapper({
   description,
   children,
   space = 'Personal',
+  open = false,
+  setOpen,
 }: ITaskDialogWrapper) {
   return (
     <BaseDialog
+      open={open}
+      onClose={setOpen}
       trigger={trigger}
       title={title}
       description={description}
@@ -35,9 +39,11 @@ export function TaskDialogWrapper({
 }
 
 interface ITaskDialogWrapper {
-  trigger: React.ReactNode;
+  trigger?: React.ReactNode;
   title: string;
   description: string;
   children: React.ReactNode;
   space?: string;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
 }

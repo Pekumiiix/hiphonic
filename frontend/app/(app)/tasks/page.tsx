@@ -7,7 +7,7 @@ import TaskBoard from '../shared/task/task-board';
 import { ErrorState } from './component/error-state';
 
 export default function TasksPage() {
-  const isError = true;
+  const isError = false;
 
   return (
     <>
@@ -22,7 +22,7 @@ export default function TasksPage() {
         <section className='w-full h-fit flex flex-col gap-6 border-t border-grey-100 max-md:mt-6'>
           <TaskBoard
             tasks={tasks}
-            className='md:border-l'
+            className='md:border-l-[2px]'
           />
         </section>
       </QueryStateHandler>

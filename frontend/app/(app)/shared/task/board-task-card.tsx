@@ -7,7 +7,7 @@ import {
   TaskDescription,
   TaskDetailsSkeleton,
   TaskTitle,
-} from './task-card-parts';
+} from './task-card-components';
 
 export function BoardTaskCard({
   image,
