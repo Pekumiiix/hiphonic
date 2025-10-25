@@ -1,6 +1,20 @@
 {
   "dependencies": {},
   "devDependencies": {
-    "@biomejs/biome": "2.0.6"
+    "@biomejs/biome": "2.0.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6"
+  },
+  "scripts": {
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "frontend/**/*.{js,jsx,ts,tsx,json,css,md}": [
+      "bunx biome check --apply"
+    ],
+    "backend/**/*.{js,ts,json,md}": [
+      "bunx biome check --apply",
+      "bun --cwd backend typecheck"
+    ]
   }
 }
