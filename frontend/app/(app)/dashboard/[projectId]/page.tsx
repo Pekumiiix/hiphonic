@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { projects } from '@/mock-data/projects';
 import { tasks } from '@/mock-data/tasks';
 import DashboardNav from '../../shared/dashboard-nav';
-import TaskBoard from '../../shared/task/task-board';
+import TaskBoard from '../../shared/task-card/task-board';
 import ProjectNav from './sections/project-nav';
 
 export default async function ProjectPage({ params }: { params: Promise<{ projectId: string }> }) {

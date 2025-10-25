@@ -9,7 +9,7 @@ import {
   useForm,
 } from 'react-hook-form';
 import { z } from 'zod';
-import { TaskCategoryTag } from '@/app/(app)/shared/task/task-card-components';
+import { TaskCategoryTag } from '@/app/(app)/shared/task-card/task-card-components';
 import { BaseAccordion } from '@/components/reuseable/base-accordion';
 import { BaseAvatar } from '@/components/reuseable/base-avatar';
 import { BaseDatePicker } from '@/components/reuseable/base-date-picker';
@@ -18,8 +18,8 @@ import { BaseUISelect } from '@/components/reuseable/base-ui-select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { RenderTaskDate } from '../component/render-task-date';
-import { TaskDialogWrapper } from '../component/task-dialog-wrapper';
+import { RenderTaskDate } from './task-dialog-components';
+import { TaskDialogWrapper } from './task-dialog-wrapper';
 
 const taskSchema = z.object({
   name: z.string(),

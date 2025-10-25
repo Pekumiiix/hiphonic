@@ -1,4 +1,5 @@
 import { AlertCircle, CheckCircle, Info, type LucideIcon, User } from 'lucide-react';
+import Link from 'next/link';
 import { QueryStateHandler } from '@/components/shared/query-state-handler';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -35,12 +36,13 @@ export default function NotificationsCard() {
         ))}
       </QueryStateHandler>
 
-      {!isError && (
+      {!isError && !isLoading && (
         <Button
+          asChild
           variant='ghost'
           className='w-full h-12 text-sm font-bold leading-[160%] text-grey-900 hover:bg-grey-100'
         >
-          See all
+          <Link href='/notification'>See all</Link>
         </Button>
       )}
     </div>

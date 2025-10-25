@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { BaseUISelect } from '@/components/reuseable/base-ui-select';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { CreateTaskDialog } from '../../dashboard/[projectId]/sections/create-task-dialog';
+import { CreateTaskDialog } from '../task-dialog/create-task-dialog';
 
 export function TaskContentWrapper({ children, className }: IProjectContentWrapper) {
   const [display, setDisplay] = useState<TDisplay>('list');

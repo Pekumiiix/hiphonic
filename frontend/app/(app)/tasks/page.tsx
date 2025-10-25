@@ -3,7 +3,7 @@
 import { QueryStateHandler } from '@/components/shared/query-state-handler';
 import { tasks } from '@/mock-data/tasks';
 import DashboardNav from '../shared/dashboard-nav';
-import TaskBoard from '../shared/task/task-board';
+import TaskBoard from '../shared/task-card/task-board';
 import { ErrorState } from './component/error-state';
 
 export default function TasksPage() {

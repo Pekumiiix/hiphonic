@@ -169,7 +169,7 @@ const menu_links: IMenuLinkProps = {
     {
       title: 'Notifications',
       icon: Bell,
-      href: '#',
+      href: '/notification',
     },
     {
       title: 'Goals',

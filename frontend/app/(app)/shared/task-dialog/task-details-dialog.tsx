@@ -2,7 +2,7 @@
 
 import { ChevronDown, Clock4, Send } from 'lucide-react';
 import { useState } from 'react';
-import { TaskCategoryTag } from '@/app/(app)/shared/task/task-card-components';
+import { TaskCategoryTag } from '@/app/(app)/shared/task-card/task-card-components';
 import { BaseAccordion } from '@/components/reuseable/base-accordion';
 import { BaseAvatar } from '@/components/reuseable/base-avatar';
 import { BaseUISelect } from '@/components/reuseable/base-ui-select';
@@ -10,8 +10,8 @@ import { OverlappingPfps } from '@/components/shared/overlapping-pfps';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/provider/auth-provider';
-import { RenderTaskDate } from '../component/render-task-date';
-import { TaskDialogWrapper } from '../component/task-dialog-wrapper';
+import { RenderTaskDate } from './task-dialog-components';
+import { TaskDialogWrapper } from './task-dialog-wrapper';
 
 export function TaskDetailsDialog({ open = false, setOpen }: ITaskDetailsDialog) {
   return (

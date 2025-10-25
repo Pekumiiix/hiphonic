@@ -10,11 +10,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { truncateSentence } from '@/utils/truncate';
-import { TaskDetailsDialog } from '../[projectId]/sections/task-details-dialog';
 import { DashboardPopoverWrapper } from '../components/dashboard-popover-wrapper';
 import { EmptyState } from '../components/empty-state';
 import { ErrorState } from '../components/error-state';
 import { LoadingState } from '../components/loading-state';
+import { TaskDetailsDialog } from '../../shared/task-dialog/task-details-dialog';
 
 export default function TodaysTasks() {
   const isLoading = false;

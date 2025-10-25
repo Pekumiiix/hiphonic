@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo } from 'react';
-import { BoardTaskCard, BoardTaskCardSkeleton } from '@/app/(app)/shared/task/board-task-card';
-import { ListTaskCard, ListTaskCardSkeleton } from '@/app/(app)/shared/task/list-task-card';
-import { TaskContentWrapper } from '@/app/(app)/shared/task/task-content-wrapper';
+import { BoardTaskCard, BoardTaskCardSkeleton } from '@/app/(app)/shared/task-card/board-task-card';
+import { ListTaskCard, ListTaskCardSkeleton } from '@/app/(app)/shared/task-card/list-task-card';
+import { TaskContentWrapper } from '@/app/(app)/shared/task-card/task-content-wrapper';
 import { QueryStateHandler } from '@/components/shared/query-state-handler';
 import type { ITaskCardProps, ITaskProps } from '@/types';
 import { TaskBoardColumn } from './task-board-column';
