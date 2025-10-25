@@ -24,7 +24,7 @@ export default function TodaysTasks() {
   return (
     <div className='col-span-2 flex flex-col gap-3'>
       <div className='flex items-center justify-between'>
-        <p className='font-bold text-grey-900 leading-[160%]'>Today's Task</p>
+        <p className='font-bold text-grey-900 leading-[160%]'>Today&apos;s Tasks</p>
 
         <Button
           asChild
