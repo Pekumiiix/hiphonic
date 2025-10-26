@@ -38,7 +38,12 @@ export function BaseUISelect({
       >
         <SelectValue className={classNames?.value}>
           {(value) => {
-            if (!value) return placeholder || '';
+            const hasValue = multiple ? Array.isArray(value) && value.length > 0 : !!value;
+
+            if (!hasValue) {
+              return placeholder || '';
+            }
+
             if (renderValue) return renderValue(value);
 
             const item = group.flatMap((g) => g.item).find((item) => item.value === value);

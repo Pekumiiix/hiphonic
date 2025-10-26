@@ -1,5 +1,6 @@
 import { Calendar1, MessageCircleMore } from 'lucide-react';
 import { OverlappingPfps } from '@/components/shared/overlapping-pfps';
+import { CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import type { ITaskCardProps, TCategory } from '@/types';
@@ -8,17 +9,21 @@ import { InfoBadge } from '../info-badge';
 
 export function TaskTitle({ title, category }: Pick<ITaskCardProps, 'title' | 'category'>) {
   return (
-    <div className='flex flex-col gap-1'>
-      <p className='font-semibold text-grey-900 leading-[150%]'>{title}</p>
+    <CardHeader className='flex flex-col gap-1 p-0 m-0'>
+      <CardTitle className='min-w-[140px] font-semibold text-grey-900 leading-[150%]'>
+        {title}
+      </CardTitle>
 
       <TaskCategoryTag category={category} />
-    </div>
+    </CardHeader>
   );
 }
 
 export function TaskDescription({ description, className }: ITaskDescription) {
   return (
-    <p className={cn('text-xs text-grey-500', className)}>{truncateSentence(description, 66)}</p>
+    <CardDescription className={cn('text-xs text-grey-500', className)}>
+      {truncateSentence(description, 66)}
+    </CardDescription>
   );
 }
 
@@ -41,8 +46,8 @@ export function TaskCategoryTag({ category }: { category: TCategory }) {
 
 export function TaskCardDetails({ due_date, comment, variant, avatars }: ITaskDetails) {
   return (
-    <div
-      className={cn('flex items-center', {
+    <CardFooter
+      className={cn('flex items-center p-0 m-0', {
         'max-md:justify-between md:gap-[60px] lg:gap-16': variant === 'list',
         'justify-between': variant === 'grid',
       })}
@@ -64,7 +69,7 @@ export function TaskCardDetails({ due_date, comment, variant, avatars }: ITaskDe
         maxVisible={2}
         avatars={avatars}
       />
-    </div>
+    </CardFooter>
   );
 }
 

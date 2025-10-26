@@ -8,7 +8,7 @@ export function TaskDialogWrapper({
   description,
   children,
   space = 'Personal',
-  open = false,
+  open,
   setOpen,
 }: ITaskDialogWrapper) {
   return (

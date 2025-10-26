@@ -15,6 +15,7 @@ import { BaseAvatar } from '@/components/reuseable/base-avatar';
 import { BaseDatePicker } from '@/components/reuseable/base-date-picker';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
 import { BaseUISelect } from '@/components/reuseable/base-ui-select';
+import { OverlappingPfps } from '@/components/shared/overlapping-pfps';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -34,6 +35,7 @@ export function CreateTaskDialog() {
     resolver: zodResolver(taskSchema),
     defaultValues: {
       category: 'development',
+      assignee: [],
     },
   });
 
@@ -204,6 +206,7 @@ function AsigneeSelect({ value, onValueChange }: IAsigneeSelect) {
           text='No asignee'
         />
       }
+      renderValue={(val) => <RenderAssignValue val={val} />}
       onValueChange={(val) => handleChange(val as string[])}
       classNames={{
         trigger: 'p-0 rounded-[2px] border-none shadow-none w-full',
@@ -230,7 +233,26 @@ function AsigneeSelectItem() {
   );
 }
 
-function Placeholder({ image, text }: { image: string; text: string }) {
+function RenderAssignValue({ val }: { val: { label: React.ReactNode; value: string }[] }) {
+  return (
+    <div className='flex items-center'>
+      {val.map((item) => (
+        <OverlappingPfps
+          key={item.value}
+          maxVisible={3}
+          avatars={[{ username: 'Pelumi', src: '' }]}
+          className='size-10'
+        />
+      ))}
+
+      <div className='flex items-center justify-center size-10 -ml-3 z-50 rounded-full border-2 border-white bg-grey-50'>
+        <Plus size={20} />
+      </div>
+    </div>
+  );
+}
+
+function Placeholder({ image, text }: IPlaceholder) {
   return (
     <div className='w-full flex items-center gap-3'>
       <Image
@@ -262,4 +284,9 @@ interface ICustomFieldProps {
 interface IAsigneeSelect {
   value: string[];
   onValueChange?: (value: string[]) => void;
+}
+
+interface IPlaceholder {
+  image: string;
+  text: string;
 }
