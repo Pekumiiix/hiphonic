@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import { useSearchParams } from '@/hooks/use-search-params';
 import { globalToasts } from '@/lib/toasts';
 import { useAuth } from '@/provider/auth-provider';
-import AlternativeAuthMethod from '../components/alternative-auth-method';
-import FormContainer from '../components/form-container';
+import AlternativeAuthMethod from '../shared/alternative-auth-method';
+import FormContainer from '../shared/form-container';
 import SignInForm from './sections/sign-in-form';
 
 export default function SignInPage() {

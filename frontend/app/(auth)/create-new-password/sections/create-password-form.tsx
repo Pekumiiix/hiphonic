@@ -9,11 +9,11 @@ import type { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
 import { Button } from '@/components/ui/button';
 import { useCreateNewPassword } from '@/hooks/use-auth';
-import { AuthLogo } from '../../components/auth-logo';
-import { ConfirmationButton } from '../../components/confirmation-button';
-import FormContainer from '../../components/form-container';
-import { PasswordInput } from '../../components/password-input';
-import { ResultState } from '../../components/result-state';
+import { AuthLogo } from '../../shared/auth-logo';
+import { ConfirmationButton } from '../../shared/confirmation-button';
+import FormContainer from '../../shared/form-container';
+import { PasswordInput } from '../../shared/password-input';
+import { ResultState } from '../../shared/result-state';
 import { createPasswordSchema } from '../schema';
 
 export default function CreateNewPasswordForm({ token }: { token: string }) {

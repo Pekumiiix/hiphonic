@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useVerifyEmail } from '@/hooks/use-auth';
 import { useSearchParams } from '@/hooks/use-search-params';
-import { AuthLogo } from '../components/auth-logo';
-import { ResultState } from '../components/result-state';
+import { AuthLogo } from '../shared/auth-logo';
+import { ResultState } from '../shared/result-state';
 import Loading from './loading';
 
 export default function VerifyEmailPage() {

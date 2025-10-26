@@ -10,13 +10,13 @@ import { FormBase, FormField } from '@/components/reuseable/base-form';
 import { Label } from '@/components/ui/label';
 import { useSignUp } from '@/hooks/use-auth';
 import { globalToasts } from '@/lib/toasts';
-import AlternativeAuthMethod from '../../components/alternative-auth-method';
-import { AuthInput } from '../../components/auth-input';
-import { AuthLogo } from '../../components/auth-logo';
-import { ConfirmationButton } from '../../components/confirmation-button';
-import FormContainer from '../../components/form-container';
-import { PasswordInput } from '../../components/password-input';
-import { ResultState } from '../../components/result-state';
+import AlternativeAuthMethod from '../../shared/alternative-auth-method';
+import { AuthInput } from '../../shared/auth-input';
+import { AuthLogo } from '../../shared/auth-logo';
+import { ConfirmationButton } from '../../shared/confirmation-button';
+import FormContainer from '../../shared/form-container';
+import { PasswordInput } from '../../shared/password-input';
+import { ResultState } from '../../shared/result-state';
 import { type SignUpData, signUpSchema } from '../schema';
 
 export default function SignUpForm() {

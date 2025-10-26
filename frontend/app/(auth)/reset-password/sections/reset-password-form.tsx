@@ -11,9 +11,9 @@ import { Button } from '@/components/ui/button';
 import { useResetPassword } from '@/hooks/use-auth';
 import { globalToasts } from '@/lib/toasts';
 import { formatTime } from '@/utils/format-time';
-import { AuthInput } from '../../components/auth-input';
-import { ConfirmationButton } from '../../components/confirmation-button';
-import FormContainer from '../../components/form-container';
+import { AuthInput } from '../../shared/auth-input';
+import { ConfirmationButton } from '../../shared/confirmation-button';
+import FormContainer from '../../shared/form-container';
 
 const resetPasswordSchema = z.object({
   email: z
