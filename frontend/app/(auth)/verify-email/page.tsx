@@ -1,7 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { QueryStateHandler } from '@/components/shared/query-state-handler';
 import { useVerifyEmail } from '@/hooks/use-auth';
 import { useSearchParams } from '@/hooks/use-search-params';
 import { AuthLogo } from '../shared/auth-logo';
@@ -9,12 +10,9 @@ import { ResultState } from '../shared/result-state';
 import Loading from './loading';
 
 export default function VerifyEmailPage() {
-  const [errorMessage, setErrorMessage] = useState<string>('Something went wrong.');
-  const [success, setSuccess] = useState<boolean | null>(null);
-
   const verifyEmailMutation = useVerifyEmail();
 
-  const { mutate, isPending } = verifyEmailMutation;
+  const { mutate, isPending, isError, error } = verifyEmailMutation;
 
   const { get } = useSearchParams();
 
@@ -24,42 +22,62 @@ export default function VerifyEmailPage() {
 
   useEffect(() => {
     if (!token || token === undefined) {
-      router.push('/sign-in');
+      router.replace('/sign-in');
       return;
     }
 
-    mutate(
-      { token: token },
-      {
-        onSuccess: () => {
-          setSuccess(true);
-        },
-        onError: (data) => {
-          setErrorMessage(data.message);
-          setSuccess(false);
-        },
-      },
-    );
+    mutate({ token: token });
   }, [router, token, mutate]);
 
-  if (success === null) {
-    return (
+  return (
+    <QueryStateHandler
+      isLoading={isPending}
+      isError={isError}
+      loading={<LoadingState />}
+      error={
+        <ErrorState
+          error={error}
+          isPending={isPending}
+        />
+      }
+    >
       <div className='w-full h-full flex flex-col'>
         <AuthLogo />
-        <Loading />
+        <ResultState
+          image='/assets/auth/check.gif'
+          name='Email has been verified successfully, procced to sign in.'
+          alt='Checkmark'
+          isLoading={isPending}
+        />
       </div>
-    );
-  }
+    </QueryStateHandler>
+  );
+}
 
+function LoadingState() {
+  return (
+    <div className='w-full h-full flex flex-col'>
+      <AuthLogo />
+      <Loading />
+    </div>
+  );
+}
+
+function ErrorState({ error, isPending }: IErrorState) {
   return (
     <div className='w-full h-full flex flex-col'>
       <AuthLogo />
       <ResultState
-        image={success ? '/assets/auth/check.gif' : '/assets/auth/error.gif'}
-        name={success ? 'Email has been verified successfully, procced to sign in.' : errorMessage}
-        alt={success ? 'Checkmark' : 'Error'}
+        image='/assets/auth/error.gif'
+        name={error?.message || 'Something went wrong'}
+        alt='Error'
         isLoading={isPending}
       />
     </div>
   );
+}
+
+interface IErrorState {
+  error: Error | null;
+  isPending: boolean;
 }
