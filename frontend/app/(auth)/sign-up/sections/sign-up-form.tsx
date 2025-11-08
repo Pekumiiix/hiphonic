@@ -1,15 +1,17 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { UseMutateFunction } from '@tanstack/react-query';
 import { Mail, User } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
 import { Label } from '@/components/ui/label';
 import { useSignUp } from '@/hooks/use-auth';
 import { globalToasts } from '@/lib/toasts';
+import type { IApiResponse } from '@/types/api';
+import type { ISignUpPayLoad } from '@/types/auth';
 import AlternativeAuthMethod from '../../shared/alternative-auth-method';
 import { AuthInput } from '../../shared/auth-input';
 import { AuthLogo } from '../../shared/auth-logo';
@@ -20,40 +22,44 @@ import { ResultState } from '../../shared/result-state';
 import { type SignUpData, signUpSchema } from '../schema';
 
 export default function SignUpForm() {
-  const [success, setSuccess] = useState<boolean>(false);
+  const signUpMutation = useSignUp();
 
-  return success ? (
-    <div className='w-full h-full flex flex-col'>
-      <AuthLogo />
+  const { mutate, isSuccess, isPending } = signUpMutation;
 
-      <ResultState
-        name='Check your email for your verification link.'
-        showButton={false}
-      />
-    </div>
-  ) : (
+  if (isSuccess) {
+    return (
+      <div className='w-full h-full flex flex-col'>
+        <AuthLogo />
+
+        <ResultState
+          name='Check your email for your verification link.'
+          showButton={false}
+        />
+      </div>
+    );
+  }
+
+  return (
     <FormContainer headline='Sign Up for an Account'>
-      <AuthForm setSuccess={setSuccess} />
+      <AuthForm
+        mutate={mutate}
+        isPending={isPending}
+      />
 
       <AlternativeAuthMethod />
     </FormContainer>
   );
 }
 
-function AuthForm({ setSuccess }: { setSuccess: (success: boolean) => void }) {
+function AuthForm({ mutate, isPending }: IAuthForm) {
   const form = useForm<SignUpData>({
     resolver: zodResolver(signUpSchema),
   });
-
-  const signUpMutation = useSignUp();
-
-  const { mutate, isPending } = signUpMutation;
 
   async function onSubmit(data: SignUpData) {
     mutate(
       { ...data, email: data.email.toLowerCase() },
       {
-        onSuccess: () => setSuccess(true),
         onError: (data) => {
           const field = errorMap[data.message];
           if (field) {
@@ -148,3 +154,8 @@ const errorMap: Record<string, 'email' | 'username'> = {
   'Email is already registered': 'email',
   'Username is already taken': 'username',
 };
+
+interface IAuthForm {
+  mutate: UseMutateFunction<IApiResponse, Error, ISignUpPayLoad, unknown>;
+  isPending: boolean;
+}

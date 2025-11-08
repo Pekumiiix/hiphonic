@@ -21,8 +21,10 @@ export const signInSchema = z.object({
   rememberMe: z.boolean().optional(),
 });
 
-export const defaultSignInValue: z.infer<typeof signInSchema> = {
+export const defaultSignInValue: SignInData = {
   email: isDevelopment ? process.env.NEXT_PUBLIC_TEST_EMAIL || '' : '',
   password: isDevelopment ? process.env.NEXT_PUBLIC_TEST_PASSWORD || '' : '',
   rememberMe: false,
 };
+
+export type SignInData = z.infer<typeof signInSchema>;

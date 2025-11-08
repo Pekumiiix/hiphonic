@@ -3,64 +3,41 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import type { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
 import { Button } from '@/components/ui/button';
 import { useCreateNewPassword } from '@/hooks/use-auth';
-import { AuthLogo } from '../../shared/auth-logo';
+import { globalToasts } from '@/lib/toasts';
 import { ConfirmationButton } from '../../shared/confirmation-button';
 import FormContainer from '../../shared/form-container';
 import { PasswordInput } from '../../shared/password-input';
-import { ResultState } from '../../shared/result-state';
-import { createPasswordSchema } from '../schema';
+import {
+  type CreateNewPasswordData,
+  createNewPasswordDefaultValues,
+  createPasswordSchema,
+} from '../schema';
 
 export default function CreateNewPasswordForm({ token }: { token: string }) {
-  const [success, setSuccess] = useState<boolean>(false);
-
-  return success ? (
-    <div className='w-full h-full flex flex-col'>
-      <AuthLogo />
-      <ResultState
-        name='You have successfully changed password.'
-        showButton
-      />
-    </div>
-  ) : (
-    <CreatePasswordForm
-      token={token}
-      setSuccess={setSuccess}
-    />
-  );
-}
-
-function CreatePasswordForm({ setSuccess, token }: ICreatePasswordForm) {
   const createNewPasswordMutation = useCreateNewPassword();
 
   const { mutate, isPending } = createNewPasswordMutation;
 
   const router = useRouter();
 
-  const form = useForm<TCreateNewPasswordData>({
+  const form = useForm<CreateNewPasswordData>({
     resolver: zodResolver(createPasswordSchema),
-    defaultValues: {
-      password: '',
-      confirmPassword: '',
-    },
+    defaultValues: createNewPasswordDefaultValues,
   });
 
-  async function onSubmit(data: TCreateNewPasswordData) {
+  async function onSubmit(data: CreateNewPasswordData) {
     const newPassword = data.password;
+
     mutate(
       { newPassword, token: token ?? '' },
       {
         onSuccess: () => {
-          setSuccess(true);
-          router.replace('/create-new-password');
-        },
-        onError: () => {
-          setSuccess(false);
+          router.replace('/sign-in');
+          globalToasts.globalSuccess('Redirecting to sign-in page.');
         },
       },
     );
@@ -88,6 +65,7 @@ function CreatePasswordForm({ setSuccess, token }: ICreatePasswordForm) {
             isLoading={isPending}
             name='Continue'
           />
+
           <Button
             asChild
             variant='outline'
@@ -100,10 +78,3 @@ function CreatePasswordForm({ setSuccess, token }: ICreatePasswordForm) {
     </FormContainer>
   );
 }
-
-interface ICreatePasswordForm {
-  setSuccess: (success: boolean) => void;
-  token: string;
-}
-
-type TCreateNewPasswordData = z.infer<typeof createPasswordSchema>;

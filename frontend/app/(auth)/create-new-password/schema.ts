@@ -23,3 +23,10 @@ export const createPasswordSchema = z
     message: "Passwords don't match",
     path: ['confirmPassword'],
   });
+
+export const createNewPasswordDefaultValues: CreateNewPasswordData = {
+  password: '',
+  confirmPassword: '',
+};
+
+export type CreateNewPasswordData = z.infer<typeof createPasswordSchema>;

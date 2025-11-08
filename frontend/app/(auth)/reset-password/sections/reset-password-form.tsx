@@ -5,7 +5,6 @@ import { Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { type Path, type UseFormReturn, useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { FormBase } from '@/components/reuseable/base-form';
 import { Button } from '@/components/ui/button';
 import { useResetPassword } from '@/hooks/use-auth';
@@ -14,21 +13,15 @@ import { formatTime } from '@/utils/format-time';
 import { AuthInput } from '../../shared/auth-input';
 import { ConfirmationButton } from '../../shared/confirmation-button';
 import FormContainer from '../../shared/form-container';
-
-const resetPasswordSchema = z.object({
-  email: z
-    .string({ required_error: 'Provide a valid email address.' })
-    .email({ message: 'Please enter a valid email address.' }),
-});
+import { resetPasswordSchema, type TSignUpData } from '../schema';
 
 export default function ResetPasswordForm() {
-  const [success, setSuccess] = useState<boolean>(false);
   const [formData, setFormData] = useState<TSignUpData>();
   const [countdown, setCountdown] = useState<number>(0);
 
   const resetPasswordMutation = useResetPassword();
 
-  const { mutate, isPending } = resetPasswordMutation;
+  const { mutate, isPending, isSuccess } = resetPasswordMutation;
 
   useEffect(() => {
     if (countdown > 0) {
@@ -39,7 +32,7 @@ export default function ResetPasswordForm() {
     }
   }, [countdown]);
 
-  const form = useForm<z.infer<typeof resetPasswordSchema>>({
+  const form = useForm<TSignUpData>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       email: '',
@@ -49,12 +42,12 @@ export default function ResetPasswordForm() {
   async function onSubmit(data: TSignUpData) {
     mutate(data, {
       onSuccess: () => {
-        setSuccess(true);
         setFormData(data);
         setCountdown(1200);
       },
       onError: (data) => {
         const field = errorMap[data.message];
+
         if (field) {
           form.setError(field, { type: 'server', message: data.message });
         } else {
@@ -64,14 +57,18 @@ export default function ResetPasswordForm() {
     });
   }
 
-  return success ? (
-    <SuccessState
-      onResend={() => formData && onSubmit(formData)}
-      isLoading={isPending}
-      countdown={countdown}
-      formatTime={formatTime}
-    />
-  ) : (
+  if (isSuccess) {
+    return (
+      <SuccessState
+        onResend={() => formData && onSubmit(formData)}
+        isLoading={isPending}
+        countdown={countdown}
+        formatTime={formatTime}
+      />
+    );
+  }
+
+  return (
     <EmailForm
       onSubmit={onSubmit}
       isLoading={isPending}
@@ -81,7 +78,7 @@ export default function ResetPasswordForm() {
   );
 }
 
-function EmailForm<T extends TSignUpData>({ onSubmit, isLoading, form, name }: IEmailForm<T>) {
+function EmailForm({ onSubmit, isLoading, form, name }: IEmailForm) {
   return (
     <FormContainer
       headline='Reset your password'
@@ -150,13 +147,11 @@ const errorMap: Record<string, 'email'> = {
   'This email is not tied to any account.': 'email',
 };
 
-type TSignUpData = z.infer<typeof resetPasswordSchema>;
-
-interface IEmailForm<T extends TSignUpData> {
+interface IEmailForm {
   onSubmit: (data: TSignUpData) => void;
   isLoading: boolean;
-  form: UseFormReturn<T>;
-  name: Path<T>;
+  form: UseFormReturn<TSignUpData>;
+  name: Path<TSignUpData>;
 }
 
 interface ISuccessState {

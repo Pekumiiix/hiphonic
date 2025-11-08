@@ -5,27 +5,30 @@ import { Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import type { z } from 'zod';
 import { BaseCheckbox } from '@/components/reuseable/base-checkbox';
 import { FormBase, FormField } from '@/components/reuseable/base-form';
 import { globalToasts } from '@/lib/toasts';
 import { useAuth } from '@/provider/auth-provider';
-import { AuthInput } from '../../components/auth-input';
-import { ConfirmationButton } from '../../components/confirmation-button';
-import { PasswordInput } from '../../components/password-input';
-import { defaultSignInValue, signInSchema } from '../schema';
+import { AuthInput } from '../../shared/auth-input';
+import { ConfirmationButton } from '../../shared/confirmation-button';
+import { PasswordInput } from '../../shared/password-input';
+import { defaultSignInValue, type SignInData, signInSchema } from '../schema';
 
 export default function SignInForm() {
   const { signIn } = useAuth();
 
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof signInSchema>>({
+  const form = useForm<SignInData>({
     resolver: zodResolver(signInSchema),
     defaultValues: defaultSignInValue,
   });
 
-  async function onSubmit(data: z.infer<typeof signInSchema>) {
+  const passwordValue = form.watch('password');
+
+  const isValidPassowrd = passwordValue.length > 8;
+
+  async function onSubmit(data: SignInData) {
     signIn.mutate(
       { ...data, email: data.email.toLocaleLowerCase() },
       {
@@ -62,7 +65,9 @@ export default function SignInForm() {
         />
 
         <PasswordInput
-          description='Your password must have at least 8 characters'
+          description={
+            isValidPassowrd ? undefined : 'Your password must have at least 8 characters'
+          }
           form={form}
           name='password'
         />
@@ -93,6 +98,7 @@ export default function SignInForm() {
       </div>
 
       <ConfirmationButton
+        disabled={passwordValue.length < 8}
         isLoading={signIn.isPending}
         name='Sign In'
       />

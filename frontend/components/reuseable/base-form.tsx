@@ -123,6 +123,7 @@ export function FormField<TFormValues extends FieldValues>({
 }: FormFieldProps<TFormValues>) {
   const error = get(form.formState.errors, name);
   const touched = get(form.formState.touchedFields, name);
+
   const value = form.watch(name);
   const isValid = touched && !error && value;
 
