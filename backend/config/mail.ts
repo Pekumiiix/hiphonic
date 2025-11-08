@@ -1,8 +1,9 @@
+import app from '@adonisjs/core/services/app';
 import { defineConfig, transports } from '@adonisjs/mail';
 import env from '#start/env';
 
 const mailConfig = defineConfig({
-  default: 'smtp',
+  default: app.inProduction ? 'resend' : 'smtp',
 
   /**
    * The mailers object can be used to configure multiple mailers
@@ -22,6 +23,10 @@ const mailConfig = defineConfig({
         user: env.get('SMTP_USERNAME', ''),
         pass: env.get('SMTP_PASSWORD', ''),
       },
+    }),
+    resend: transports.resend({
+      key: env.get('RESEND_API_KEY'),
+      baseUrl: 'https://api.resend.com',
     }),
   },
 });

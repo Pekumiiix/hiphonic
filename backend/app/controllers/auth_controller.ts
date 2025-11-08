@@ -1,6 +1,7 @@
 import type { AccessToken } from '@adonisjs/auth/access_tokens';
 import { cuid } from '@adonisjs/core/helpers';
 import type { HttpContext } from '@adonisjs/core/http';
+import app from '@adonisjs/core/services/app';
 import mail from '@adonisjs/mail/services/main';
 import { DateTime } from 'luxon';
 import User from '#models/user';
@@ -111,7 +112,7 @@ export default class AuthController {
 
       response.cookie('access_token', tokenValue, {
         httpOnly: true,
-        secure: env.get('NODE_ENV') === 'production',
+        secure: app.inProduction,
         sameSite: 'lax',
         maxAge: sessionDuration,
         path: '/',
@@ -258,7 +259,7 @@ export default class AuthController {
 
       response.cookie('access_token', tokenValue, {
         httpOnly: true,
-        secure: env.get('NODE_ENV') === 'production',
+        secure: app.inProduction,
         sameSite: 'lax',
         maxAge: '30d',
         path: '/',

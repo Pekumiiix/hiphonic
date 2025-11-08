@@ -1,4 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http';
+import app from '@adonisjs/core/services/app';
 import User from '#models/user';
 import env from '#start/env';
 
@@ -51,7 +52,7 @@ export default class SocialAuthController {
 
       response.cookie('auth_token', tokenValue, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: app.inProduction,
         sameSite: 'lax',
         maxAge: '7 days',
         path: '/',
@@ -106,7 +107,7 @@ export default class SocialAuthController {
 
       response.cookie('auth_token', tokenValue, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: app.inProduction,
         sameSite: 'lax',
         maxAge: '7 days',
         path: '/',
