@@ -1,6 +1,11 @@
+'use client';
+
+import { useState } from 'react';
+import { TeamDialog } from '@/app/(app)/shared/team-dialog.tsx';
 import { OverlappingPfps } from '@/components/shared/overlapping-pfps';
 import { cn } from '@/lib/utils';
 import { ShareButton } from '../component/share-button';
+import { TeamDialogContent } from './team-dialog-content';
 
 export default function ProjectNav({ variant = 'desktop', projectName }: IProjectNav) {
   return (
@@ -49,25 +54,37 @@ function ProjectDetails() {
 }
 
 function Team({ variant }: IVariant) {
+  const [open, setOpen] = useState<boolean>(false);
+
   return (
-    <div
-      className={cn({
-        'md:hidden': variant === 'mobile',
-        'max-md:hidden': variant === 'desktop',
-      })}
-    >
-      <OverlappingPfps
-        maxVisible={4}
-        avatars={[
-          { username: 'OU', src: 'https://github.com/shadcn.png' },
-          { username: 'TU', src: 'https://github.com/shadcn.png' },
-          { username: 'RU', src: 'https://github.com/shadcn.png' },
-          { username: 'YU', src: 'https://github.com/shadcn.png' },
-          { username: 'UU', src: 'https://github.com/shadcn.png' },
-          { username: 'PU', src: 'https://github.com/shadcn.png' },
-        ]}
-      />
-    </div>
+    <>
+      <div
+        className={cn({
+          'md:hidden': variant === 'mobile',
+          'max-md:hidden': variant === 'desktop',
+        })}
+      >
+        <OverlappingPfps
+          maxVisible={4}
+          onClick={() => setOpen(true)}
+          avatars={[
+            { username: 'OU', src: 'https://github.com/shadcn.png' },
+            { username: 'TU', src: 'https://github.com/shadcn.png' },
+            { username: 'RU', src: 'https://github.com/shadcn.png' },
+            { username: 'YU', src: 'https://github.com/shadcn.png' },
+            { username: 'UU', src: 'https://github.com/shadcn.png' },
+            { username: 'PU', src: 'https://github.com/shadcn.png' },
+          ]}
+        />
+      </div>
+
+      <TeamDialog
+        open={open}
+        setOpen={setOpen}
+      >
+        <TeamDialogContent />
+      </TeamDialog>
+    </>
   );
 }
 

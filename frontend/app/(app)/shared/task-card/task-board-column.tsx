@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { CreateTaskDialog } from '../task-dialog/create-task-dialog';
+import { CreateTaskDialog } from '../task-dialog/create';
 
 export function TaskBoardColumn({ name, children, display }: IProjectProps) {
   return (

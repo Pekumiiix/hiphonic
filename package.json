@@ -13,7 +13,7 @@
       "bun --cwd frontend lint"
     ],
     "backend/**/*.{js,ts,json,md}": [
-      "bunx biome format --write",
+      "bunx --cwd backend lint",
       "bun --cwd backend typecheck"
     ]
   }

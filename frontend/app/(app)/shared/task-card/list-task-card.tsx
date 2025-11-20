@@ -5,13 +5,13 @@ import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ITaskCardProps } from '@/types';
-import { TaskDetailsDialog } from '../task-dialog/task-details-dialog';
+import { TaskDetailsDialog } from '../task-dialog/view-task';
 import {
   TaskCardDetails,
   TaskDescription,
   TaskDetailsSkeleton,
   TaskTitle,
-} from './task-card-components';
+} from './components/task-card-details';
 
 export function ListTaskCard({
   title,
@@ -26,7 +26,7 @@ export function ListTaskCard({
     <>
       <Card
         onClick={() => setOpen(true)}
-        className='flex flex-col max-md:gap-3 md:flex-row md:items-center justify-between p-4 bg-white rounded-xl'
+        className='flex flex-col max-md:gap-3 md:flex-row md:items-center justify-between p-4 bg-white rounded-xl border-none'
       >
         <TaskTitle
           title={title}
@@ -58,6 +58,7 @@ export function ListTaskCard({
       <TaskDetailsDialog
         open={open}
         setOpen={setOpen}
+        mode='view'
       />
     </>
   );

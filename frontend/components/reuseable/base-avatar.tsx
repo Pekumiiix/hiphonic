@@ -12,7 +12,9 @@ export function BaseAvatar({ username, avatar, classNames }: IBaseAvatar) {
         src={avatar || undefined}
         className={cn('object-center object-contain', classNames?.image)}
       />
-      <AvatarFallback className='uppercase'>{username?.slice(0, 2)}</AvatarFallback>
+      <AvatarFallback className='uppercase text-black text-sm'>
+        {username?.slice(0, 2)}
+      </AvatarFallback>
     </Avatar>
   );
 }

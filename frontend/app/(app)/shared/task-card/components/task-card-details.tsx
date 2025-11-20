@@ -3,9 +3,10 @@ import { OverlappingPfps } from '@/components/shared/overlapping-pfps';
 import { CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import type { ITaskCardProps, TCategory } from '@/types';
+import type { ITaskCardProps } from '@/types';
 import { truncateSentence } from '@/utils/truncate';
-import { InfoBadge } from '../info-badge';
+import { InfoBadge } from '../../info-badge';
+import { TaskCategoryTag } from '../../task-category-tag';
 
 export function TaskTitle({ title, category }: Pick<ITaskCardProps, 'title' | 'category'>) {
   return (
@@ -24,23 +25,6 @@ export function TaskDescription({ description, className }: ITaskDescription) {
     <CardDescription className={cn('text-xs text-grey-500', className)}>
       {truncateSentence(description, 66)}
     </CardDescription>
-  );
-}
-
-export function TaskCategoryTag({ category }: { category: TCategory }) {
-  return (
-    <div className='flex items-center gap-1'>
-      <span
-        className='size-[6px] rounded-full'
-        style={{ background: categoryColor[category] }}
-      />
-      <p
-        className='text-xs font-medium text-inherit capitalize'
-        style={{ color: categoryColor[category] }}
-      >
-        {category}
-      </p>
-    </div>
   );
 }
 
@@ -90,12 +74,6 @@ export function TaskDetailsSkeleton({ variant }: { variant: ITaskDetails['varian
     </div>
   );
 }
-
-const categoryColor: Record<TCategory, string> = {
-  development: '#38BDF8',
-  design: '#2563EB',
-  planning: '#34D399',
-};
 
 interface ITaskDescription {
   description: string;

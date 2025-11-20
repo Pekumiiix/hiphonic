@@ -1,5 +1,6 @@
-import { X } from 'lucide-react';
+import { Trash, X } from 'lucide-react';
 import { BaseDialog } from '@/components/reuseable/base-dialog';
+import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 
 export function TaskDialogWrapper({
@@ -10,6 +11,7 @@ export function TaskDialogWrapper({
   space = 'Personal',
   open,
   setOpen,
+  mode = 'create',
 }: ITaskDialogWrapper) {
   return (
     <BaseDialog
@@ -25,12 +27,20 @@ export function TaskDialogWrapper({
           Space &gt; {space}
         </p>
 
-        <DialogClose className='size-6 flex items-center justify-center hover:bg-grey-200 rounded-[5px]'>
-          <X
-            size={15}
-            className='text-grey-500'
-          />
-        </DialogClose>
+        <div className='flex items-center gap-2'>
+          {mode === 'view' && (
+            <Button className='size-6 rounded-[5px] bg-transparent hover:bg-red-200 shadow-none'>
+              <Trash className='text-grey-500' />
+            </Button>
+          )}
+
+          <DialogClose className='size-6 flex items-center justify-center hover:bg-grey-200 rounded-[5px]'>
+            <X
+              size={15}
+              className='text-grey-500'
+            />
+          </DialogClose>
+        </div>
       </div>
 
       {children}
@@ -46,4 +56,5 @@ interface ITaskDialogWrapper {
   space?: string;
   open?: boolean;
   setOpen?: (open: boolean) => void;
+  mode: 'view' | 'create';
 }

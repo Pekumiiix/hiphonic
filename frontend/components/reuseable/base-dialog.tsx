@@ -46,7 +46,7 @@ export function BaseDialog({
     >
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
 
-      <DialogContent className='!max-w-[700px] w-[95%] md:w-full [&>button]:hidden !p-0 rounded-[16px] border border-grey-50'>
+      <DialogContent className='!max-w-[700px] w-[95%] md:w-fit [&>button]:hidden !p-0 rounded-[16px] border border-grey-50'>
         <VisuallyHidden>
           <DialogHeader className='w-full flex flex-col items-center justify-center font-input-mono'>
             <DialogTitle>{title}</DialogTitle>

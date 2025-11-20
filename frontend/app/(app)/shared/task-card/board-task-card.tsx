@@ -6,13 +6,13 @@ import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ITaskCardProps } from '@/types';
-import { TaskDetailsDialog } from '../task-dialog/task-details-dialog';
+import { TaskDetailsDialog } from '../task-dialog/view-task';
 import {
   TaskCardDetails,
   TaskDescription,
   TaskDetailsSkeleton,
   TaskTitle,
-} from './task-card-components';
+} from './components/task-card-details';
 
 export function BoardTaskCard({
   image,
@@ -71,6 +71,7 @@ export function BoardTaskCard({
       <TaskDetailsDialog
         open={open}
         setOpen={setOpen}
+        mode='view'
       />
     </>
   );
