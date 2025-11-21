@@ -1,5 +1,7 @@
+import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { CreateTaskDialog } from '../task-dialog/create';
+import { CreateDialog } from '../app-dialog/create-dialog';
 
 export function TaskBoardColumn({ name, children, display }: IProjectProps) {
   return (
@@ -21,8 +23,17 @@ export function TaskBoardColumn({ name, children, display }: IProjectProps) {
           {name}
         </p>
 
-        {name === 'To Do' && <CreateTaskDialog />}
-        {/* <TaskDetailsDialog /> */}
+        {name === 'To Do' && (
+          <CreateDialog type='task'>
+            <Button
+              variant='ghost'
+              size='icon'
+              className='size-6 text-grey-400'
+            >
+              <Plus size={14} />
+            </Button>
+          </CreateDialog>
+        )}
       </div>
 
       <div className='w-full flex flex-col gap-4'>{children}</div>

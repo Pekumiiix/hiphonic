@@ -4,7 +4,7 @@ import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { BaseUISelect } from '@/components/reuseable/base-ui-select';
 
-export function SelectStatus() {
+export function SelectStatus({ isTask }: { isTask: boolean }) {
   const [value, setValue] = useState<TStatus>('');
 
   return (
@@ -16,7 +16,7 @@ export function SelectStatus() {
       group={[
         {
           label: 'Status',
-          item: statusItem,
+          item: isTask ? taskStatusItem : goalStatusItem,
         },
       ]}
       icon={
@@ -36,16 +36,23 @@ const selectBackground: Record<TStatus, string> = {
   'in-progress': '#2563EB',
   'in-review': '#F6A723',
   done: '#24d164',
+  completed: '#24d164',
+  archive: '#2563EB',
   '': '#0f172a',
 };
 
-const statusItem: IStatusItem[] = [
+const taskStatusItem: IStatusItem[] = [
   { value: 'in-review', label: 'In review' },
   { value: 'in-progress', label: 'In Progress' },
   { value: 'done', label: 'Done' },
 ];
 
-type TStatus = '' | 'in-progress' | 'in-review' | 'done';
+const goalStatusItem: IStatusItem[] = [
+  { value: 'completed', label: 'Complete' },
+  { value: 'archive', label: 'Archive' },
+];
+
+type TStatus = '' | 'in-progress' | 'in-review' | 'done' | 'completed' | 'archive';
 
 interface IStatusItem {
   value: TStatus;

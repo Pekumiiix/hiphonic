@@ -1,8 +1,8 @@
 import type { ControllerRenderProps, Path, UseFormReturn } from 'react-hook-form';
 import { FormField } from '@/components/reuseable/base-form';
-import type { TaskSchema } from '../schema';
+import type { DialogSchema } from '../schema';
 
-export function CreateTaskFormField({ form, name, label, children }: ICreateTaskFieldProps) {
+export function CreateDialogFormField({ form, name, label, children }: ICreateDialogFieldProps) {
   return (
     <FormField
       form={form}
@@ -15,9 +15,9 @@ export function CreateTaskFormField({ form, name, label, children }: ICreateTask
   );
 }
 
-interface ICreateTaskFieldProps {
-  form: UseFormReturn<TaskSchema>;
-  name: Path<TaskSchema>;
+interface ICreateDialogFieldProps {
+  form: UseFormReturn<DialogSchema>;
+  name: Path<DialogSchema>;
   label?: string;
   children: (field: Partial<ControllerRenderProps>) => React.ReactNode;
 }

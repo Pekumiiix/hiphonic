@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { truncateSentence } from '@/utils/truncate';
-import { TaskDetailsDialog } from '../../shared/task-dialog/view-task';
+import { DetailsDialog } from '../../shared/app-dialog/details-dialog';
 import { DashboardPopoverWrapper } from '../components/dashboard-popover-wrapper';
 import { EmptyState } from '../components/empty-state';
 import { ErrorState } from '../components/error-state';
@@ -90,9 +90,10 @@ function TaskListItem() {
             </Button>
           </DashboardPopoverWrapper>
 
-          <TaskDetailsDialog
+          <DetailsDialog
             open={open}
             setOpen={setOpen}
+            isTask
           />
         </div>
 

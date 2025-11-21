@@ -3,7 +3,7 @@ import { BaseDialog } from '@/components/reuseable/base-dialog';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 
-export function TaskDialogWrapper({
+export function AppDialogWrapper({
   trigger,
   title,
   description,
@@ -12,7 +12,7 @@ export function TaskDialogWrapper({
   open,
   setOpen,
   mode = 'create',
-}: ITaskDialogWrapper) {
+}: IAppDialogWrapper) {
   return (
     <BaseDialog
       open={open}
@@ -48,7 +48,7 @@ export function TaskDialogWrapper({
   );
 }
 
-interface ITaskDialogWrapper {
+interface IAppDialogWrapper {
   trigger?: React.ReactNode;
   title: string;
   description: string;

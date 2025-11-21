@@ -5,8 +5,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import type { ITaskCardProps } from '@/types';
 import { truncateSentence } from '@/utils/truncate';
+import { TaskCategoryTag } from '../../category-tag';
 import { InfoBadge } from '../../info-badge';
-import { TaskCategoryTag } from '../../task-category-tag';
 
 export function TaskTitle({ title, category }: Pick<ITaskCardProps, 'title' | 'category'>) {
   return (

@@ -5,9 +5,9 @@ import { BaseAvatar } from '@/components/reuseable/base-avatar';
 import { OverlappingPfps } from '@/components/shared/overlapping-pfps';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { TaskCategoryTag } from '../../../task-category-tag';
-import { TeamDialog } from '../../../team-dialog.tsx';
-import { RenderTaskDate } from '../../components/task-dialog-components';
+import { TaskCategoryTag } from '../../../category-tag';
+import { RenderTaskDate } from '../../components/app-dialog-components';
+import { TeamDialog } from '../../team-dialog.tsx';
 
 export function AccordionContent() {
   const [open, setOpen] = useState<boolean>(false);

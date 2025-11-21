@@ -3,6 +3,7 @@ import { BaseUITabs } from '@/components/reuseable/base-ui-tabs';
 import { Button } from '@/components/ui/button';
 import { goals } from '@/mock-data/goals';
 import type { IGoalCardProps } from '@/types';
+import { CreateDialog } from '../shared/app-dialog/create-dialog';
 import DashboardNav from '../shared/dashboard-nav';
 import { GoalsCard } from './components/goals-card';
 
@@ -35,9 +36,11 @@ export default function GoalsPage() {
             content: 'p-4 md:p-8',
           }}
         >
-          <Button className='flex items-center gap-2 py-2 px-6 rounded-[6px] text-xs text-white font-bold leading-[140%] bg-primary-600 shadow-[0px_8px_24px_0px_#1E40AF14] cursor-pointer'>
-            <Plus size={16} /> New Goal
-          </Button>
+          <CreateDialog type='goal'>
+            <Button className='flex items-center gap-2 py-2 px-6 rounded-[6px] text-xs text-white font-bold leading-[140%] bg-primary-600 shadow-[0px_8px_24px_0px_#1E40AF14] cursor-pointer'>
+              <Plus size={16} /> New Goal
+            </Button>
+          </CreateDialog>
         </BaseUITabs>
       </section>
     </>

@@ -1,25 +1,25 @@
 import { BaseAccordion } from '@/components/reuseable/base-accordion';
-import { TaskDialogWrapper } from '../components/task-dialog-wrapper';
-import { AccordionContent } from './components/accordion-content';
+import { AppDialogWrapper } from '../components/app-dialog-wrapper';
 import { CommentInput } from './components/comment-input';
 import { SelectStatus } from './components/select-status';
 import { TaskComment } from './components/task-comment';
+import { AccordionContent } from './sections/accordion-content';
 
-export function TaskDetailsDialog({ open = false, setOpen, mode = 'create' }: ITaskDetailsDialog) {
+export function DetailsDialog({ open, setOpen, isTask }: ITaskDetailsDialog) {
   return (
-    <TaskDialogWrapper
+    <AppDialogWrapper
       open={open}
       setOpen={setOpen}
       title='View Task Details'
       description='View and manage all details related to this task.'
       space='Hiphonic'
-      mode={mode}
+      mode='view'
     >
       <div className='w-full flex flex-col gap-8 px-6 pb-10'>
         <div className='w-full flex items-center justify-between'>
           <p className='text-[22px] text-grey-900 font-bold leading-[125%]'>Automated Goals</p>
 
-          <SelectStatus />
+          <SelectStatus isTask={isTask} />
         </div>
 
         <BaseAccordion
@@ -55,12 +55,12 @@ export function TaskDetailsDialog({ open = false, setOpen, mode = 'create' }: IT
           </div>
         </div>
       </div>
-    </TaskDialogWrapper>
+    </AppDialogWrapper>
   );
 }
 
 interface ITaskDetailsDialog {
   open: boolean;
   setOpen: (open: boolean) => void;
-  mode?: 'view' | 'create';
+  isTask: boolean;
 }

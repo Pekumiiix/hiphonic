@@ -1,12 +1,12 @@
 'use client';
 
-import { Funnel, LayoutGrid, List, type LucideIcon } from 'lucide-react';
+import { Funnel, LayoutGrid, List, type LucideIcon, Plus } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 import { BaseUISelect } from '@/components/reuseable/base-ui-select';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { CreateTaskDialog } from '../task-dialog/create';
+import { CreateDialog } from '../app-dialog/create-dialog';
 
 export function TaskContentWrapper({ children, className }: IProjectContentWrapper) {
   const [display, setDisplay] = useState<TDisplay>('list');
@@ -55,7 +55,15 @@ export function TaskContentWrapper({ children, className }: IProjectContentWrapp
               setActiveTab={setActiveTab}
             />
 
-            <CreateTaskDialog />
+            <CreateDialog type='task'>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='size-6 text-grey-400'
+              >
+                <Plus size={14} />
+              </Button>
+            </CreateDialog>
           </div>
         )}
 

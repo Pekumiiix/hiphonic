@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ITaskCardProps } from '@/types';
-import { TaskDetailsDialog } from '../task-dialog/view-task';
+import { DetailsDialog } from '../app-dialog/details-dialog';
 import {
   TaskCardDetails,
   TaskDescription,
@@ -55,10 +55,10 @@ export function ListTaskCard({
         />
       </Card>
 
-      <TaskDetailsDialog
+      <DetailsDialog
         open={open}
         setOpen={setOpen}
-        mode='view'
+        isTask
       />
     </>
   );

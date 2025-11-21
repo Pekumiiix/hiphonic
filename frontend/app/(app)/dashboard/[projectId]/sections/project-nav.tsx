@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { TeamDialog } from '@/app/(app)/shared/team-dialog.tsx';
+import { TeamDialog } from '@/app/(app)/shared/app-dialog/team-dialog.tsx';
 import { OverlappingPfps } from '@/components/shared/overlapping-pfps';
 import { cn } from '@/lib/utils';
 import { ShareButton } from '../component/share-button';

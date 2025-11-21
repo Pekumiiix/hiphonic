@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-export function CreateTaskPlaceholder({ image, text }: IPlaceholder) {
+export function CreateDialogPlaceholder({ image, text }: IPlaceholder) {
   return (
     <div className='w-full flex items-center gap-3'>
       <Image

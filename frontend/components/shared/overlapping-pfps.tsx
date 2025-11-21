@@ -15,17 +15,15 @@ export function OverlappingPfps({
       className='flex gap-0 p-0 w-fit h-fit bg-transparent hover:bg-transparent shadow-none'
     >
       {avatars.slice(0, maxVisible).map((item, index) => (
-        <>
-          <BaseAvatar
-            key={item.username}
-            username={item.username}
-            avatar={item.src}
-            classNames={{
-              avatar: `border-2 border-white ${className} ${index !== 0 ? margin : ''}`,
-              image: 'size-full',
-            }}
-          />
-        </>
+        <BaseAvatar
+          key={item.username}
+          username={item.username}
+          avatar={item.src}
+          classNames={{
+            avatar: `border-2 border-white ${className} ${index !== 0 ? margin : ''}`,
+            image: 'size-full',
+          }}
+        />
       ))}
 
       {avatars.length > maxVisible && (

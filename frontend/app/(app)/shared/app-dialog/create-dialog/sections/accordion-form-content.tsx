@@ -4,16 +4,16 @@ import { BaseAvatar } from '@/components/reuseable/base-avatar';
 import { BaseDatePicker } from '@/components/reuseable/base-date-picker';
 import { BaseUISelect } from '@/components/reuseable/base-ui-select';
 import { OverlappingPfps } from '@/components/shared/overlapping-pfps';
-import { TaskCategoryTag } from '../../../task-category-tag';
-import { RenderTaskDate } from '../../components/task-dialog-components';
-import type { TaskSchema } from '../schema';
-import { CreateTaskFormField } from './create-task-form-field';
-import { CreateTaskPlaceholder } from './create-task-placeholder';
+import { GoalCategoryTag, TaskCategoryTag } from '../../../category-tag';
+import { RenderTaskDate } from '../../components/app-dialog-components';
+import { CreateDialogFormField } from '../components/create-dialog-form-field';
+import { CreateDialogPlaceholder } from '../components/create-dialog-placeholder';
+import type { DialogSchema } from '../schema';
 
-export function AccordionFormContent({ form }: { form: UseFormReturn<TaskSchema> }) {
+export function AccordionFormContent({ form, isTask }: IAccordionFormContent) {
   return (
     <div className='w-full grid grid-cols-2 gap-x-2 gap-y-5 md:flex items-start justify-between md:gap-0'>
-      <CreateTaskFormField
+      <CreateDialogFormField
         form={form}
         name='assignee'
         label='assigned to'
@@ -24,7 +24,7 @@ export function AccordionFormContent({ form }: { form: UseFormReturn<TaskSchema>
             onValueChange={field.onChange}
           />
         )}
-      </CreateTaskFormField>
+      </CreateDialogFormField>
 
       <div className='flex flex-col gap-3 -mt-1'>
         <p className='text-sm font-medium text-grey-400'>CREATED</p>
@@ -32,7 +32,7 @@ export function AccordionFormContent({ form }: { form: UseFormReturn<TaskSchema>
         <RenderTaskDate date={new Date()} />
       </div>
 
-      <CreateTaskFormField
+      <CreateDialogFormField
         form={form}
         name='category'
         label='category'
@@ -46,12 +46,12 @@ export function AccordionFormContent({ form }: { form: UseFormReturn<TaskSchema>
             value={field.value}
             onValueChange={field.onChange}
             icon={<></>}
-            group={[{ label: 'Categories', item: categories }]}
+            group={[{ label: 'Categories', item: isTask ? taskCategories : goalsCategories }]}
           />
         )}
-      </CreateTaskFormField>
+      </CreateDialogFormField>
 
-      <CreateTaskFormField
+      <CreateDialogFormField
         form={form}
         name='due_date'
         label='due date'
@@ -60,7 +60,7 @@ export function AccordionFormContent({ form }: { form: UseFormReturn<TaskSchema>
           <BaseDatePicker
             {...field}
             placeholder={
-              <CreateTaskPlaceholder
+              <CreateDialogPlaceholder
                 image='/assets/dashboard/task/due-date.png'
                 text='No due date'
               />
@@ -69,7 +69,7 @@ export function AccordionFormContent({ form }: { form: UseFormReturn<TaskSchema>
             className='w-[130px] hover:bg-transparent px-0'
           />
         )}
-      </CreateTaskFormField>
+      </CreateDialogFormField>
     </div>
   );
 }
@@ -86,7 +86,7 @@ function AsigneeSelect({ value, onValueChange }: IAsigneeSelect) {
       value={value}
       icon={<></>}
       placeholder={
-        <CreateTaskPlaceholder
+        <CreateDialogPlaceholder
           image='/assets/dashboard/task/asignee.png'
           text='No asignee'
         />
@@ -137,13 +137,30 @@ function RenderAssignValue({ val }: { val: { label: React.ReactNode; value: stri
   );
 }
 
-const categories: { label: React.ReactNode; value: string }[] = [
+const taskCategories: ICategories[] = [
   { label: <TaskCategoryTag category='development' />, value: 'development' },
   { label: <TaskCategoryTag category='design' />, value: 'design' },
   { label: <TaskCategoryTag category='planning' />, value: 'planning' },
 ];
 
+const goalsCategories: ICategories[] = [
+  { label: <GoalCategoryTag category='sales' />, value: 'sales' },
+  { label: <GoalCategoryTag category='seo' />, value: 'seo' },
+  { label: <GoalCategoryTag category='marketing' />, value: 'marketing' },
+  { label: <GoalCategoryTag category='engineering' />, value: 'engineering' },
+];
+
 interface IAsigneeSelect {
   value: string[];
   onValueChange?: (value: string[]) => void;
+}
+
+interface ICategories {
+  label: React.ReactNode;
+  value: string;
+}
+
+interface IAccordionFormContent {
+  form: UseFormReturn<DialogSchema>;
+  isTask: boolean;
 }
