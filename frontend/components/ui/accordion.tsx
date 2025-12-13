@@ -1,10 +1,10 @@
 'use client';
 
-import * as React from 'react';
-import { cn } from '@/lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { ChevronDown, Plus } from 'lucide-react';
 import { Accordion as AccordionPrimitive } from 'radix-ui';
+import * as React from 'react';
+import { cn } from '@/lib/utils';
 
 // Variants
 const accordionRootVariants = cva('', {
@@ -94,7 +94,7 @@ function Accordion(
   return (
     <AccordionContext.Provider value={{ variant: variant || 'default', indicator }}>
       <AccordionPrimitive.Root
-        data-slot="accordion"
+        data-slot='accordion'
         className={cn(accordionRootVariants({ variant }), className)}
         {...rest}
       >
@@ -110,7 +110,7 @@ function AccordionItem(props: React.ComponentProps<typeof AccordionPrimitive.Ite
 
   return (
     <AccordionPrimitive.Item
-      data-slot="accordion-item"
+      data-slot='accordion-item'
       className={cn(accordionItemVariants({ variant }), className)}
       {...rest}
     >
@@ -124,16 +124,24 @@ function AccordionTrigger(props: React.ComponentProps<typeof AccordionPrimitive.
   const { variant, indicator } = React.useContext(AccordionContext);
 
   return (
-    <AccordionPrimitive.Header className="flex">
+    <AccordionPrimitive.Header className='flex'>
       <AccordionPrimitive.Trigger
-        data-slot="accordion-trigger"
+        data-slot='accordion-trigger'
         className={cn(accordionTriggerVariants({ variant, indicator }), className)}
         {...rest}
       >
         {children}
-        {indicator === 'plus' && <Plus className="size-4 shrink-0 transition-transform duration-200" strokeWidth={1} />}
+        {indicator === 'plus' && (
+          <Plus
+            className='size-4 shrink-0 transition-transform duration-200'
+            strokeWidth={1}
+          />
+        )}
         {indicator === 'arrow' && (
-          <ChevronDown className="size-4 shrink-0 transition-transform duration-200" strokeWidth={1} />
+          <ChevronDown
+            className='size-4 shrink-0 transition-transform duration-200'
+            strokeWidth={1}
+          />
         )}
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
@@ -146,7 +154,7 @@ function AccordionContent(props: React.ComponentProps<typeof AccordionPrimitive.
 
   return (
     <AccordionPrimitive.Content
-      data-slot="accordion-content"
+      data-slot='accordion-content'
       className={cn(accordionContentVariants({ variant }), className)}
       {...rest}
     >

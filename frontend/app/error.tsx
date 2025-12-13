@@ -3,7 +3,7 @@
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function Error({ error, reset }: IError) {
+export default function AppError({ error, reset }: IError) {
   return (
     <div className='h-screen flex flex-col items-center justify-center px-4'>
       <div className='flex flex-col items-center gap-6 bg-white p-8 rounded-lg shadow-md max-w-md w-full border border-grey-200'>

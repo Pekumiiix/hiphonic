@@ -1,27 +1,13 @@
 'use client';
 
-import {
-  Bell,
-  LayoutDashboard,
-  LogOut,
-  type LucideIcon,
-  Plus,
-  SquareCheck,
-  Trophy,
-} from 'lucide-react';
+import { Bell, LayoutDashboard, LogOut, type LucideIcon, SquareCheck, Trophy } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupAction,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
@@ -30,6 +16,7 @@ import {
 import { useSignOut } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import type { TRoute } from '@/types';
+import { CustomSidebarGroup } from './components/sidebar-group';
 
 export default function DashboardSidebar() {
   const { isMobile } = useSidebar();
@@ -94,65 +81,6 @@ export default function DashboardSidebar() {
   );
 }
 
-function CustomSidebarGroup({ title, data, action }: ICustomSidebarGroup) {
-  return (
-    <SidebarGroup title={title}>
-      <div className='flex items-center justify-between'>
-        <SidebarGroupLabel className='px-4 text-xs font-bold leading-[160%] text-grey-400 tracking-[1px]'>
-          {title}
-        </SidebarGroupLabel>
-
-        {action && (
-          <SidebarGroupAction
-            title='New project'
-            onClick={action}
-          >
-            <Plus
-              size={16}
-              color='#64748B'
-            />
-          </SidebarGroupAction>
-        )}
-      </div>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {data.links.map((link) => (
-            <MenuLink
-              key={link.title}
-              title={link.title}
-              href={link.href}
-              Icon={link?.icon}
-              inActiveClassName={data.inActiveClassName}
-            />
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  );
-}
-
-function MenuLink({ title, href, Icon, inActiveClassName }: IMenuLink) {
-  const pathname = usePathname();
-  const isActive = pathname === href || pathname?.startsWith(`${href}/`);
-
-  return (
-    <SidebarMenuItem title={title}>
-      <SidebarMenuButton
-        asChild
-        className={cn(
-          'w-full h-12 px-4 flex items-center gap-4 rounded-[12px] leading-[160%] text-sm hover:text-primary-600 transition-colors duration-200',
-          isActive ? 'font-bold text-primary-600 bg-grey-50 hover:bg-grey-50' : inActiveClassName,
-        )}
-      >
-        <Link href={href}>
-          {Icon ? <Icon size={22} /> : <div className='size-3 bg-[#6366F1] rounded-full' />}
-          <span>{title}</span>
-        </Link>
-      </SidebarMenuButton>
-    </SidebarMenuItem>
-  );
-}
-
 const menu_links: IMenuLinkProps = {
   inActiveClassName: 'font-medium tracking-[0.2px] text-grey-500 bg-transparent',
   links: [
@@ -188,21 +116,7 @@ const projects: IMenuLinkProps = {
   ],
 };
 
-interface ICustomSidebarGroup {
-  title: string;
-  data: IMenuLinkProps;
-  action?: () => void;
-}
-
-interface IMenuLink {
-  title: string;
-  href: TRoute;
-  Icon?: LucideIcon;
-  inActiveClassName?: string;
-}
-
-interface IMenuLinkProps {
-  activeClassName?: string;
+export interface IMenuLinkProps {
   inActiveClassName?: string;
   links: {
     title: string;

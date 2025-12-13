@@ -4,7 +4,7 @@ export const config = {
   matcher: ['/dashboard/:path*', '/profile/:path*', '/settings/:path*', '/admin/:path*'],
 };
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const accessToken = request.cookies.get('access_token')?.value;
   const signInUrl = new URL('/sign-in', request.url);
 

@@ -1,8 +1,5 @@
-import {
-  useSearchParams as useNextSearchParams,
-  useRouter,
-} from "next/navigation";
-import { useCallback } from "react";
+import { useSearchParams as useNextSearchParams, useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 
 type SetSearchParams = (params: Record<string, string | undefined>) => void;
 
@@ -10,10 +7,7 @@ export function useSearchParams() {
   const router = useRouter();
   const searchParams = useNextSearchParams();
 
-  const get = useCallback(
-    (key: string) => searchParams?.get(key) ?? undefined,
-    [searchParams]
-  );
+  const get = useCallback((key: string) => searchParams?.get(key) ?? undefined, [searchParams]);
 
   const set: SetSearchParams = useCallback(
     (params) => {
@@ -28,7 +22,7 @@ export function useSearchParams() {
       });
       router.replace(`?${newParams.toString()}`);
     },
-    [router, searchParams]
+    [router, searchParams],
   );
 
   return { get, set, all: searchParams };

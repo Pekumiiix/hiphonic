@@ -1,9 +1,9 @@
 'use client';
 
-import * as React from 'react';
-import { cn } from '@/lib/utils';
 import { Tabs as BaseTabs } from '@base-ui-components/react/tabs';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
+import { cn } from '@/lib/utils';
 
 // Variants for TabsList
 const tabsListVariants = cva('flex items-center shrink-0', {
@@ -146,7 +146,13 @@ const TabsContext = React.createContext<TabsContextType>({
 
 // Components
 function Tabs({ className, ...props }: React.ComponentProps<typeof BaseTabs.Root>) {
-  return <BaseTabs.Root data-slot="tabs" className={cn('', className)} {...props} />;
+  return (
+    <BaseTabs.Root
+      data-slot='tabs'
+      className={cn('', className)}
+      {...props}
+    />
+  );
 }
 
 function TabsList({
@@ -159,7 +165,7 @@ function TabsList({
   return (
     <TabsContext.Provider value={{ variant: variant || 'default', size: size || 'md' }}>
       <BaseTabs.List
-        data-slot="tabs-list"
+        data-slot='tabs-list'
         className={cn(tabsListVariants({ variant, shape, size }), className)}
         {...props}
       />
@@ -172,7 +178,7 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof BaseTa
 
   return (
     <BaseTabs.Tab
-      data-slot="tabs-trigger"
+      data-slot='tabs-trigger'
       className={cn(tabsTriggerVariants({ variant, size }), className)}
       {...props}
     />
@@ -185,7 +191,11 @@ function TabsContent({
   ...props
 }: React.ComponentProps<typeof BaseTabs.Panel> & VariantProps<typeof tabsContentVariants>) {
   return (
-    <BaseTabs.Panel data-slot="tabs-content" className={cn(tabsContentVariants({ variant }), className)} {...props} />
+    <BaseTabs.Panel
+      data-slot='tabs-content'
+      className={cn(tabsContentVariants({ variant }), className)}
+      {...props}
+    />
   );
 }
 

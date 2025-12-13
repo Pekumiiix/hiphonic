@@ -2,6 +2,7 @@
 
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
+import Cookies from 'js-cookie';
 import { Menu } from 'lucide-react';
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
@@ -77,7 +78,10 @@ function SidebarProvider({
       }
 
       // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      Cookies.set(SIDEBAR_COOKIE_NAME, String(openState), {
+        path: '/',
+        expires: SIDEBAR_COOKIE_MAX_AGE,
+      });
     },
     [setOpenProp, open],
   );
