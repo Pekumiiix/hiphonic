@@ -1,7 +1,7 @@
-import { Trash, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { BaseDialog } from '@/components/reuseable/base-dialog';
-import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
+import { DeleteConfirmationDialog } from '../delete-dialog';
 
 export function AppDialogWrapper({
   trigger,
@@ -12,6 +12,10 @@ export function AppDialogWrapper({
   open,
   setOpen,
   mode = 'create',
+  onDelete,
+  isDeleting = false,
+  name,
+  isTask = false,
 }: IAppDialogWrapper) {
   return (
     <BaseDialog
@@ -29,9 +33,12 @@ export function AppDialogWrapper({
 
         <div className='flex items-center gap-2'>
           {mode === 'view' && (
-            <Button className='size-6 rounded-[5px] bg-transparent hover:bg-red-200 shadow-none'>
-              <Trash className='text-grey-500' />
-            </Button>
+            <DeleteConfirmationDialog
+              onConfirm={onDelete}
+              isDeleting={isDeleting}
+              name={name || ''}
+              isTask={isTask}
+            />
           )}
 
           <DialogClose className='size-6 flex items-center justify-center hover:bg-grey-200 rounded-[5px]'>
@@ -57,4 +64,8 @@ interface IAppDialogWrapper {
   open?: boolean;
   setOpen?: (open: boolean) => void;
   mode: 'view' | 'create';
+  onDelete: () => Promise<void> | void;
+  isDeleting?: boolean;
+  isTask?: boolean;
+  name?: string;
 }

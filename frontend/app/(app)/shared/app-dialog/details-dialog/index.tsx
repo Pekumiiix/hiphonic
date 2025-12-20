@@ -14,6 +14,9 @@ export function DetailsDialog({ open, setOpen, isTask }: ITaskDetailsDialog) {
       description='View and manage all details related to this task.'
       space='Hiphonic'
       mode='view'
+      onDelete={() => {}}
+      isTask={isTask}
+      name='Automated Goals'
     >
       <div className='w-full flex flex-col gap-8 px-6 pb-10'>
         <div className='w-full flex items-center justify-between'>

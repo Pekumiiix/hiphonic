@@ -34,6 +34,7 @@ export function CreateDialog({ type, children }: ICreateDialog) {
       description={`Fill out the form below to add a new ${type}.`}
       space={isTask ? 'Hiphonic' : undefined}
       mode='create'
+      onDelete={() => {}}
     >
       <FormBase
         form={form}

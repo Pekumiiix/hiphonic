@@ -63,6 +63,7 @@ export function useCurrentUser() {
   return useQuery({
     queryKey: ['currentUser'],
     queryFn: () => authService.currentUser(),
+    retry: 2,
   });
 }
 

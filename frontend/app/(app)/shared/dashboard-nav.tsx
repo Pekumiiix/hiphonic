@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { BaseAvatar } from '@/components/reuseable/base-avatar';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -35,7 +36,10 @@ export default function DashboardNav({ variant = 'default', title = 'Dashboard' 
         </div>
       </div>
 
-      <div className='flex items-center gap-3'>
+      <Link
+        href='/profile'
+        className='flex items-center gap-3'
+      >
         <BaseAvatar
           username={user?.username}
           avatar={user?.avatarUrl}
@@ -51,7 +55,7 @@ export default function DashboardNav({ variant = 'default', title = 'Dashboard' 
         )}
 
         <SidebarTrigger className='md:hidden' />
-      </div>
+      </Link>
     </div>
   );
 }
