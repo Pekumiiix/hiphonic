@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'Hiphonic',
     description:
       'Hiphonic is a modern project management platform designed to help teams collaborate, organize tasks, and boost productivity. Manage your projects, track progress, and achieve your goals efficiently.',
-    start_url: '/sign-in',
+    start_url: '/dashboard',
     display: 'standalone',
     background_color: '#ffffff',
     theme_color: '#ffffff',
