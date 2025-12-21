@@ -36,7 +36,7 @@ export interface ITaskCardProps {
   title: string;
   description: string;
   comment: number;
-  due_date: string;
+  due_date: Date;
 }
 
 export interface ITaskProps {
@@ -44,7 +44,7 @@ export interface ITaskProps {
   category: TCategory;
   description: string;
   comment: number;
-  due_date: string;
+  due_date: Date;
   status: 'to-do' | 'in-progress' | 'in-review' | 'done';
 }
 

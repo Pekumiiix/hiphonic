@@ -1,22 +1,29 @@
 'use client';
 
-import { Funnel, LayoutGrid, List, type LucideIcon, Plus } from 'lucide-react';
+import { LayoutGrid, List, type LucideIcon, Plus } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 import { BaseUISelect } from '@/components/reuseable/base-ui-select';
 import { Button } from '@/components/ui/button';
+import type { Filter } from '@/components/ui/filters';
 import { cn } from '@/lib/utils';
-import { CreateDialog } from '../app-dialog/create-dialog';
+import { CreateDialog } from '../../app-dialog/create-dialog';
+import { TaskFilter } from './task-filter';
 
 export function TaskContentWrapper({ children, className }: IProjectContentWrapper) {
   const [display, setDisplay] = useState<TDisplay>('list');
   const [activeTab, setActiveTab] = useState<Triggers>('to-do');
+  const [filters, setFilters] = useState<Filter[]>([]);
+
+  const handleFiltersChange = (newFilters: Filter[]) => {
+    setFilters(newFilters);
+  };
 
   return (
     <div className='w-full h-full flex flex-col px-4 max-md:gap-6 md:px-0'>
       <div
         className={cn(
-          'w-full flex items-center justify-between p-2 md:px-8 md:py-4 bg-white border-grey-100 max-md:rounded-[10px]',
+          'w-full flex flex-col lg:flex-row lg:items-center justify-between max-md:gap-2.5 p-2 md:px-8 md:py-4 bg-white border-grey-100 max-md:rounded-[10px]',
           className,
         )}
       >
@@ -35,11 +42,12 @@ export function TaskContentWrapper({ children, className }: IProjectContentWrapp
           />
         </div>
 
-        <ActionButtons
-          Icon={Funnel}
-          text='Filter'
-          action={() => console.log('You clicked me.')}
-        />
+        <div className='max-md:w-full h-fit flex items-center'>
+          <TaskFilter
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+          />
+        </div>
       </div>
 
       <div className='w-full flex flex-col gap-4'>
@@ -73,7 +81,7 @@ export function TaskContentWrapper({ children, className }: IProjectContentWrapp
             'flex-col md:px-8 lg:py-8': display === 'list',
           })}
         >
-          {children(display, activeTab)}
+          {children(display, activeTab, filters)}
         </div>
       </div>
     </div>
@@ -176,7 +184,7 @@ type TDisplay = 'list' | 'board';
 type Triggers = 'to-do' | 'in-progress' | 'in-review' | 'done';
 
 interface IProjectContentWrapper {
-  children: (display: TDisplay, activeTab: Triggers) => React.ReactNode;
+  children: (display: TDisplay, activeTab: Triggers, filter: Filter[]) => React.ReactNode;
   className?: string;
 }
 

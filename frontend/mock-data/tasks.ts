@@ -6,7 +6,7 @@ export const tasks: ITaskProps[] = [
     category: 'design',
     description: 'Add Forgot password option when login & send email to reset password...',
     comment: 2,
-    due_date: 'Nov 30',
+    due_date: new Date('2026-01-10'),
     status: 'to-do',
   },
   {
@@ -14,7 +14,7 @@ export const tasks: ITaskProps[] = [
     category: 'development',
     description: 'Add Forgot password option when login & send email to reset password...',
     comment: 2,
-    due_date: 'Nov 30',
+    due_date: new Date('2026-01-11'),
     status: 'in-progress',
   },
   {
@@ -22,7 +22,7 @@ export const tasks: ITaskProps[] = [
     category: 'planning',
     description: 'Add Forgot password option when login & send email to reset password...',
     comment: 2,
-    due_date: 'Nov 30',
+    due_date: new Date('2026-01-12'),
     status: 'in-review',
   },
   {
@@ -30,7 +30,7 @@ export const tasks: ITaskProps[] = [
     category: 'planning',
     description: 'Add Forgot password option when login & send email to reset password...',
     comment: 2,
-    due_date: 'Nov 30',
+    due_date: new Date('2026-01-13'),
     status: 'done',
   },
 ];

@@ -11,7 +11,7 @@ export function TeamDialog({ open, setOpen, children }: ITeamDialog) {
       onClose={setOpen}
       title=''
       description=''
-      className='w-full max-h-[90vh] md:w-[400px] flex flex-col overflow-y-scroll scrollbar-none'
+      className='w-full max-h-[90vh] md:w-[450px] flex flex-col overflow-y-scroll scrollbar-none'
     >
       <div className='w-full flex justify-end border-b p-4 border-grey-100'>
         <DialogClose className='size-6 flex items-center justify-center hover:bg-grey-200 rounded-[5px]'>

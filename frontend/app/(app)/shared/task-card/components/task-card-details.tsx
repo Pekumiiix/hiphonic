@@ -2,6 +2,7 @@ import { Calendar1, MessageCircleMore } from 'lucide-react';
 import { OverlappingPfps } from '@/components/shared/overlapping-pfps';
 import { CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { months } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import type { ITaskCardProps } from '@/types';
 import { truncateSentence } from '@/utils/truncate';
@@ -39,7 +40,7 @@ export function TaskCardDetails({ due_date, comment, variant, avatars }: ITaskDe
       <div className='flex gap-2'>
         <InfoBadge
           icon={Calendar1}
-          info={due_date}
+          info={`${months[due_date.getMonth()].slice(0, 3)} ${due_date.getDate()}`}
         />
         <InfoBadge
           icon={MessageCircleMore}
@@ -81,7 +82,7 @@ interface ITaskDescription {
 }
 
 interface ITaskDetails {
-  due_date: string;
+  due_date: Date;
   comment: number;
   variant: 'list' | 'grid';
   avatars: { username: string; src: string }[];

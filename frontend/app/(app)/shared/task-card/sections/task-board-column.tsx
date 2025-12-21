@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { CreateDialog } from '../app-dialog/create-dialog';
+import { CreateDialog } from '../../app-dialog/create-dialog';
 
 export function TaskBoardColumn({ name, children, display }: IProjectProps) {
   return (
