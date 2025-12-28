@@ -18,9 +18,7 @@ import {
 } from '../schema';
 
 export default function CreateNewPasswordForm({ token }: { token: string }) {
-  const createNewPasswordMutation = useCreateNewPassword();
-
-  const { mutate, isPending } = createNewPasswordMutation;
+  const { mutate, isPending } = useCreateNewPassword();
 
   const router = useRouter();
 

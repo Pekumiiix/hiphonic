@@ -10,9 +10,7 @@ import { ResultState } from '../shared/result-state';
 import Loading from './loading';
 
 export default function VerifyEmailPage() {
-  const verifyEmailMutation = useVerifyEmail();
-
-  const { mutate, isPending, isError, error } = verifyEmailMutation;
+  const { mutate, isPending, isError, error } = useVerifyEmail();
 
   const { get } = useSearchParams();
 

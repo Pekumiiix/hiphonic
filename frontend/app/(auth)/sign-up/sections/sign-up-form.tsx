@@ -22,9 +22,7 @@ import { ResultState } from '../../shared/result-state';
 import { type SignUpData, signUpSchema } from '../schema';
 
 export default function SignUpForm() {
-  const signUpMutation = useSignUp();
-
-  const { mutate, isSuccess, isPending } = signUpMutation;
+  const { mutate, isSuccess, isPending } = useSignUp();
 
   if (isSuccess) {
     return (

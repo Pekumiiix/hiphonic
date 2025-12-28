@@ -19,9 +19,7 @@ export default function ResetPasswordForm() {
   const [formData, setFormData] = useState<TSignUpData>();
   const [countdown, setCountdown] = useState<number>(0);
 
-  const resetPasswordMutation = useResetPassword();
-
-  const { mutate, isPending, isSuccess } = resetPasswordMutation;
+  const { mutate, isPending, isSuccess } = useResetPassword();
 
   useEffect(() => {
     if (countdown > 0) {
