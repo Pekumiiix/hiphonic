@@ -11,7 +11,7 @@ if (!process.env.NEXT_PUBLIC_BACKEND_URL) {
 }
 
 if (!process.env.CLOUDINARY_URL) {
-  throw new Error('NEXT_PUBLIC_CLOUDINARY_URL is not set');
+  throw new Error('CLOUDINARY_URL is not set');
 }
 
 export default env;
