@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
-import { BACKEND_URL } from '@/utils/config';
+import env from '@/config/env';
 
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies();
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     headers.set('Cookie', incomingCookies);
     headers.set('x-xsrf-token', xsrfCookie.value);
 
-    const backendResponse = await fetch(`${BACKEND_URL}/auth/sign-out`, {
+    const backendResponse = await fetch(`${env.apiUrl}/auth/sign-out`, {
       method: 'POST',
       headers: headers,
       credentials: 'include',

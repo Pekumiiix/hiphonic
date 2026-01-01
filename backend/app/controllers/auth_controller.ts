@@ -1,33 +1,29 @@
-import type { AccessToken } from '@adonisjs/auth/access_tokens';
 import { cuid } from '@adonisjs/core/helpers';
 import type { HttpContext } from '@adonisjs/core/http';
 import app from '@adonisjs/core/services/app';
 import mail from '@adonisjs/mail/services/main';
 import { DateTime } from 'luxon';
 import User from '#models/user';
+import AuthService from '#services/auth_service';
+import UserService from '#services/user_service';
 import env from '#start/env';
-import { refreshValidator } from '#validators/auth_validator';
+import {
+  createNewPasswordValidator,
+  refreshValidator,
+  resetPasswordValidator,
+  signInValidator,
+  signUpValidator,
+  verifyEmailValidator,
+} from '#validators/auth_validator';
 
 export default class AuthController {
   async signUp({ request, response }: HttpContext) {
+    const data = await request.validateUsing(signUpValidator);
+
     try {
-      const data = request.only(['email', 'password', 'username']);
+      await UserService.ensureUsernameIsUnique(data.username);
 
-      const existingUserByUsername = await User.findBy('username', data.username);
-
-      if (existingUserByUsername) {
-        return response.badRequest({
-          message: 'Username is already taken',
-        });
-      }
-
-      const existingUserByEmail = await User.findBy('email', data.email);
-
-      if (existingUserByEmail) {
-        return response.badRequest({
-          message: 'Email is already registered',
-        });
-      }
+      await UserService.ensureEmailIsUnique(data.email);
 
       const user = await User.create(data);
 
@@ -52,19 +48,18 @@ export default class AuthController {
           });
       });
 
-      return response.ok({ message: 'Email verification link sent' });
-    } catch (error) {
+      return response.ok({ message: 'Email verification link sent.' });
+    } catch (_) {
       return response.internalServerError({
-        message: 'Failed to create user',
-        error: error.message,
+        message: 'Failed to create user.',
       });
     }
   }
 
   async verifyEmail({ request, response }: HttpContext) {
-    try {
-      const { token } = request.only(['token']);
+    const { token } = await request.validateUsing(verifyEmailValidator);
 
+    try {
       const user = await User.findBy('emailVerificationToken', token);
 
       if (
@@ -82,39 +77,26 @@ export default class AuthController {
       await user.save();
 
       return response.ok({ message: 'Email verified successfully.' });
-    } catch (error) {
+    } catch (_) {
       return response.internalServerError({
-        message: 'Something went wrong.',
-        error: error.message,
+        message: 'Something went wrong on our end.',
       });
     }
   }
 
   async signIn({ request, response }: HttpContext) {
-    try {
-      const {
-        email,
-        password,
-        rememberMe = false,
-      } = request.only(['email', 'password', 'rememberMe']);
+    const { email, password, rememberMe = false } = await request.validateUsing(signInValidator);
 
+    try {
       const user = await User.verifyCredentials(email, password);
 
-      const sessionDuration = rememberMe ? '30 days' : '7 days';
-      const sessionName = rememberMe ? 'Remembered Web Session' : 'Regular Web Session';
-
-      const token = await User.accessTokens.create(user, ['*'], {
-        name: sessionName,
-        expiresIn: sessionDuration,
-      });
-
-      const tokenValue = token.value?.release();
+      const { tokenValue, maxAge } = await AuthService.generateSessionToken(user, rememberMe);
 
       response.cookie('access_token', tokenValue, {
         httpOnly: true,
         secure: app.inProduction,
         sameSite: 'lax',
-        maxAge: sessionDuration,
+        maxAge,
         path: '/',
       });
 
@@ -127,20 +109,20 @@ export default class AuthController {
         },
       });
     } catch (error) {
-      if (error.code === 'E_INVALID_CREDENTIALS') {
+      if (error.code === 'E_INVALID_CREDENTIALS' || error.code === 'E_ROW_NOT_FOUND') {
         return response.unauthorized({ message: 'Invalid credentials' });
       }
+
       return response.internalServerError({
-        message: 'Something went wrong.',
-        error: error.message,
+        message: 'Something went wrong on our end.',
       });
     }
   }
 
   async resetPassword({ request, response }: HttpContext) {
-    try {
-      const { email } = request.only(['email']);
+    const { email } = await request.validateUsing(resetPasswordValidator);
 
+    try {
       const user = await User.findByOrFail('email', email);
 
       const token = cuid();
@@ -170,16 +152,15 @@ export default class AuthController {
         return response.unauthorized({ message: 'This email is not tied to any account.' });
       }
       return response.internalServerError({
-        message: 'Something went wrong.',
-        error: error.message,
+        message: 'Something went wrong on our end.',
       });
     }
   }
 
   async createNewPassword({ request, response }: HttpContext) {
-    try {
-      const { token, newPassword } = request.only(['token', 'newPassword']);
+    const { token, newPassword } = await request.validateUsing(createNewPasswordValidator);
 
+    try {
       const user = await User.findBy('resetPasswordToken', token);
 
       if (!user || !user.resetPasswordExpiresAt || user.resetPasswordExpiresAt < DateTime.now()) {
@@ -193,17 +174,16 @@ export default class AuthController {
       await user.save();
 
       return response.ok({ message: 'Password updated successfully.' });
-    } catch (error) {
+    } catch (_) {
       return response.internalServerError({
-        message: 'Something went wrong.',
-        error: error.message,
+        message: 'Something went wrong on our end.',
       });
     }
   }
 
   async me({ auth, response }: HttpContext) {
     try {
-      const user = await auth.authenticateUsing(['api']);
+      const user = await auth.authenticate();
 
       return response.ok({
         user: {
@@ -213,16 +193,16 @@ export default class AuthController {
           avatarUrl: user.avatarUrl,
         },
       });
-    } catch (error) {
-      return response.unauthorized({ message: 'Unauthenticated', error: error.message });
+    } catch (_) {
+      return response.unauthorized({ message: 'User is unathorized.' });
     }
   }
 
   async signOut({ auth, response }: HttpContext) {
     try {
-      const user = await auth.authenticateUsing(['api']);
+      const user = await auth.authenticate();
 
-      const token = (auth.user as User & { currentAccessToken: AccessToken }).currentAccessToken;
+      const token = user.currentAccessToken;
 
       if (token) {
         await User.accessTokens.delete(user, token.identifier);
@@ -242,26 +222,18 @@ export default class AuthController {
   }
 
   async refresh({ auth, response, request }: HttpContext) {
+    const { extendRememberMe = false } = await request.validateUsing(refreshValidator);
+
     try {
-      const { extendRememberMe = false } = await request.validateUsing(refreshValidator);
+      const user = await auth.authenticate();
 
-      const user = auth.getUserOrFail();
-
-      const sessionDuration = extendRememberMe ? '30 days' : '7 days';
-      const sessionName = extendRememberMe ? 'Remembered Web Session' : 'Regular Web Session';
-
-      const newToken = await User.accessTokens.create(user, ['*'], {
-        expiresIn: sessionDuration,
-        name: sessionName,
-      });
-
-      const tokenValue = newToken.value?.release();
+      const { tokenValue, maxAge } = await AuthService.generateSessionToken(user, extendRememberMe);
 
       response.cookie('access_token', tokenValue, {
         httpOnly: true,
         secure: app.inProduction,
         sameSite: 'lax',
-        maxAge: '30d',
+        maxAge,
         path: '/',
       });
 

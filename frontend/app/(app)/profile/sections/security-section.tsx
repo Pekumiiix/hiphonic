@@ -5,17 +5,20 @@ import { Lock } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { FormBase } from '@/components/reuseable/base-form';
 import { InputFormField } from '@/components/shared/input-form-field';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/shared/submit-button';
+import { useUpdatePassword } from '@/hooks/use-profile';
 import { ProfileSectionWrapper } from '../components/section-wrapper';
 import { type SecurityData, securitySchema } from '../schema/security';
 
 export function SecuritySection() {
+  const { mutate, isPending } = useUpdatePassword();
+
   const securityForm = useForm<SecurityData>({
     resolver: zodResolver(securitySchema),
   });
 
   function handleSave(data: SecurityData) {
-    console.log('Security data submitted:', data);
+    mutate(data);
   }
 
   return (
@@ -52,7 +55,11 @@ export function SecuritySection() {
           classNames={{ input: 'h-10', wrapper: 'max-w-md' }}
         />
 
-        <Button disabled={!securityForm.formState.isDirty}>Update password</Button>
+        <SubmitButton
+          name='Update password'
+          isLoading={isPending}
+          disabled={!securityForm.formState.isDirty}
+        />
       </FormBase>
     </ProfileSectionWrapper>
   );

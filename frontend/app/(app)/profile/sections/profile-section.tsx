@@ -6,17 +6,21 @@ import { useForm } from 'react-hook-form';
 import { BaseAvatar } from '@/components/reuseable/base-avatar';
 import { FormBase } from '@/components/reuseable/base-form';
 import { InputFormField } from '@/components/shared/input-form-field';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/shared/submit-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useFileUpload } from '@/hooks/use-file-upload';
+import { useUpdateUsername } from '@/hooks/use-profile';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/provider/auth-provider';
+import { ActionButtons } from '../components/action-buttons';
 import { ProfileSectionWrapper } from '../components/section-wrapper';
 import { type UsernameData, usernameSchema } from '../schema/profile';
 
 export function ProfileSection() {
   const { user } = useAuth();
+
+  const { mutate: updateUsernameMutation, isPending: isUpdatingUsername } = useUpdateUsername();
 
   const [
     { files, isDragging }, // errors
@@ -51,7 +55,7 @@ export function ProfileSection() {
   });
 
   function handleUsernameUpdate(data: UsernameData) {
-    console.log('Username updated to:', data.username);
+    updateUsernameMutation({ username: data.username });
   }
 
   return (
@@ -120,12 +124,12 @@ export function ProfileSection() {
           classNames={{ input: 'h-10', wrapper: 'max-w-md' }}
         />
 
-        <Button
+        <SubmitButton
+          name='Update'
+          isLoading={isUpdatingUsername}
           disabled={!usernameForm.getFieldState('username').isDirty}
           className='size-fit'
-        >
-          Update
-        </Button>
+        />
       </FormBase>
 
       <div className='space-y-2'>
@@ -145,23 +149,4 @@ export function ProfileSection() {
       </div>
     </ProfileSectionWrapper>
   );
-}
-
-function ActionButtons({ onCancel, onSave }: IActionButtons) {
-  return (
-    <div className='flex items-center gap-2.5'>
-      <Button
-        variant='destructive'
-        onClick={onCancel}
-      >
-        Cancel
-      </Button>
-      <Button onClick={onSave}>Save Changes</Button>
-    </div>
-  );
-}
-
-interface IActionButtons {
-  onCancel: () => void;
-  onSave: () => void;
 }

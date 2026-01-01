@@ -10,11 +10,10 @@
   },
   "lint-staged": {
     "frontend/**/*.{js,jsx,ts,tsx,json,css,md}": [
-      "bun --cwd frontend lint"
+      "bun --cwd frontend lint:fix"
     ],
     "backend/**/*.{js,ts,json,md}": [
-      "bunx --cwd backend lint",
-      "bun --cwd backend typecheck"
+      "bun --cwd backend format"
     ]
   }
 }

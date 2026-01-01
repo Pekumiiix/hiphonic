@@ -1,5 +1,5 @@
-import { defineConfig, services } from '@adonisjs/ally'
-import env from '#start/env'
+import { defineConfig, services } from '@adonisjs/ally';
+import env from '#start/env';
 
 const allyConfig = defineConfig({
   facebook: services.facebook({
@@ -12,9 +12,9 @@ const allyConfig = defineConfig({
     clientSecret: env.get('GOOGLE_CLIENT_SECRET'),
     callbackUrl: env.get('GOOGLE_CALLBACK_URL'),
   }),
-})
+});
 
-export default allyConfig
+export default allyConfig;
 
 declare module '@adonisjs/ally/types' {
   interface SocialProviders extends InferSocialProviders<typeof allyConfig> {}

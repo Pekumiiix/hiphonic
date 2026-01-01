@@ -1,10 +1,10 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { BACKEND_URL } from '@/utils/config';
+import env from '@/config/env';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
-  const backendRes = await fetch(`${BACKEND_URL}/auth/verify-email`, {
+  const backendRes = await fetch(`${env.apiUrl}/auth/verify-email`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

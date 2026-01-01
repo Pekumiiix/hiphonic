@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { BACKEND_URL } from '@/utils/config';
+import env from '@/config/env';
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -18,7 +18,7 @@ export async function GET() {
 
     headers.set('Cookie', `access_token=${tokenCookie.value}`);
 
-    const backendRes = await fetch(`${BACKEND_URL}/auth/me`, {
+    const backendRes = await fetch(`${env.apiUrl}/auth/me`, {
       method: 'GET',
       headers: headers,
       credentials: 'include',

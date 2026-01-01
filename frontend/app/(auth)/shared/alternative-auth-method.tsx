@@ -2,13 +2,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { BACKEND_URL } from '@/utils/config';
+import env from '@/config/env';
 
-export default function AlternativeAuthMethod({
-  type = 'sign-up',
-}: {
-  type?: 'sign-in' | 'sign-up';
-}) {
+export default function AlternativeAuthMethod({ type = 'sign-up' }: IAlternativeMethod) {
   return (
     <div className='w-full flex flex-col items-center gap-8'>
       <div className='w-full flex items-center justify-center gap-4'>
@@ -65,9 +61,13 @@ export default function AlternativeAuthMethod({
 }
 
 function handleGoogleSignIn() {
-  window.location.href = `${BACKEND_URL}/auth/google/redirect`;
+  window.location.href = `${env.apiUrl}/auth/google/redirect`;
 }
 
 function handleFacebookSignIn() {
-  window.location.href = `${BACKEND_URL}/auth/facebook/redirect`;
+  window.location.href = `${env.apiUrl}/auth/facebook/redirect`;
+}
+
+interface IAlternativeMethod {
+  type?: 'sign-in' | 'sign-up';
 }

@@ -58,3 +58,13 @@ router
     ]);
   })
   .prefix('/auth');
+
+// Profile Routes
+router
+  .group(() => {
+    router.patch('/avatar', [() => import('#controllers/profile_controllers'), 'updateAvatar']);
+    router.patch('/username', [() => import('#controllers/profile_controllers'), 'updateUsername']);
+    router.patch('/password', [() => import('#controllers/profile_controllers'), 'updatePassword']);
+  })
+  .use(middleware.cookieAuth())
+  .prefix('/profile');

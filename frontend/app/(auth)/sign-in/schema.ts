@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isDevelopment } from '@/utils/config';
+import env from '@/config/env';
 
 export const signInSchema = z.object({
   email: z
@@ -22,8 +22,8 @@ export const signInSchema = z.object({
 });
 
 export const defaultSignInValue: SignInData = {
-  email: isDevelopment ? process.env.NEXT_PUBLIC_TEST_EMAIL || '' : '',
-  password: isDevelopment ? process.env.NEXT_PUBLIC_TEST_PASSWORD || '' : '',
+  email: env.isDev ? env.testEmail || '' : '',
+  password: env.isDev ? env.testPassword || '' : '',
   rememberMe: false,
 };
 
