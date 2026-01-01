@@ -9,7 +9,7 @@ import api from '@/services/http.service';
  * @param data - Optional request body or params
  */
 export async function apiRequest<TResponse, TData = unknown>(
-  method: 'get' | 'post' | 'put' | 'delete',
+  method: 'get' | 'post' | 'put' | 'delete' | 'patch',
   endpoint: string,
   data?: TData,
 ): Promise<TResponse> {
